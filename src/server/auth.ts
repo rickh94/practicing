@@ -15,6 +15,7 @@ import { db } from "~/server/db";
 import { domain, getChallenge, rpID } from "~/server/webauthn";
 import { verifyAuthenticationResponse } from "@simplewebauthn/server";
 import { type JWT } from "next-auth/jwt";
+import { type AuthenticationResponseJSON } from "@simplewebauthn/typescript-types";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -74,30 +75,7 @@ export const authOptions: NextAuthOptions = {
       name: "webauthn",
       credentials: {},
       async authorize(_cred, req) {
-        if (!req.body) return null;
-        const {
-          id,
-          rawId,
-          type,
-          clientDataJSON,
-          authenticatorData,
-          signature,
-          userHandle,
-          clientExtensionResults,
-        } = req.body;
-
-        const response = {
-          id,
-          rawId,
-          type,
-          response: {
-            clientDataJSON,
-            authenticatorData,
-            signature,
-            userHandle,
-          },
-          clientExtensionResults,
-        };
+        const response = getWebauthnBody(req as RequestInternal);
         // console.log("response", response);
 
         const authenticator = await db.credential.findFirst({
@@ -164,7 +142,7 @@ export const authOptions: NextAuthOptions = {
   },
 };
 
-function getWebauthnBody(req: RequestInternal) {
+function getWebauthnBody(req: RequestInternal): AuthenticationResponseJSON {
   if (!req.body) {
     throw new Error("Missing body");
   }
@@ -186,7 +164,7 @@ function getWebauthnBody(req: RequestInternal) {
   if (!rawId || typeof rawId !== "string") {
     throw new Error("Missing rawId");
   }
-  if (!type || typeof type !== "string") {
+  if (!type || typeof type !== "string" || type !== "public-key") {
     throw new Error("Missing type");
   }
   if (!clientDataJSON || typeof clientDataJSON !== "string") {
@@ -209,10 +187,12 @@ function getWebauthnBody(req: RequestInternal) {
     id,
     rawId,
     type,
-    clientDataJSON,
-    authenticatorData,
-    signature,
-    userHandle,
+    response: {
+      clientDataJSON,
+      authenticatorData,
+      signature,
+      userHandle,
+    },
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     clientExtensionResults,
   };

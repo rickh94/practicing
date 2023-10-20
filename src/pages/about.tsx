@@ -1,8 +1,6 @@
 import {
   Chart as ChartJS,
   ArcElement,
-  Tooltip,
-  Legend,
   LinearScale,
   CategoryScale,
   PointElement,
@@ -15,8 +13,6 @@ import { PageColumnLayout } from "~/components/layout";
 
 ChartJS.register(
   ArcElement,
-  Tooltip,
-  Legend,
   LinearScale,
   PointElement,
   LineElement,
@@ -25,7 +21,6 @@ ChartJS.register(
 );
 
 export default function About() {
-  "use client";
   return (
     <>
       <PageColumnLayout>
@@ -37,7 +32,7 @@ export default function About() {
             ← Back Home
           </Link>
         </div>
-        <div className="h-4 sm:hidden"></div>
+        <div className="h-4 md:hidden" />
         <h1 className="px-4 pb-1 pt-4 text-5xl font-bold text-neutral-800">
           Better Practicing
         </h1>

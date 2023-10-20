@@ -69,6 +69,7 @@ function SingleSetupForm({
 }) {
   return (
     <div className="absolute left-0 top-0 w-full">
+
       <div className="py-2">
         <h1 className="py-1 text-2xl font-bold">Single Random Spots</h1>
         <p className="text-lg">

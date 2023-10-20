@@ -2,12 +2,22 @@ import { useState } from "react";
 import { PageColumnLayout } from "~/components/layout";
 import { Transition } from "@headlessui/react";
 import { SingleMode } from "~/components/random/single";
+import Link from "next/link";
 
 export default function Random() {
   return (
     <PageColumnLayout>
       <div className="flex items-center justify-center pb-4 pt-8">
-        <h1 className="text-3xl font-extrabold tracking-tight text-neutral-800 sm:text-[3rem] md:text-[4rem]">
+        <div className="absolute left-0 top-0 p-8">
+          <Link
+            className="h-8 rounded-xl bg-neutral-700/10 p-4 text-neutral-700 hover:bg-neutral-700/20"
+            href="/"
+          >
+            ← Back Home
+          </Link>
+        </div>
+        <div className="h-4 sm:hidden" />
+        <h1 className="text-3xl font-extrabold tracking-tight text-neutral-800 sm:text-[3rem]">
           Practice Randomizer
         </h1>
       </div>
