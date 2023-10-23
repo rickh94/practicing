@@ -23,16 +23,7 @@ ChartJS.register(
 export default function About() {
   return (
     <>
-      <PageColumnLayout>
-        <div className="absolute left-0 top-0 p-8">
-          <Link
-            className="h-8 rounded-xl bg-neutral-700/10 p-4 text-neutral-700 hover:bg-neutral-700/20"
-            href="/"
-          >
-            ← Back Home
-          </Link>
-        </div>
-        <div className="h-4 md:hidden" />
+      <PageColumnLayout backLink={true} backLinkTo="/" backLinkText="Back Home">
         <h1 className="px-4 pb-1 pt-4 text-5xl font-bold text-neutral-800">
           Better Practicing
         </h1>
@@ -141,7 +132,7 @@ export default function About() {
             </p>
             <div className="flex">
               <Link
-                className="flex flex-col gap-4 rounded-xl bg-neutral-700/10 p-4 text-neutral-700 no-underline hover:bg-neutral-700/20"
+                className="flex flex-col gap-4 rounded-xl bg-neutral-700/10 px-6 py-4 text-neutral-700 no-underline hover:bg-neutral-700/20"
                 href="/random"
               >
                 <h3 className="m-0 p-0 text-xl font-bold text-neutral-800 no-underline">

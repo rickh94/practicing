@@ -16,7 +16,7 @@ export default function RadioBox({
   return (
     <label
       htmlFor={`${name}-${value}`}
-      className={`focusable relative flex cursor-pointer rounded-xl px-4 py-3 ${selected ? " bg-neutral-700/20" : " bg-neutral-700/10"
+      className={`focusable relative flex cursor-pointer rounded-xl py-3 pl-4 pr-2 ${selected ? " bg-neutral-700/20 shadow" : " bg-neutral-700/10"
         }`}
     >
       <input
@@ -41,7 +41,7 @@ export default function RadioBox({
         </span>
       </span>
       <CheckCircleIcon
-        className={`ml-2 h-5 w-5 text-neutral-800 ${selected ? "" : " invisible"
+        className={`ml-1 h-5 w-5 text-neutral-800 ${selected ? "" : " invisible"
           }`}
         aria-hidden="true"
       />
