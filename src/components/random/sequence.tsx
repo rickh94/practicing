@@ -4,8 +4,10 @@ import { type WheelDataType } from "react-custom-roulette";
 import RadioBox from "~/components/radio";
 import { type RandomMode } from "~/pages/random";
 import { Summary, type PracticeSummaryItem } from "./summary";
+import { CheckCircleIcon as CheckCircleOutline } from "@heroicons/react/24/outline";
+import { CheckCircleIcon as CheckCircleSolid } from "@heroicons/react/20/solid";
 
-export default function SingleTab({
+export default function SequenceTab({
   show,
   mode,
   setMode,
@@ -15,7 +17,7 @@ export default function SingleTab({
   setMode: (mode: RandomMode) => void;
 }) {
   const [numSpots, setNumSpots] = useState(5);
-  const [useAnimation, setUseAnimation] = useState(false);
+  const [fullyRandom, setFullyRandom] = useState(false);
   const [spots, setSpots] = useState<WheelDataType[]>([]);
   const [summary, setSummary] = useState<PracticeSummaryItem[]>([]);
 
@@ -24,18 +26,46 @@ export default function SingleTab({
     for (let i = 0; i < numSpots; i++) {
       spots.push({ option: `Spot #${i + 1}` });
     }
-    setSpots(spots);
-  }, [numSpots]);
+    if (fullyRandom) {
+      const randomSpots: WheelDataType[] = [];
+      for (let i = 0; i < 2 * numSpots; i++) {
+        const randomSpot = spots[Math.floor(Math.random() * spots.length)];
+        if (!randomSpot) {
+          throw new Error("invalid random spot");
+        }
+        randomSpots.push(randomSpot);
+      }
+      setSpots(randomSpots);
+    } else {
+      spots.sort(() => Math.random() - 0.5);
+      setSpots(spots);
+    }
+  }, [numSpots, fullyRandom]);
+
+  function moreSpots() {
+    if (!fullyRandom) {
+      return;
+    }
+    const randomSpots: WheelDataType[] = [];
+    for (let i = 0; i < 2 * numSpots; i++) {
+      const randomSpot = spots[Math.floor(Math.random() * spots.length)];
+      if (!randomSpot) {
+        throw new Error("invalid random spot");
+      }
+      randomSpots.push(randomSpot);
+    }
+    setSpots((spots) => spots.concat(randomSpots));
+  }
 
   return (
     <Transition
       show={show}
       enter="transition ease-out transform duration-300"
-      enterFrom="opacity-0 -translate-x-full"
+      enterFrom="opacity-0 translate-x-full"
       enterTo="opacity-100 translate-x-0"
       leave="transition ease-in transform duration-300"
       leaveFrom="opacity-100 translate-x-0"
-      leaveTo="opacity-0 -translate-x-full"
+      leaveTo="opacity-0 translate-x-full"
     >
       <Transition
         className="absolute left-0 top-0 w-full"
@@ -47,11 +77,11 @@ export default function SingleTab({
         leaveFrom="opacity-100 scale-100"
         leaveTo="opacity-0 scale-95"
       >
-        <SingleSetupForm
+        <SequenceSetupForm
           numSpots={numSpots}
           setNumSpots={setNumSpots}
-          useAnimation={useAnimation}
-          setUseAnimation={setUseAnimation}
+          fullyRandom={fullyRandom}
+          setFullyRandom={setFullyRandom}
           submit={() => setMode("practice")}
         />
       </Transition>
@@ -65,14 +95,15 @@ export default function SingleTab({
         leaveFrom="opacity-100 scale-100"
         leaveTo="opacity-0 scale-95"
       >
-        <SinglePractice
+        <SequencePractice
           spots={spots}
-          useAnimation={useAnimation}
           setup={() => setMode("setup")}
           finish={(finalSummary) => {
             setSummary(finalSummary);
             setMode("summary");
           }}
+          moreSpots={moreSpots}
+          fullyRandom={fullyRandom}
         />
       </Transition>
       <Transition
@@ -95,27 +126,26 @@ export default function SingleTab({
   );
 }
 
-function SingleSetupForm({
+function SequenceSetupForm({
   numSpots,
   setNumSpots,
-  useAnimation,
-  setUseAnimation,
+  fullyRandom,
+  setFullyRandom,
   submit,
 }: {
   numSpots: number;
   setNumSpots: (numSpots: number) => void;
-  useAnimation: boolean;
-  setUseAnimation: (useAnimation: boolean) => void;
+  fullyRandom: boolean;
+  setFullyRandom: (fullyRandom: boolean) => void;
   submit: () => void;
 }) {
   // TODO: add ability to rate spots
   return (
     <>
       <div className="py-2">
-        <h1 className="py-1 text-2xl font-bold">Single Random Spots</h1>
+        <h1 className="py-1 text-2xl font-bold">Random Spots Sequence</h1>
         <p className="text-lg">
-          Generates random spots to practice one at a time with an optional
-          animation.
+          Generates a random sequence of spots to practice to practice.
         </p>
       </div>
       <div className="grid grid-cols-1 gap-x-2 gap-y-4 sm:grid-cols-2">
@@ -152,28 +182,27 @@ function SingleSetupForm({
         </div>
         <div className="flex flex-col">
           <label className="text-lg font-semibold text-neutral-800">
-            Use Spinner animation
+            Randomness
           </label>
           <p className="pb-2 text-sm text-neutral-700">
-            There is a wheel-of-fortune style spinner available that can play
-            each time, or you can skip it and just have the number appear on
-            screen.
+            Choose to either generate a fully random sequence or use each spot
+            once before repeating.
           </p>
           <div className="flex w-full gap-2">
             {/* TODO: fix ring, border outline, add no*/}
             <RadioBox
-              text="Yes"
-              setSelected={() => setUseAnimation(true)}
-              selected={useAnimation}
-              value="yes"
-              name="animation"
+              text="Fully Random"
+              setSelected={() => setFullyRandom(true)}
+              selected={fullyRandom}
+              value="random"
+              name="random"
             />
             <RadioBox
-              text="No"
-              setSelected={() => setUseAnimation(false)}
-              selected={!useAnimation}
-              value="no"
-              name="animation"
+              text="Each Spot Once"
+              setSelected={() => setFullyRandom(false)}
+              selected={!fullyRandom}
+              value="each"
+              name="each"
             />
           </div>
         </div>
@@ -191,77 +220,38 @@ function SingleSetupForm({
   );
 }
 
-function SinglePractice({
+function SequencePractice({
   spots,
-  useAnimation,
   setup,
   finish,
+  moreSpots,
+  fullyRandom,
 }: {
   spots: WheelDataType[];
-  useAnimation: boolean;
   setup: () => void;
+  moreSpots: () => void;
   finish: (summary: PracticeSummaryItem[]) => void;
+  fullyRandom: boolean;
 }) {
-  const [currentSpotIdx, setCurrentSpotIdx] = useState(
-    Math.floor(Math.random() * spots.length),
-  );
-  const [changingSpot, setChangingSpot] = useState(false);
-  const [practiceSummary, setPracticeSummary] = useState<number[]>([]);
-
-  function addSpotRep(idx: number) {
-    setPracticeSummary((curr) => {
-      curr[idx] += 1;
-      return curr;
-    });
-  }
-
   function handleDone() {
-    addSpotRep(currentSpotIdx);
-    const finalSummary = [];
-    for (let i = 0; i < spots.length; i++) {
-      finalSummary.push({
-        name: spots[i]?.option ?? "Missing spot name",
-        reps: practiceSummary[i] ?? 0,
-      });
+    const finalSummary: PracticeSummaryItem[] = [];
+    for (const spot of spots) {
+      const spotIndex = finalSummary.findIndex(
+        (item) => item.name === spot.option,
+      );
+      if (spotIndex === -1) {
+        finalSummary.push({
+          name: spot.option ?? "Missing spot name",
+          reps: 1,
+        });
+      } else {
+        if (!finalSummary[spotIndex]?.reps) {
+          throw new Error("Invalid final summary item");
+        }
+        finalSummary[spotIndex]!.reps += 1;
+      }
     }
     finish(finalSummary);
-  }
-
-  useEffect(() => {
-    setPracticeSummary(Array(spots.length).fill(0));
-  }, [spots]);
-  /*
-  const [nextSpotIdx, setNextSpotIdx] = useState(
-    Math.floor(Math.random() * spots.length),
-  );
-  */
-  // const [spinning, setSpinning] = useState(false);
-
-  /*
-  function startSpinning() {
-    if (!spinning) {
-      setSpinning(true);
-    }
-  }
-  
-  function stopSpinning() {
-    if (spinning) {
-      setSpinning(() => false);
-      setCurrentSpotIdx(nextSpotIdx);
-      setNextSpotIdx(Math.floor(Math.random() * spots.length));
-    }
-  }
-  */
-
-  function nextSpot() {
-    if (!changingSpot) {
-      setChangingSpot(true);
-      setTimeout(() => {
-        addSpotRep(currentSpotIdx);
-        setCurrentSpotIdx(Math.floor(Math.random() * spots.length));
-        setChangingSpot(false);
-      }, 300);
-    }
   }
 
   return (
@@ -280,74 +270,61 @@ function SinglePractice({
         <div className="text-2xl font-semibold text-neutral-700">
           Practicing:
         </div>
-        <div className="relative h-32 w-full">
-          <Transition
-            className="absolute left-1/2 top-0 mt-4 w-max -translate-x-1/2 transform rounded-xl border border-neutral-500 bg-neutral-400/10 px-8 pb-5 pt-4 text-3xl font-bold text-black shadow-lg sm:pb-8 sm:pt-7 sm:text-[3rem]"
-            show={!changingSpot}
-            enter="transition ease-out transform duration-100"
-            enterFrom="opacity-0 scale-95"
-            enterTo="opacity-100 scale-100"
-            leave="transition ease-in transform duration-200"
-            leaveFrom="opacity-100 scale-100"
-            leaveTo="opacity-0 scale-95"
-          >
-            {spots[currentSpotIdx]?.option ?? "Something went wrong"}
-          </Transition>
+        <div className="w-full">
+          <ul className="mx-auto grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2 lg:grid-cols-3">
+            {spots.map((spot, idx) => (
+              <SpotItem key={`${spot.option}-${idx}`} spot={spot} />
+            ))}
+
+            {fullyRandom && (
+              <button
+                type="button"
+                className="focusable rounded-xl bg-neutral-700/10 px-6 py-2 text-2xl font-semibold text-neutral-800 hover:bg-neutral-700/20"
+                onClick={moreSpots}
+              >
+                More Spots...
+              </button>
+            )}
+          </ul>
         </div>
-        <div className="pt-12">
-          <button
-            type="button"
-            onClick={nextSpot}
-            className="focusable rounded-xl bg-neutral-700/10 px-8 py-4 text-4xl font-semibold text-neutral-800 hover:bg-neutral-700/20"
-          >
-            Next Spot
-          </button>
-        </div>
-        <div className="pt-8">
-          <button
-            type="button"
-            onClick={handleDone}
-            className="focusable rounded-xl bg-neutral-700/10 px-6 py-2 text-2xl font-semibold text-neutral-800 hover:bg-neutral-700/20"
-          >
-            Done
-          </button>
-        </div>
+      </div>
+      <div className="flex w-full items-center justify-center pt-8">
+        <button
+          type="button"
+          onClick={handleDone}
+          className="focusable rounded-xl bg-neutral-700/10 px-6 py-2 text-2xl font-semibold text-neutral-800 hover:bg-neutral-700/20"
+        >
+          Done
+        </button>
       </div>
     </div>
   );
 }
 
-/*
-function Spinner({
-spots,
-spinning,
-onStartSpinning,
-onStopSpinning,
-prizeNumber,
-}: {
-spots: WheelDataType[];
-spinning: boolean;
-onStartSpinning: () => void;
-onStopSpinning: () => void;
-prizeNumber: number;
-}) {
-const Wheel = dynamic(
-  () => import("react-custom-roulette").then((mod) => mod.Wheel),
-  { ssr: false },
-);
-return (
-  <>
-    <Wheel
-      data={spots}
-      prizeNumber={prizeNumber}
-      mustStartSpinning={spinning}
-      onStopSpinning={onStopSpinning}
-      startingOptionIndex={0}
-    />
-    <button onClick={onStartSpinning} type="button">
-      Spin
-    </button>
-  </>
-);
+function SpotItem({ spot }: { spot: WheelDataType }) {
+  const [completed, setCompleted] = useState(false);
+  return (
+    <li className="w-full">
+      <button
+        type="button"
+        className="flex w-full justify-between rounded-xl border border-neutral-500 bg-neutral-400/10 p-3 text-xl text-black shadow transition duration-100"
+        onClick={() => setCompleted((completed) => !completed)}
+      >
+        <span className={`${completed ? "font-medium" : "font-base"}`}>
+          {spot.option}
+        </span>
+        {completed ? (
+          <>
+            <span className="sr-only">Completed</span>
+            <CheckCircleSolid className="h-6 w-6 text-green-500" />
+          </>
+        ) : (
+          <>
+            <span className="sr-only">Incomplete</span>
+            <CheckCircleOutline className="h-6 w-6 text-neutral-500" />
+          </>
+        )}
+      </button>
+    </li>
+  );
 }
-*/

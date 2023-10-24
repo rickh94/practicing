@@ -3,6 +3,7 @@ import { PageHeroLayout } from "~/components/layout";
 
 export default function Home() {
   // TODO: check for login and change get started element and login element
+  // TODO: fix left button in layout 
   return (
     <>
       <PageHeroLayout>

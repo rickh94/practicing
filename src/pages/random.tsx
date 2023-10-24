@@ -1,19 +1,36 @@
 import { Fragment, useState } from "react";
-import { PageColumnLayout } from "~/components/layout";
+import { PageColumnLayout, workSans } from "~/components/layout";
 import { Dialog, Transition } from "@headlessui/react";
 import SingleTab from "~/components/random/single";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
+import { BackToHome } from "~/components/links";
+import SequenceTab from "~/components/random/sequence";
+
+// TODO: allow manual entry of spot names/numbers
 
 export default function Random() {
   // TODO: fix back button so it scrolls off
+  const [helpOpen, setHelpOpen] = useState(false);
   return (
     <>
       <PageColumnLayout
-        backLink={true}
-        backLinkTo={"/"}
-        backLinkText="Back Home"
+        leftButton={<BackToHome />}
+        rightButton={
+          <button
+            type="button"
+            className="focusable block self-end rounded-xl bg-neutral-700/10 px-6 py-4 font-semibold text-neutral-700 hover:bg-neutral-700/20"
+            onClick={() => {
+              setHelpOpen(true);
+            }}
+          >
+            <span className="flex items-center gap-1">
+              <span>Read More</span>
+              <InformationCircleIcon className="inline h-6 w-6" />
+            </span>
+          </button>
+        }
       >
-        <Help />
+        <Help open={helpOpen} setOpen={setHelpOpen} />
         <div className="flex items-center justify-center">
           <h1 className="text-5xl font-extrabold tracking-tight text-neutral-800 sm:text-[3rem]">
             Practice Randomizer
@@ -67,50 +84,26 @@ function TabChooser() {
         <div className="h-8" />
         <div className="relative">
           <SingleTab show={tab === "single"} mode={mode} setMode={setMode} />
-          <SequenceTab show={tab === "sequence"} />
+          <SequenceTab
+            show={tab === "sequence"}
+            mode={mode}
+            setMode={setMode}
+          />
         </div>
       </div>
     </>
   );
 }
 
-function SequenceTab({ show }: { show: boolean }) {
-  return (
-    <Transition
-      show={show}
-      enter="transition ease-out transform duration-300"
-      enterFrom="opacity-0 translate-x-full"
-      enterTo="opacity-100 translate-x-0"
-      leave="transition ease-in transform duration-300"
-      leaveFrom="opacity-100 translate-x-0"
-      leaveTo="opacity-0 translate-x-full"
-    >
-      {/* TODO: create the sequence view with a configuration and a nice interface to check off spots */}
-      <div className="absolute left-0 top-0 w-full">
-        <h1 className="py-1 text-2xl font-bold text-neutral-700">
-          Sequences (coming soon)
-        </h1>
-      </div>
-    </Transition>
-  );
-}
-
-function Help() {
-  const [open, setOpen] = useState(false);
+function Help({
+  open,
+  setOpen,
+}: {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+}) {
   return (
     <>
-      <div className="absolute right-0 top-0 p-4">
-        <button
-          type="button"
-          className="focusable block rounded-xl bg-neutral-700/10 px-6 py-4 font-semibold text-neutral-700 hover:bg-neutral-700/20"
-          onClick={() => setOpen(true)}
-        >
-          <span className="flex items-center gap-1">
-            <span>Read More</span>
-            <InformationCircleIcon className="inline h-6 w-6" />
-          </span>
-        </button>
-      </div>
       <Transition.Root show={open} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={setOpen}>
           <Transition.Child
@@ -136,7 +129,9 @@ function Help() {
                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               >
-                <Dialog.Panel className="relative transform overflow-hidden rounded-xl bg-[#fff9ee] px-4 pb-4 pt-5 text-left shadow-lg transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6">
+                <Dialog.Panel
+                  className={`relative transform overflow-hidden rounded-xl bg-gradient-to-t from-neutral-50 to-[#fff9ee] px-4 pb-4 pt-5 text-left shadow-lg transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6 ${workSans.className}`}
+                >
                   <div>
                     <div className="mt-3 text-center sm:mt-5">
                       <Dialog.Title
@@ -145,10 +140,47 @@ function Help() {
                       >
                         Random Practicing
                       </Dialog.Title>
-                      <div className="mt-2">
-                        <p className="text-sm text-gray-500">
-                          {/* TODO: write this */}
-                          More info soon
+                      <div className="prose prose-sm prose-neutral mt-2 text-left">
+                        <p>
+                          In order to maintain novelty for our distractable
+                          brains and ensure even practicing amoung our different
+                          sections, it’s very helpful to practice our spots in a
+                          randomized order. To that end, we have two different
+                          practicing modes available.
+                        </p>
+                        <h2>Modes</h2>
+                        <dl>
+                          <dt>Single Mode</dt>
+                          <dd>
+                            Random spots are selected one at a time and put up
+                            on the screen. Click the button to advance. This
+                            will continue indefinitely until you click done.
+                          </dd>
+                          <dt>Sequence Mode</dt>
+                          <dd>
+                            We will generate a sequence of spots so you don’t
+                            have to stop and click between each one. It can
+                            either be totally random or use each spot once
+                            before continuing. You can check them off as you go,
+                            and it will generate more as long as you want.
+                          </dd>
+                        </dl>
+                        <p>
+                          Select which mode you want using that tabs at the top.
+                          If you want to switch modes, go back to setup to
+                          change.
+                        </p>
+                        <h2>Setup and Practicing</h2>
+                        <p>
+                          You’ll need to number your different spots, then
+                          select how many you want to practice. The numbers will
+                          be randomly generated from there.
+                        </p>
+                        <p>
+                          When you’re done, you’ll get a table showing how many
+                          times you practiced each different spot. You can
+                          return to setup at any time, but your progress will be
+                          reset.
                         </p>
                       </div>
                     </div>
@@ -159,7 +191,7 @@ function Help() {
                       className="focusable block w-full rounded-xl bg-neutral-800/20 px-6 py-2 text-xl font-semibold text-neutral-700 hover:bg-neutral-800/30"
                       onClick={() => setOpen(false)}
                     >
-                      Done
+                      Done Reading
                     </button>
                   </div>
                 </Dialog.Panel>

@@ -10,6 +10,7 @@ import {
 import Link from "next/link";
 import { Line } from "react-chartjs-2";
 import { PageColumnLayout } from "~/components/layout";
+import { BackToHome } from "~/components/links";
 
 ChartJS.register(
   ArcElement,
@@ -23,7 +24,7 @@ ChartJS.register(
 export default function About() {
   return (
     <>
-      <PageColumnLayout backLink={true} backLinkTo="/" backLinkText="Back Home">
+      <PageColumnLayout leftButton={<BackToHome />}>
         <h1 className="px-4 pb-1 pt-4 text-5xl font-bold text-neutral-800">
           Better Practicing
         </h1>
