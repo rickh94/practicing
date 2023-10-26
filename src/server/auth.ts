@@ -1,5 +1,5 @@
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { type GetServerSidePropsContext } from "next";
+import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import { type AnySQLiteDatabase } from "@auth/drizzle-adapter/lib/utils";
 import {
   getServerSession,
   type DefaultSession,
@@ -7,11 +7,14 @@ import {
   type Session,
   type RequestInternal,
 } from "next-auth";
-import EmailProvider from "next-auth/providers/email";
-import CredentialsProvider from "next-auth/providers/credentials";
 
 import { env } from "~/env.mjs";
 import { db } from "~/server/db";
+import { sqliteTable } from "drizzle-orm/sqlite-core";
+
+import EmailProvider from "next-auth/providers/email";
+import CredentialsProvider from "next-auth/providers/credentials";
+
 import { domain, getChallenge, rpID } from "~/server/webauthn";
 import { verifyAuthenticationResponse } from "@simplewebauthn/server";
 import { type JWT } from "next-auth/jwt";
@@ -25,11 +28,11 @@ import { type AuthenticationResponseJSON } from "@simplewebauthn/typescript-type
  */
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: DefaultSession["user"] & {
+    user: {
       id: string;
       // ...other properties
       // role: UserRole;
-    };
+    } & DefaultSession["user"];
   }
 
   // interface User {
@@ -58,6 +61,8 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
     jwt: ({ token, user }) => {
+      console.log("token", token);
+      console.log("user", user);
       if (user) {
         token.id = user.id;
         token.email = user.email;
@@ -65,23 +70,22 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
   },
-  adapter: PrismaAdapter(db),
+  adapter: DrizzleAdapter(db as unknown as AnySQLiteDatabase, sqliteTable),
   secret: env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
   },
   providers: [
     CredentialsProvider({
+      id: "webauthn",
       name: "webauthn",
       credentials: {},
       async authorize(_cred, req) {
         const response = getWebauthnBody(req as RequestInternal);
-        // console.log("response", response);
 
-        const authenticator = await db.credential.findFirst({
-          where: {
-            credentialID: response.id,
-          },
+        const authenticator = await db.query.credentials.findFirst({
+          where: (credentials, { eq }) =>
+            eq(credentials.credentialID, response.id),
         });
 
         if (!authenticator) {
@@ -92,6 +96,7 @@ export const authOptions: NextAuthOptions = {
         if (!expectedChallenge) {
           return null;
         }
+
         try {
           const { verified, authenticationInfo } =
             await verifyAuthenticationResponse({
@@ -100,7 +105,8 @@ export const authOptions: NextAuthOptions = {
               expectedOrigin: domain,
               expectedRPID: rpID,
               authenticator: {
-                credentialPublicKey: authenticator.credentialPublicKey,
+                credentialPublicKey:
+                  authenticator.credentialPublicKey as Buffer,
                 counter: authenticator.counter,
                 credentialID: Buffer.from(
                   authenticator.credentialID,
@@ -113,11 +119,14 @@ export const authOptions: NextAuthOptions = {
             return null;
           }
 
-          return await db.user.findFirst({
-            where: {
-              id: authenticator.userId,
-            },
+          const user = await db.query.users.findFirst({
+            where: (users, { eq }) => eq(users.id, authenticator.userId),
           });
+          if (!user) {
+            console.log("user not found");
+            return null;
+          }
+          return user;
         } catch (err) {
           console.log(err);
           return null;
@@ -138,7 +147,7 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   pages: {
-    signIn: "/auth/signin",
+    signIn: "/signin",
   },
 };
 
@@ -162,24 +171,31 @@ function getWebauthnBody(req: RequestInternal): AuthenticationResponseJSON {
   }
 
   if (!rawId || typeof rawId !== "string") {
+    console.log("missing rawId");
     throw new Error("Missing rawId");
   }
   if (!type || typeof type !== "string" || type !== "public-key") {
+    console.log("missing type");
     throw new Error("Missing type");
   }
   if (!clientDataJSON || typeof clientDataJSON !== "string") {
+    console.log("missing clientDataJSON");
     throw new Error("Missing clientDataJSON");
   }
   if (!authenticatorData || typeof authenticatorData !== "string") {
+    console.log("missing authenticatorData");
     throw new Error("Missing authenticatorData");
   }
   if (!signature || typeof signature !== "string") {
+    console.log("missing signature");
     throw new Error("Missing signature");
   }
   if (!userHandle || typeof userHandle !== "string") {
+    console.log("missing userHandle");
     throw new Error("Missing userHandle");
   }
-  if (!clientExtensionResults || typeof clientExtensionResults !== "object") {
+  if (!clientExtensionResults) {
+    console.log("missing clientExtensionResults");
     throw new Error("Missing clientExtensionResults");
   }
 
@@ -203,9 +219,6 @@ function getWebauthnBody(req: RequestInternal): AuthenticationResponseJSON {
  *
  * @see https://next-auth.js.org/configuration/nextjs
  */
-export const getServerAuthSession = (ctx: {
-  req: GetServerSidePropsContext["req"];
-  res: GetServerSidePropsContext["res"];
-}) => {
-  return getServerSession(ctx.req, ctx.res, authOptions);
+export const getServerAuthSession = () => {
+  return getServerSession(authOptions);
 };
