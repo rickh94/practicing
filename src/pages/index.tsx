@@ -1,21 +1,32 @@
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { PageHeroLayout } from "~/components/layout";
 
 export default function Home() {
   // TODO: check for login and change get started element and login element
-  // TODO: fix left button in layout 
+  // TODO: fix left button in layout
+  const session = useSession();
   return (
     <>
-      <PageHeroLayout>
-        <div className="absolute right-0 top-0 p-8">
-          <Link
-            className="focusable h-8 rounded-xl bg-neutral-700/10 p-4 font-semibold text-neutral-700 hover:bg-neutral-700/20"
-            href="/"
-          >
-            Login →
-          </Link>
-        </div>
-        <div className="h-8 sm:hidden" />
+      <PageHeroLayout
+        rightButton={
+          session.status === "authenticated" ? (
+            <Link
+              className="focusable block rounded-xl bg-neutral-700/10 px-6 py-4 font-semibold text-neutral-700 hover:bg-neutral-700/20"
+              href="/dashboard"
+            >
+              Dashboard →
+            </Link>
+          ) : (
+            <Link
+              className="focusable block rounded-xl bg-neutral-700/10 px-6 py-4 font-semibold text-neutral-700 hover:bg-neutral-700/20"
+              href="/"
+            >
+              Login →
+            </Link>
+          )
+        }
+      >
         <svg
           version="1.1"
           viewBox="0 0 512 512"
