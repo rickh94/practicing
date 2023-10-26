@@ -1,5 +1,4 @@
 import { Work_Sans } from "next/font/google";
-import { type PropsWithChildren } from "react";
 
 export const workSans = Work_Sans({
   subsets: ["latin"],

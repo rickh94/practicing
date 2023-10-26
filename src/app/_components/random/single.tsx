@@ -257,6 +257,7 @@ function SinglePractice({
         <div className="text-2xl font-semibold text-neutral-700">
           Practicing:
         </div>
+        <span>use animation: {useAnimation}</span>
         <div className="relative h-32 w-full">
           <Transition
             className="absolute left-1/2 top-0 mt-4 w-max -translate-x-1/2 transform rounded-xl border border-neutral-500 bg-neutral-400/10 px-8 pb-5 pt-4 text-3xl font-bold text-black shadow-lg sm:pb-8 sm:pt-7 sm:text-[3rem]"
