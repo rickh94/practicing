@@ -35,7 +35,7 @@ export default async function Home() {
           session?.user && (
             <Link
               className="focusable block rounded-xl bg-neutral-700/10 px-6 py-4 font-semibold text-neutral-700 hover:bg-neutral-700/20"
-              href="/api/auth/signouw"
+              href="/api/auth/signout"
             >
               Logout
             </Link>

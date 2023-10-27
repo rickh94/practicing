@@ -24,7 +24,7 @@ export default async function Dashboard() {
         leftButton={<BackToDashboard />}
         rightButton={
           <Link
-            href="/api/auth/logout"
+            href="/api/auth/signout"
             className="focusable flex items-center gap-1 rounded-xl bg-neutral-700/10 px-6 py-4 font-semibold text-neutral-700 hover:bg-neutral-700/20"
           >
             <UserIcon className="inline h-6 w-6" />
