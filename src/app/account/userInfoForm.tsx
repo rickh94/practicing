@@ -73,7 +73,7 @@ export default function UserInfoForm({
                     id="name"
                     placeholder="Enter your Name"
                     {...field}
-                    className="focusable rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
+                    className="focusable w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
                   />
                   {error && (
                     <p className="mt-2 text-sm text-red-600">{error.message}</p>
@@ -102,7 +102,7 @@ export default function UserInfoForm({
                     autoComplete="home email"
                     placeholder="Enter your email"
                     {...field}
-                    className="focusable rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
+                    className="focusable w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
                   />
                   {error && (
                     <p className="mt-2 text-sm text-red-600">{error.message}</p>
@@ -117,7 +117,7 @@ export default function UserInfoForm({
             disabled={!formState.isValid}
             type="submit"
             className={`focusable rounded-xl px-4 py-2 font-semibold text-neutral-800 transition duration-200 ${formState.isValid
-                ? "bg-emerald-700/10 shadow hover:bg-emerald-700/20"
+                ? "bg-emerald-700/10 hover:bg-emerald-700/20"
                 : "bg-neutral-700/50"
               }`}
           >
@@ -125,7 +125,7 @@ export default function UserInfoForm({
           </button>
           <button
             type="button"
-            className="focusable rounded-xl bg-amber-700/10 px-4 py-2 font-semibold text-amber-800 shadow transition duration-200 hover:bg-amber-700/20"
+            className="focusable rounded-xl bg-amber-700/10 px-4 py-2 font-semibold text-amber-800  transition duration-200 hover:bg-amber-700/20"
             onClick={stopEditing}
           >
             Cancel

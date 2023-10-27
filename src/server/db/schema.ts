@@ -6,7 +6,6 @@ import {
   text,
   blob,
   sqliteTable,
-  foreignKey,
 } from "drizzle-orm/sqlite-core";
 import { type AdapterAccount } from "next-auth/adapters";
 import { createId } from "@paralleldrive/cuid2";
