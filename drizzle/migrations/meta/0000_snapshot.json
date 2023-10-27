@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "5399b413-8b1d-49d7-90aa-f2aeae14e18f",
+  "id": "a0a37a49-66ef-4a18-8b6b-2e9b378db2a5",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "account": {
@@ -94,7 +94,21 @@
           "isUnique": false
         }
       },
-      "foreignKeys": {},
+      "foreignKeys": {
+        "account_userId_user_id_fk": {
+          "name": "account_userId_user_id_fk",
+          "tableFrom": "account",
+          "tableTo": "user",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {
         "account_provider_providerAccountId_pk": {
           "columns": [
@@ -124,7 +138,7 @@
         },
         "userId": {
           "name": "userId",
-          "type": "text(255)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -160,7 +174,21 @@
           "isUnique": false
         }
       },
-      "foreignKeys": {},
+      "foreignKeys": {
+        "credential_userId_user_id_fk": {
+          "name": "credential_userId_user_id_fk",
+          "tableFrom": "credential",
+          "tableTo": "user",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
@@ -198,7 +226,21 @@
           "isUnique": false
         }
       },
-      "foreignKeys": {},
+      "foreignKeys": {
+        "session_userId_user_id_fk": {
+          "name": "session_userId_user_id_fk",
+          "tableFrom": "session",
+          "tableTo": "user",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },

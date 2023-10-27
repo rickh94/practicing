@@ -6,6 +6,7 @@ import {
   text,
   blob,
   sqliteTable,
+  foreignKey,
 } from "drizzle-orm/sqlite-core";
 import { type AdapterAccount } from "next-auth/adapters";
 import { createId } from "@paralleldrive/cuid2";
@@ -32,12 +33,15 @@ export const users = sqliteTable("user", {
 
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
+  credentials: many(credentials),
 }));
 
 export const accounts = sqliteTable(
   "account",
   {
-    userId: text("userId", { length: 255 }).notNull(),
+    userId: text("userId", { length: 255 })
+      .notNull()
+      .references(() => users.id),
     type: text("type", { length: 255 })
       .$type<AdapterAccount["type"]>()
       .notNull(),
@@ -65,7 +69,9 @@ export const sessions = sqliteTable(
   "session",
   {
     sessionToken: text("sessionToken", { length: 255 }).notNull().primaryKey(),
-    userId: text("userId", { length: 255 }).notNull(),
+    userId: text("userId", { length: 255 })
+      .notNull()
+      .references(() => users.id),
     expires: integer("expires", { mode: "timestamp" }).notNull(),
   },
   (session) => ({
@@ -97,7 +103,9 @@ export const credentials = sqliteTable(
       .primaryKey()
       .$default(() => createId()),
     credentialID: text("credentialID").notNull(),
-    userId: text("userId", { length: 255 }).notNull(),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id),
     credentialPublicKey: blob("credentialPublicKey").notNull(),
     counter: integer("counter").notNull(),
     transports: text("transports", { mode: "json" }).notNull(),

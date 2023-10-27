@@ -10,22 +10,25 @@ CREATE TABLE `account` (
 	`scope` text(255),
 	`id_token` text,
 	`session_state` text(255),
-	PRIMARY KEY(`provider`, `providerAccountId`)
+	PRIMARY KEY(`provider`, `providerAccountId`),
+	FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `credential` (
 	`id` text(255) PRIMARY KEY NOT NULL,
 	`credentialID` text NOT NULL,
-	`userId` text(255) NOT NULL,
+	`userId` text NOT NULL,
 	`credentialPublicKey` blob NOT NULL,
 	`counter` integer NOT NULL,
-	`transports` text NOT NULL
+	`transports` text NOT NULL,
+	FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `session` (
 	`sessionToken` text(255) PRIMARY KEY NOT NULL,
 	`userId` text(255) NOT NULL,
-	`expires` integer NOT NULL
+	`expires` integer NOT NULL,
+	FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `user` (
