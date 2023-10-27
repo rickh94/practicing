@@ -41,7 +41,7 @@ export const accounts = sqliteTable(
   {
     userId: text("userId", { length: 255 })
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: "cascade" }),
     type: text("type", { length: 255 })
       .$type<AdapterAccount["type"]>()
       .notNull(),
@@ -71,7 +71,7 @@ export const sessions = sqliteTable(
     sessionToken: text("sessionToken", { length: 255 }).notNull().primaryKey(),
     userId: text("userId", { length: 255 })
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: "cascade" }),
     expires: integer("expires", { mode: "timestamp" }).notNull(),
   },
   (session) => ({
@@ -105,7 +105,7 @@ export const credentials = sqliteTable(
     credentialID: text("credentialID").notNull(),
     userId: text("userId")
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: "cascade" }),
     credentialPublicKey: blob("credentialPublicKey").notNull(),
     counter: integer("counter").notNull(),
     transports: text("transports", { mode: "json" }).notNull(),
