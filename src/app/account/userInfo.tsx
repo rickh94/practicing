@@ -12,7 +12,7 @@ export default function UserInfo({
 }) {
   const [isEditing, setIsEditing] = useState(false);
   return (
-    <div className="h-80">
+    <div className="h-72 sm:h-64">
       <div className="px-4 sm:px-0">
         <h3 className="text-base font-semibold leading-7 text-neutral-900">
           {isEditing ? "Edit" : "Account"} Information

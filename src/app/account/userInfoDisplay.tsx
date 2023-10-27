@@ -2,7 +2,6 @@ import { api } from "~/trpc/server";
 
 export default async function UserInfoDisplay() {
   const userInfo = await api.user.getUserInfo.query();
-  console.log("rendering user info display");
   return (
     <dl className="divide-y divide-neutral-700 border-y border-neutral-700">
       <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">

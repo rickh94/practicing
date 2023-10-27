@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 
-export default function RegistrationComponent({
+export default function RegistrationPasskey({
   webauthnData,
 }: {
   webauthnData: PublicKeyCredentialCreationOptionsJSON;

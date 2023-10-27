@@ -46,6 +46,7 @@ export function PageHeroLayout({
   );
 }
 
+// TODO: proper nav menu
 export function PageColumnLayout({
   children,
   leftButton = null,
@@ -78,7 +79,6 @@ export function PageColumnLayout({
         </div>
       </div>
       <div className="container mx-auto flex flex-col items-center justify-center gap-12 px-4 py-8">
-        {(!!rightButton || !!leftButton) && <div className="h-4 lg:hidden" />}
         {children}
       </div>
     </main>
