@@ -12,7 +12,7 @@ export default function Summary({
   return (
     <>
       <div className="flex w-full flex-col items-center justify-center gap-2 pt-12">
-        <table className="min-w-full divide-y divide-gray-300">
+        <table className="min-w-full divide-y divide-neutral-700">
           <thead>
             <tr>
               <th
@@ -29,7 +29,7 @@ export default function Summary({
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody className="divide-y divide-neutral-700">
             {summary.map(({ name, reps }, idx) => (
               <tr
                 key={`${name}-${reps}-${idx}`}

@@ -2,6 +2,7 @@ import "~/styles/globals.css";
 
 import { Inter } from "next/font/google";
 import { headers } from "next/headers";
+import { Toaster } from "react-hot-toast";
 
 import { TRPCReactProvider } from "~/trpc/react";
 
@@ -25,6 +26,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`font-sans ${inter.variable}`}>
         <TRPCReactProvider headers={headers()}>{children}</TRPCReactProvider>
+        <Toaster position="bottom-right" />
       </body>
     </html>
   );

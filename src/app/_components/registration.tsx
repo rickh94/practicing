@@ -32,6 +32,7 @@ export default function RegistrationComponent({
     <>
       <div className="flex justify-center pt-4">
         <button
+          type="button"
           onClick={registerWebauthn}
           disabled={registrationLoading}
           className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline shadow transition hover:bg-white/20"

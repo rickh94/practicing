@@ -1,6 +1,6 @@
-import { postRouter } from "~/server/api/routers/post";
 import { createTRPCRouter } from "~/server/api/trpc";
 import { webauthnRouter } from "./routers/webauthn";
+import { userRouter } from "./routers/user";
 
 /**
  * This is the primary router for your server.
@@ -8,8 +8,8 @@ import { webauthnRouter } from "./routers/webauthn";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  post: postRouter,
   webauthn: webauthnRouter,
+  user: userRouter,
 });
 
 // export type definition of API

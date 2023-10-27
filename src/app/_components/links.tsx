@@ -14,3 +14,7 @@ export function BackLink({ to, text }: { to?: string; text?: string }) {
 export function BackToHome() {
   return <BackLink to="/" text="Back Home" />;
 }
+
+export function BackToDashboard() {
+  return <BackLink to="/dashboard" text="Dashboard" />;
+}
