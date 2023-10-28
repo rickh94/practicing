@@ -33,6 +33,7 @@ export const users = sqliteTable("user", {
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
   credentials: many(credentials),
+  pieces: many(pieces),
 }));
 
 export const accounts = sqliteTable(
@@ -116,4 +117,87 @@ export const credentials = sqliteTable(
 
 export const credentialsRelations = relations(credentials, ({ one }) => ({
   user: one(users, { fields: [credentials.userId], references: [users.id] }),
+}));
+
+export const pieces = sqliteTable(
+  "piece",
+  {
+    id: text("id", { length: 255 })
+      .notNull()
+      .primaryKey()
+      .$default(() => createId()),
+    title: text("title", { length: 255 }).notNull(),
+    description: text("description", { length: 255 }).notNull(),
+    composer: text("composer", { length: 255 }).notNull(),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    recordingLink: text("recordingLink", { length: 255 }),
+    practiceNotes: text("practiceNotes"),
+  },
+  (piece) => ({
+    userIdIdx: index("piece_userId_idx").on(piece.userId),
+    titleIdx: index("piece_title_idx").on(piece.title),
+  }),
+);
+
+export const piecesRelations = relations(pieces, ({ one, many }) => ({
+  user: one(users, { fields: [pieces.userId], references: [users.id] }),
+  spots: many(spots),
+}));
+
+export const spots = sqliteTable(
+  "spot",
+  {
+    id: text("id", { length: 255 })
+      .notNull()
+      .primaryKey()
+      .$default(() => createId()),
+    name: text("name", { length: 255 }).notNull(),
+    pieceId: text("pieceId")
+      .notNull()
+      .references(() => pieces.id, { onDelete: "cascade" }),
+    number: integer("number"),
+    stage: text("stage", {
+      enum: ["repeat", "random", "interleave", "interleave_days"],
+    })
+      .notNull()
+      .default("repeat"),
+  },
+  (spot) => ({
+    pieceIdIdx: index("spot_pieceId_idx").on(spot.pieceId),
+    nameIdx: index("spot_name_idx").on(spot.name),
+    stageIdx: index("spot_stage_idx").on(spot.stage),
+    stagePieceIdx: index("spot_stage_piece_idx").on(spot.stage, spot.pieceId),
+  }),
+);
+
+export const spotsRelations = relations(spots, ({ one, many }) => ({
+  piece: one(pieces, { fields: [spots.pieceId], references: [pieces.id] }),
+  prompts: many(prompts),
+}));
+
+// TODO: add uploadable audio files uploadthing or other
+export const prompts = sqliteTable(
+  "prompt",
+  {
+    id: text("id", { length: 255 })
+      .notNull()
+      .primaryKey()
+      .$default(() => createId()),
+    text: text("text", { length: 255 }),
+    musicNotes: text("musicNotes"),
+    // TODO: audio: text("audio", { length: 255 }),
+    type: text("type", {
+      enum: ["text", "musicNotes", "audio"],
+    }).notNull(),
+    spotId: text("spotId").references(() => spots.id, { onDelete: "cascade" }),
+  },
+  (prompt) => ({
+    spotIdIdx: index("prompt_spotId_idx").on(prompt.spotId),
+  }),
+);
+
+export const promptsRelations = relations(prompts, ({ one }) => ({
+  spot: one(spots, { fields: [prompts.spotId], references: [spots.id] }),
 }));

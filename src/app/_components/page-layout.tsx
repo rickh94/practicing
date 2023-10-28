@@ -79,6 +79,7 @@ export function PageColumnLayout({
         </div>
       </div>
       <div className="container mx-auto flex flex-col items-center justify-center gap-12 px-4 py-8">
+        {(!!rightButton || !!leftButton) && <div className="h-4 md:hidden" />}
         {children}
       </div>
     </main>

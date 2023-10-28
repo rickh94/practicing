@@ -1,15 +1,10 @@
 "use client";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import UserInfoForm from "./userInfoForm";
 import { Transition } from "@headlessui/react";
+import Loader from "~/app/_components/loader";
 
-export default function UserInfo({
-  display,
-  initialUserInfo,
-}: {
-  display: React.ReactNode;
-  initialUserInfo: { name?: string | null; email: string };
-}) {
+export default function UserInfo({ display }: { display: React.ReactNode }) {
   const [isEditing, setIsEditing] = useState(false);
   return (
     <div className="h-72 sm:h-64">
@@ -32,10 +27,7 @@ export default function UserInfo({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <UserInfoForm
-            initialUserInfo={initialUserInfo}
-            stopEditing={() => setIsEditing(false)}
-          />
+          <UserInfoForm stopEditing={() => setIsEditing(false)} />
         </Transition>
         <Transition
           className="absolute left-0 top-0 w-full"
@@ -47,7 +39,7 @@ export default function UserInfo({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          {display}
+          <Suspense fallback={<Loader />}>{display}</Suspense>
           <button
             onClick={() => setIsEditing(true)}
             type="button"

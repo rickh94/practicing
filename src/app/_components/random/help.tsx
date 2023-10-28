@@ -36,10 +36,10 @@ export default function Help({
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel
-                className={`relative transform overflow-hidden rounded-xl bg-gradient-to-t from-neutral-50 to-[#fff9ee] px-4 pb-4 pt-5 text-left shadow-lg transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6 ${workSans.className}`}
+                className={`relative transform overflow-hidden rounded-xl bg-gradient-to-t from-neutral-50 to-[#fff9ee] px-4 pb-4 pt-5 text-left shadow-lg transition-all sm:my-8 sm:w-full sm:max-w-xl sm:p-6 ${workSans.className}`}
               >
                 <div>
-                  <div className="mt-3 text-center sm:mt-5">
+                  <div className="text-center sm:mt-5">
                     <Dialog.Title
                       as="h3"
                       className="text-2xl font-semibold leading-6 text-neutral-900"

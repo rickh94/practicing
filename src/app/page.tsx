@@ -5,11 +5,6 @@ import { getServerAuthSession } from "~/server/auth";
 
 export default async function Home() {
   const session = await getServerAuthSession();
-  // let webauthnData: PublicKeyCredentialCreationOptionsJSON | null = null;
-  //
-  // if (session) {
-  //   webauthnData = await api.webauthn.handlePreRegister.query();
-  // }
 
   return (
     <>
@@ -69,7 +64,7 @@ export default async function Home() {
             href="/random"
           >
             <h3 className="text-2xl font-bold text-neutral-800">
-              Get Started →
+              Start Practicing →
             </h3>
             <div className="text-lg">
               Leave behind your old habits and get started practicing better

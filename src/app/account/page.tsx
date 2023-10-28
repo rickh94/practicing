@@ -5,18 +5,18 @@ import { Suspense } from "react";
 import { BackToDashboard } from "~/app/_components/links";
 import { PageColumnLayout } from "~/app/_components/page-layout";
 import { getServerAuthSession } from "~/server/auth";
-import { api } from "~/trpc/server";
 import Loader from "../_components/loader";
 import PasskeyManagement from "./passkeys";
 import UserInfo from "./userInfo";
 import UserInfoDisplay from "./userInfoDisplay";
+
+// TODO: make skeletons, maybe move userInfo query down.
 
 export default async function Dashboard() {
   const session = await getServerAuthSession();
   if (!session?.user) {
     redirect("/login");
   }
-  const userInfo = await api.user.getUserInfo.query();
 
   return (
     <>
@@ -38,15 +38,10 @@ export default async function Dashboard() {
           </h1>
         </div>
         <div className="relative grid w-full grid-cols-1 gap-x-2 gap-y-4 sm:max-w-5xl md:grid-cols-2">
-          <UserInfo
-            display={
-              <Suspense fallback={<Loader />}>
-                <UserInfoDisplay />
-              </Suspense>
-            }
-            initialUserInfo={userInfo}
-          />
-          <PasskeyManagement />
+          <UserInfo display={<UserInfoDisplay />} />
+          <Suspense fallback={<Loader />}>
+            <PasskeyManagement />
+          </Suspense>
         </div>
       </PageColumnLayout>
     </>

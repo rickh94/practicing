@@ -20,7 +20,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`font-sans ${workSans.variable}`}>
+      <body className={`font-sans ${workSans.variable} antialiased`}>
         <TRPCReactProvider headers={headers()}>{children}</TRPCReactProvider>
         <Toaster position="bottom-right" />
       </body>

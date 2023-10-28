@@ -2,7 +2,8 @@
 
 {
   # https://devenv.sh/basics/
-  env.GREET = "devenv";
+  dotenv.enable = false;
+  dotenv.disableHint = true;
 
   # https://devenv.sh/packages/
   packages = [

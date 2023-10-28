@@ -1,6 +1,5 @@
 import { Transition } from "@headlessui/react";
 import { useEffect, useState } from "react";
-import RadioBox from "~/app/_components/radio";
 import { type RandomMode, type PracticeSummaryItem } from "~/lib/random";
 import Summary from "./summary";
 
@@ -14,7 +13,6 @@ export default function SingleTab({
   setMode: (mode: RandomMode) => void;
 }) {
   const [numSpots, setNumSpots] = useState(5);
-  const [useAnimation, setUseAnimation] = useState(false);
   const [spots, setSpots] = useState<string[]>([]);
   const [summary, setSummary] = useState<PracticeSummaryItem[]>([]);
 
@@ -49,8 +47,6 @@ export default function SingleTab({
         <SingleSetupForm
           numSpots={numSpots}
           setNumSpots={setNumSpots}
-          useAnimation={useAnimation}
-          setUseAnimation={setUseAnimation}
           submit={() => setMode("practice")}
         />
       </Transition>
@@ -66,7 +62,6 @@ export default function SingleTab({
       >
         <SinglePractice
           spots={spots}
-          useAnimation={useAnimation}
           setup={() => setMode("setup")}
           finish={(finalSummary) => {
             setSummary(finalSummary);
@@ -97,14 +92,10 @@ export default function SingleTab({
 function SingleSetupForm({
   numSpots,
   setNumSpots,
-  useAnimation,
-  setUseAnimation,
   submit,
 }: {
   numSpots: number;
   setNumSpots: (numSpots: number) => void;
-  useAnimation: boolean;
-  setUseAnimation: (useAnimation: boolean) => void;
   submit: () => void;
 }) {
   // TODO: add ability to rate spots
@@ -149,33 +140,6 @@ function SingleSetupForm({
             </button>
           </div>
         </div>
-        <div className="flex flex-col">
-          <label className="text-lg font-semibold text-neutral-800">
-            Use Spinner animation
-          </label>
-          <p className="pb-2 text-sm text-neutral-700">
-            There is a wheel-of-fortune style spinner available that can play
-            each time, or you can skip it and just have the number appear on
-            screen.
-          </p>
-          <div className="flex w-full gap-2">
-            {/* TODO: fix ring, border outline, add no*/}
-            <RadioBox
-              text="Yes"
-              setSelected={() => setUseAnimation(true)}
-              selected={useAnimation}
-              value="yes"
-              name="animation"
-            />
-            <RadioBox
-              text="No"
-              setSelected={() => setUseAnimation(false)}
-              selected={!useAnimation}
-              value="no"
-              name="animation"
-            />
-          </div>
-        </div>
         <div className="col-span-full my-16 flex w-full items-center justify-center">
           <button
             type="button"
@@ -192,12 +156,10 @@ function SingleSetupForm({
 
 function SinglePractice({
   spots,
-  useAnimation,
   setup,
   finish,
 }: {
   spots: string[];
-  useAnimation: boolean;
   setup: () => void;
   finish: (summary: PracticeSummaryItem[]) => void;
 }) {
@@ -257,7 +219,6 @@ function SinglePractice({
         <div className="text-2xl font-semibold text-neutral-700">
           Practicing:
         </div>
-        <span>use animation: {useAnimation}</span>
         <div className="relative h-32 w-full">
           <Transition
             className="absolute left-1/2 top-0 mt-4 w-max -translate-x-1/2 transform rounded-xl border border-neutral-500 bg-neutral-400/10 px-8 pb-5 pt-4 text-3xl font-bold text-black shadow-lg sm:pb-8 sm:pt-7 sm:text-[3rem]"
