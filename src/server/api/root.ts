@@ -1,6 +1,7 @@
 import { createTRPCRouter } from "~/server/api/trpc";
 import { webauthnRouter } from "./routers/webauthn";
 import { userRouter } from "./routers/user";
+import { libraryRouter } from "./routers/library";
 
 /**
  * This is the primary router for your server.
@@ -10,6 +11,7 @@ import { userRouter } from "./routers/user";
 export const appRouter = createTRPCRouter({
   webauthn: webauthnRouter,
   user: userRouter,
+  library: libraryRouter,
 });
 
 // export type definition of API

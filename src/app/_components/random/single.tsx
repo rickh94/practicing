@@ -35,7 +35,7 @@ export default function SingleTab({
       leaveTo="opacity-0 -translate-x-full"
     >
       <Transition
-        className="absolute left-0 top-0 w-full"
+        className="absolute left-0 top-0 flex w-full flex-col items-center"
         show={mode === "setup"}
         enter="transition ease-out transform duration-200 delay-200"
         enterFrom="opacity-0 scale-95"
@@ -102,14 +102,16 @@ function SingleSetupForm({
   return (
     <>
       <div className="py-2">
-        <h1 className="py-1 text-2xl font-bold">Single Random Spots</h1>
-        <p className="text-lg">
+        <h1 className="py-1 text-center text-2xl font-bold">
+          Single Random Spots
+        </h1>
+        <p className="max-w-xl text-center text-lg">
           Generates random spots to practice one at a time with an optional
           animation.
         </p>
       </div>
-      <div className="grid grid-cols-1 gap-x-2 gap-y-4 sm:grid-cols-2">
-        <div className="flex flex-col">
+      <div className="grid grid-cols-1 gap-x-2 gap-y-4">
+        <div className="flex flex-col items-center">
           <label className="text-lg font-semibold text-neutral-800">
             Number of spots
           </label>

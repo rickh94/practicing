@@ -31,6 +31,7 @@ export default function UserInfoForm({
     });
 
   const router = useRouter();
+  // TODO: add loader for update
   const { mutate, isLoading: isUpdating } = api.user.updateUserInfo.useMutation(
     {
       onSuccess: () => {
@@ -75,8 +76,9 @@ export default function UserInfoForm({
                   </div>
                   <div className="text-sm leading-6 text-neutral-700 sm:col-span-2 sm:mt-0">
                     <input
-                      type="name"
+                      type="text"
                       id="name"
+                      autoComplete="name"
                       placeholder="Enter your Name"
                       {...field}
                       className="focusable w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"

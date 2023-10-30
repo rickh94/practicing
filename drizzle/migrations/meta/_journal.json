@@ -15,6 +15,34 @@
       "when": 1698451944929,
       "tag": "0001_massive_hellion",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1698542088525,
+      "tag": "0002_exotic_james_howlett",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1698542233079,
+      "tag": "0003_flawless_shocker",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1698542310448,
+      "tag": "0004_late_daimon_hellstrom",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1698598723340,
+      "tag": "0005_gray_sabretooth",
+      "breakpoints": true
     }
   ]
 }

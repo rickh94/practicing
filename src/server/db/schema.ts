@@ -127,13 +127,14 @@ export const pieces = sqliteTable(
       .primaryKey()
       .$default(() => createId()),
     title: text("title", { length: 255 }).notNull(),
-    description: text("description", { length: 255 }).notNull(),
+    description: text("description").notNull(),
     composer: text("composer", { length: 255 }).notNull(),
     userId: text("userId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     recordingLink: text("recordingLink", { length: 255 }),
     practiceNotes: text("practiceNotes"),
+    lastPracticed: integer("lastPracticed", { mode: "timestamp" }),
   },
   (piece) => ({
     userIdIdx: index("piece_userId_idx").on(piece.userId),
@@ -157,9 +158,9 @@ export const spots = sqliteTable(
     pieceId: text("pieceId")
       .notNull()
       .references(() => pieces.id, { onDelete: "cascade" }),
-    number: integer("number"),
+    order: integer("order"),
     stage: text("stage", {
-      enum: ["repeat", "random", "interleave", "interleave_days"],
+      enum: ["repeat", "random", "interleave", "interleave_days", "completed"],
     })
       .notNull()
       .default("repeat"),

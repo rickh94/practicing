@@ -1,0 +1,1 @@
+ALTER TABLE piece ADD `lastPracticed` integer;

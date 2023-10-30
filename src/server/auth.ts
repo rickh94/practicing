@@ -61,8 +61,6 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
     jwt: ({ token, user }) => {
-      console.log("token", token);
-      console.log("user", user);
       if (user) {
         token.id = user.id;
         token.email = user.email;

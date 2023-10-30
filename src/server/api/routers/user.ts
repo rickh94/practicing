@@ -1,6 +1,5 @@
 import { TRPCError } from "@trpc/server";
 import { eq, sql } from "drizzle-orm";
-import { revalidatePath, revalidateTag } from "next/cache";
 import { updateUserData } from "~/lib/validators/user";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";

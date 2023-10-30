@@ -2,6 +2,7 @@ import Link from "next/link";
 import { PageHeroLayout } from "~/app/_components/page-layout";
 
 import { getServerAuthSession } from "~/server/auth";
+import { LibraryLink } from "./_components/links";
 
 export default async function Home() {
   const session = await getServerAuthSession();
@@ -11,12 +12,7 @@ export default async function Home() {
       <PageHeroLayout
         rightButton={
           session?.user ? (
-            <Link
-              className="focusable block rounded-xl bg-neutral-700/10 px-6 py-4 font-semibold text-neutral-700 hover:bg-neutral-700/20"
-              href="/dashboard"
-            >
-              Dashboard →
-            </Link>
+            <LibraryLink />
           ) : (
             <Link
               className="focusable block rounded-xl bg-neutral-700/10 px-6 py-4 font-semibold text-neutral-700 hover:bg-neutral-700/20"
