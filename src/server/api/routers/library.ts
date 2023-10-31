@@ -8,28 +8,47 @@ import {
 } from "~/lib/validators/library";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { pieces } from "~/server/db/schema";
+import { pieces, spots } from "~/server/db/schema";
 import { eq, and, desc } from "drizzle-orm";
 
 export const libraryRouter = createTRPCRouter({
   createPiece: protectedProcedure
     .input(createPieceData)
-    .output(z.array(z.object({ id: z.string() })))
+    .output(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      return await ctx.db
-        .insert(pieces)
-        .values({
-          title: input.title,
-          description: input.description,
-          composer: input.composer,
-          recordingLink: input.recordingLink,
-          practiceNotes: input.practiceNotes,
-          userId: ctx.session.user.id,
-          lastPracticed: new Date(),
-        })
-        .returning({
-          id: pieces.id,
-        });
+      const result = await ctx.db.transaction(async (tx) => {
+        const [piece] = await tx
+          .insert(pieces)
+          .values({
+            title: input.title,
+            description: input.description,
+            composer: input.composer,
+            recordingLink: input.recordingLink,
+            practiceNotes: input.practiceNotes,
+            userId: ctx.session.user.id,
+            lastPracticed: new Date(),
+          })
+          .returning({
+            id: pieces.id,
+          });
+        if (!piece) {
+          throw new TRPCError({
+            message: "Something went wrong",
+            code: "INTERNAL_SERVER_ERROR",
+          });
+        }
+        for (const spot of input.spots) {
+          await tx.insert(spots).values({
+            name: spot.name,
+            order: spot.order,
+            stage: spot.stage,
+            measures: spot.measures,
+            pieceId: piece.id,
+          });
+        }
+        return piece;
+      });
+      return result;
     }),
   getPieceById: protectedProcedure
     .input(z.object({ id: z.string() }))

@@ -14,17 +14,17 @@ export default async function PasskeyManagement() {
   }
 
   return (
-    <div className="border-t-2 border-neutral-700 pt-2 sm:pt-4 md:border-l-2 md:border-t-0 md:pl-2 md:pt-0">
-      <div className="px-4 sm:px-0">
-        <h3 className="text-base font-semibold leading-7 text-neutral-900">
+    <div className="h-72 rounded-xl bg-neutral-700/5 p-4 sm:h-64">
+      <div className="px-4 pb-1 sm:px-0">
+        <h3 className="text-xl font-semibold leading-7 text-neutral-900">
           Passkey Information
         </h3>
-        <p className="mt-1 max-w-2xl text-sm leading-6 text-neutral-500">
+        <p className="max-w-2xl text-sm leading-6 text-neutral-500">
           Manage your passkeys
         </p>
       </div>
-      <dl className="divide-y divide-neutral-700 border-y border-neutral-700">
-        <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+      <dl className="divide-y divide-neutral-700 border-t border-neutral-700">
+        <div className="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
           <dt className="text-sm font-medium leading-6 text-neutral-900">
             Number of Passkeys
           </dt>

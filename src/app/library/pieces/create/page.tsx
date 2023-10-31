@@ -1,3 +1,4 @@
+import Breadcrumbs from "~/app/_components/breadcrumb";
 import CreatePieceForm from "./form";
 
 export default function CreatePiece() {
@@ -8,7 +9,16 @@ export default function CreatePiece() {
           Create Piece
         </h1>
       </div>
-      <div className="w-full sm:max-w-5xl">
+      <div className="-mb-4 flex w-full items-center justify-start sm:container">
+        <Breadcrumbs
+          breadcrumbs={[
+            { label: "Library", href: "/library" },
+            { label: "Pieces", href: "/library/pieces" },
+            { label: "New", href: "/library/pieces/create", active: true },
+          ]}
+        />
+      </div>
+      <div className="w-full sm:container">
         <CreatePieceForm />
       </div>
     </>

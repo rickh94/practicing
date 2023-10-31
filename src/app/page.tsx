@@ -2,7 +2,7 @@ import Link from "next/link";
 import { PageHeroLayout } from "~/app/_components/page-layout";
 
 import { getServerAuthSession } from "~/server/auth";
-import { LibraryLink } from "./_components/links";
+import { LibraryLink, LoginLink, LogoutLink } from "~/app/_components/links";
 
 export default async function Home() {
   const session = await getServerAuthSession();
@@ -10,28 +10,8 @@ export default async function Home() {
   return (
     <>
       <PageHeroLayout
-        rightButton={
-          session?.user ? (
-            <LibraryLink />
-          ) : (
-            <Link
-              className="focusable block rounded-xl bg-neutral-700/10 px-6 py-4 font-semibold text-neutral-700 hover:bg-neutral-700/20"
-              href="/signin"
-            >
-              Login →
-            </Link>
-          )
-        }
-        leftButton={
-          session?.user && (
-            <Link
-              className="focusable block rounded-xl bg-neutral-700/10 px-6 py-4 font-semibold text-neutral-700 hover:bg-neutral-700/20"
-              href="/api/auth/signout"
-            >
-              Logout
-            </Link>
-          )
-        }
+        rightButton={session?.user ? <LibraryLink /> : <LoginLink />}
+        leftButton={session?.user && <LogoutLink />}
       >
         <svg
           version="1.1"
@@ -56,7 +36,7 @@ export default async function Home() {
         </p>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
           <Link
-            className="flex max-w-xs flex-col gap-4 rounded-xl bg-neutral-700/10 p-4 text-neutral-700 hover:bg-neutral-700/20"
+            className="focusable flex max-w-xs flex-col gap-4 rounded-xl bg-neutral-700/10 p-4 text-neutral-700 transition-all duration-200 hover:bg-neutral-700/20"
             href="/random"
           >
             <h3 className="text-2xl font-bold text-neutral-800">
@@ -68,7 +48,7 @@ export default async function Home() {
             </div>
           </Link>
           <Link
-            className="flex max-w-xs flex-col gap-4 rounded-xl bg-neutral-700/10 p-4 text-neutral-700 hover:bg-neutral-700/20"
+            className="focusable transtion-all flex max-w-xs flex-col gap-4 rounded-xl bg-neutral-700/10 p-4 text-neutral-700 duration-200 hover:bg-neutral-700/20"
             href="/about"
           >
             <h3 className="text-2xl font-bold text-neutral-800">

@@ -33,7 +33,7 @@ export function PageHeroLayout({
       className={`flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-[#ffefce] to-[#ffffff] ${workSans.className}`}
     >
       <div className="absolute left-0 top-0 w-full p-4">
-        <div className={`container mx-auto flex ${justifyClass()}`}>
+        <div className={`mx-auto flex sm:container ${justifyClass()}`}>
           {leftButton}
           {rightButton}
         </div>
@@ -73,7 +73,7 @@ export function PageColumnLayout({
       className={`relative flex min-h-screen flex-col overflow-x-hidden bg-gradient-to-br from-[#ffefce] to-[#ffffff] ${workSans.className}`}
     >
       <div className="absolute left-0 top-0 w-full p-4">
-        <div className={`container mx-auto flex ${justifyClass()}`}>
+        <div className={`mx-auto flex sm:container ${justifyClass()}`}>
           {leftButton}
           {rightButton}
         </div>

@@ -5,8 +5,8 @@ import { type z } from "zod";
 import { api } from "~/trpc/react";
 import toast from "react-hot-toast";
 import directApi from "~/trpc/direct";
-import Loader from "~/app/_components/loader";
 import { useRouter } from "next/navigation";
+import { UserInfoSkeleton } from "../_components/skeletons";
 // TODO: reset email verified if email changes
 
 type UserInfo = z.infer<typeof updateUserData>;
@@ -57,7 +57,7 @@ export default function UserInfoForm({
   // TODO: create skeleton
   return (
     <>
-      {formState.isLoading && <Loader />}
+      {formState.isLoading && <UserInfoSkeleton />}
       {!formState.isLoading && (
         <form noValidate onSubmit={handleSubmit(onSubmit)}>
           <div className="divide-y divide-neutral-700  border-y border-neutral-700">

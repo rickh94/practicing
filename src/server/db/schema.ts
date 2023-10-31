@@ -164,6 +164,7 @@ export const spots = sqliteTable(
     })
       .notNull()
       .default("repeat"),
+    measures: text("measures").default("").notNull(),
   },
   (spot) => ({
     pieceIdIdx: index("spot_pieceId_idx").on(spot.pieceId),

@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Breadcrumbs from "~/app/_components/breadcrumb";
 import type { BasicPiece, BasicSpot } from "~/lib/validators/library";
 import { api } from "~/trpc/server";
 
@@ -19,6 +20,19 @@ export default async function SinglePiece({
         <h1 className="text-3xl font-extrabold tracking-tight text-neutral-800 sm:text-5xl">
           {piece.title}
         </h1>
+      </div>
+      <div className="flex w-full items-center justify-start sm:container">
+        <Breadcrumbs
+          breadcrumbs={[
+            { label: "Library", href: "/library" },
+            { label: "Pieces", href: "/library/pieces" },
+            {
+              label: piece.title,
+              href: `/library/pieces/${piece.id}`,
+              active: true,
+            },
+          ]}
+        />
       </div>
       <div className="relative grid w-full grid-cols-1 gap-x-2 gap-y-4 sm:max-w-5xl md:grid-cols-2">
         <PieceInfoDisplay piece={piece} />
@@ -104,7 +118,11 @@ function Spots({ spots }: { spots: BasicSpot[] }) {
       <div className="flex flex-col">
         <h2 className="py-1 text-center text-2xl font-bold">Spots</h2>
       </div>
-      <div></div>
+      <div>
+        {spots.map((spot) => (
+          <div key={spot.id}>{JSON.stringify(spot)}</div>
+        ))}
+      </div>
     </div>
   );
 }

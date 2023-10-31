@@ -3,16 +3,17 @@ import { Suspense, useState } from "react";
 import UserInfoForm from "./userInfoForm";
 import { Transition } from "@headlessui/react";
 import Loader from "~/app/_components/loader";
+import { UserInfoSkeleton } from "../_components/skeletons";
 
 export default function UserInfo({ display }: { display: React.ReactNode }) {
   const [isEditing, setIsEditing] = useState(false);
   return (
-    <div className="h-72 sm:h-64">
-      <div className="px-4 sm:px-0">
-        <h3 className="text-base font-semibold leading-7 text-neutral-900">
+    <div className="h-72 rounded-xl bg-neutral-700/5 p-4 sm:h-64">
+      <div className="px-4 pb-1 sm:px-0">
+        <h3 className="text-xl font-semibold leading-7 text-neutral-900">
           {isEditing ? "Edit" : "Account"} Information
         </h3>
-        <p className="mt-1 max-w-2xl text-sm leading-6 text-neutral-500">
+        <p className="max-w-2xl text-sm leading-6 text-neutral-500">
           {isEditing ? "Edit" : "View"} your account information
         </p>
       </div>
@@ -39,7 +40,7 @@ export default function UserInfo({ display }: { display: React.ReactNode }) {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <Suspense fallback={<Loader />}>{display}</Suspense>
+          <Suspense fallback={<UserInfoSkeleton />}>{display}</Suspense>
           <button
             onClick={() => setIsEditing(true)}
             type="button"

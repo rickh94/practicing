@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { PieceListSkeleton } from "~/app/_components/skeletons";
 import Link from "next/link";
 import { DocumentPlusIcon } from "@heroicons/react/20/solid";
+import Breadcrumbs from "~/app/_components/breadcrumb";
 
 export default async function AllPieces({
   searchParams,
@@ -22,9 +23,15 @@ export default async function AllPieces({
         </h1>
       </div>
       <div className="flex w-full flex-col gap-4">
-        <div className="flex w-full justify-end">
+        <div className="flex w-full justify-between">
+          <Breadcrumbs
+            breadcrumbs={[
+              { label: "Library", href: "/library" },
+              { label: "Pieces", href: "/library/pieces", active: true },
+            ]}
+          />
           <Link
-            className="focusable flex items-center justify-center rounded-xl bg-emerald-700/10 px-6 py-3 text-center font-medium text-emerald-700 hover:bg-emerald-700/20"
+            className="focusable flex items-center justify-center gap-2 rounded-xl bg-emerald-700/10 px-6 py-3 text-center font-medium text-emerald-700 hover:bg-emerald-700/20"
             href="/library/pieces/create"
           >
             <DocumentPlusIcon className="inline h-6 w-6" />

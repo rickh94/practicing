@@ -27,7 +27,7 @@ export default async function Dashboard() {
             Practicing Today
           </h2>
         </div>
-        <div className="flex flex-col border-t-2 border-neutral-700 pt-2 sm:pt-4 md:border-l-2 md:border-t-0 md:pt-0">
+        <div className="flex flex-col border-t border-neutral-700/10 pt-2 sm:pt-4 md:border-l md:border-t-0 md:pt-0">
           <Suspense fallback={<LibraryPieceListSkeleton />}>
             <LibraryPieceList />
           </Suspense>
