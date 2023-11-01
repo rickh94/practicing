@@ -8,7 +8,13 @@ import {
 } from "~/lib/validators/library";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { pieces, spots } from "~/server/db/schema";
+import {
+  audioPrompts,
+  notesPrompts,
+  pieces,
+  spots,
+  textPrompts,
+} from "~/server/db/schema";
 import { eq, and, desc } from "drizzle-orm";
 
 export const libraryRouter = createTRPCRouter({
@@ -38,12 +44,67 @@ export const libraryRouter = createTRPCRouter({
           });
         }
         for (const spot of input.spots) {
+          let audioPromptId,
+            textPromptId,
+            notesPromptId = null;
+          if (spot.audioPrompt) {
+            const [result] = await tx
+              .insert(audioPrompts)
+              .values({
+                description: spot.audioPrompt.description,
+                url: spot.audioPrompt.url,
+              })
+              .returning({ id: audioPrompts.id });
+            if (!result) {
+              throw new TRPCError({
+                message: "Something went wrong",
+                code: "INTERNAL_SERVER_ERROR",
+              });
+            }
+            audioPromptId = result.id;
+          }
+          if (spot.textPrompt) {
+            const [result] = await tx
+              .insert(textPrompts)
+              .values({
+                description: spot.textPrompt.description,
+                text: spot.textPrompt.text,
+              })
+              .returning({ id: textPrompts.id });
+            if (!result) {
+              throw new TRPCError({
+                message: "Something went wrong",
+                code: "INTERNAL_SERVER_ERROR",
+              });
+            }
+            textPromptId = result.id;
+          }
+
+          if (spot.notesPrompt) {
+            const [result] = await tx
+              .insert(notesPrompts)
+              .values({
+                description: spot.notesPrompt.description,
+                notes: spot.notesPrompt.notes,
+              })
+              .returning({ id: notesPrompts.id });
+            if (!result) {
+              throw new TRPCError({
+                message: "Something went wrong",
+                code: "INTERNAL_SERVER_ERROR",
+              });
+            }
+            notesPromptId = result.id;
+          }
           await tx.insert(spots).values({
             name: spot.name,
             order: spot.order,
             stage: spot.stage,
             measures: spot.measures,
             pieceId: piece.id,
+            audioPromptId,
+            textPromptId,
+            notesPromptId,
           });
         }
         return piece;

@@ -95,6 +95,7 @@ export function PieceInfoSkeleton() {
             <div className="h-6 w-full bg-neutral-600/20" />
           </dd>
         </div>
+
         <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
           <dt className="text-sm font-medium leading-6 text-neutral-900">
             Composer
@@ -103,6 +104,7 @@ export function PieceInfoSkeleton() {
             <div className="h-6 w-full bg-neutral-600/20" />
           </dd>
         </div>
+
         <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
           <dt className="text-sm font-medium leading-6 text-neutral-900">
             Description
@@ -119,14 +121,13 @@ export function PieceInfoSkeleton() {
             <div className="h-6 w-full bg-neutral-600/20" />
           </dd>
         </div>
+
         <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
           <dt className="text-sm font-medium leading-6 text-neutral-900">
             Recording
           </dt>
           <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-2 sm:mt-0">
-            <div
-              className={`focusable block h-10 flex-grow rounded-xl bg-amber-700/10 px-2 py-2 text-center font-medium text-amber-700 hover:bg-amber-700/20 ${shimmer}`}
-            />
+            <div className="h-10 w-full rounded-xl bg-amber-700/20" />
           </dd>
         </div>
       </dl>
@@ -197,7 +198,7 @@ export function PieceFormSkeleton() {
 
 export function BreadcrumbSkeleton({ size }: { size: number }) {
   return (
-    <div className="block">
+    <div>
       <div className="flex h-12 rounded-xl bg-neutral-900/10">
         {[...Array<number>(size)].map((_, i) => (
           <div className="w-24" key={i} />

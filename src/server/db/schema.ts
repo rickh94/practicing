@@ -147,6 +147,33 @@ export const piecesRelations = relations(pieces, ({ one, many }) => ({
   spots: many(spots),
 }));
 
+export const audioPrompts = sqliteTable("audioPrompt", {
+  id: text("id", { length: 255 })
+    .notNull()
+    .primaryKey()
+    .$default(() => createId()),
+  description: text("description", { length: 255 }).notNull(),
+  url: text("url", { length: 255 }).notNull(),
+});
+
+export const textPrompts = sqliteTable("textPrompt", {
+  id: text("id", { length: 255 })
+    .notNull()
+    .primaryKey()
+    .$default(() => createId()),
+  description: text("description", { length: 255 }).notNull(),
+  text: text("text", { length: 255 }).notNull(),
+});
+
+export const notesPrompts = sqliteTable("notesPrompt", {
+  id: text("id", { length: 255 })
+    .notNull()
+    .primaryKey()
+    .$default(() => createId()),
+  description: text("description", { length: 255 }).notNull(),
+  notes: text("notes", { length: 255 }).notNull(),
+});
+
 export const spots = sqliteTable(
   "spot",
   {
@@ -165,6 +192,9 @@ export const spots = sqliteTable(
       .notNull()
       .default("repeat"),
     measures: text("measures").default("").notNull(),
+    audioPromptId: text("audioPromptId").references(() => audioPrompts.id),
+    textPromptId: text("textPromptId").references(() => textPrompts.id),
+    notesPromptId: text("notesPromptId").references(() => notesPrompts.id),
   },
   (spot) => ({
     pieceIdIdx: index("spot_pieceId_idx").on(spot.pieceId),
@@ -174,32 +204,18 @@ export const spots = sqliteTable(
   }),
 );
 
-export const spotsRelations = relations(spots, ({ one, many }) => ({
+export const spotsRelations = relations(spots, ({ one }) => ({
   piece: one(pieces, { fields: [spots.pieceId], references: [pieces.id] }),
-  prompts: many(prompts),
-}));
-
-// TODO: add uploadable audio files uploadthing or other
-export const prompts = sqliteTable(
-  "prompt",
-  {
-    id: text("id", { length: 255 })
-      .notNull()
-      .primaryKey()
-      .$default(() => createId()),
-    text: text("text", { length: 255 }),
-    musicNotes: text("musicNotes"),
-    // TODO: audio: text("audio", { length: 255 }),
-    type: text("type", {
-      enum: ["text", "musicNotes", "audio"],
-    }).notNull(),
-    spotId: text("spotId").references(() => spots.id, { onDelete: "cascade" }),
-  },
-  (prompt) => ({
-    spotIdIdx: index("prompt_spotId_idx").on(prompt.spotId),
+  audioPrompt: one(audioPrompts, {
+    fields: [spots.audioPromptId],
+    references: [audioPrompts.id],
   }),
-);
-
-export const promptsRelations = relations(prompts, ({ one }) => ({
-  spot: one(spots, { fields: [prompts.spotId], references: [spots.id] }),
+  textPrompt: one(textPrompts, {
+    fields: [spots.textPromptId],
+    references: [textPrompts.id],
+  }),
+  notesPrompt: one(notesPrompts, {
+    fields: [spots.notesPromptId],
+    references: [notesPrompts.id],
+  }),
 }));

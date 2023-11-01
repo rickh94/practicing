@@ -2,7 +2,6 @@
 import { Suspense, useState } from "react";
 import UserInfoForm from "./userInfoForm";
 import { Transition } from "@headlessui/react";
-import Loader from "~/app/_components/loader";
 import { UserInfoSkeleton } from "../_components/skeletons";
 
 export default function UserInfo({ display }: { display: React.ReactNode }) {

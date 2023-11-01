@@ -1,15 +1,13 @@
-import { updateUserData } from "~/lib/validators/user";
+import { updateUserData, type UserInfo } from "~/lib/validators/user";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type z } from "zod";
 import { api } from "~/trpc/react";
 import toast from "react-hot-toast";
 import directApi from "~/trpc/direct";
 import { useRouter } from "next/navigation";
-import { UserInfoSkeleton } from "../_components/skeletons";
+import { UserInfoSkeleton } from "~/app/_components/skeletons";
 // TODO: reset email verified if email changes
-
-type UserInfo = z.infer<typeof updateUserData>;
+// TODO: fix form buttons on different sizes
 
 export default function UserInfoForm({
   stopEditing,
@@ -54,7 +52,7 @@ export default function UserInfoForm({
   function onSubmit(data: UserInfo) {
     mutate(data);
   }
-  // TODO: create skeleton
+
   return (
     <>
       {formState.isLoading && <UserInfoSkeleton />}

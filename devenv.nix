@@ -42,6 +42,6 @@
 
   # See full reference at https://devenv.sh/reference/options/
   processes = {
-    next.exec = "bun run dev";
+    next.exec = "npm run dev";
   };
 }

@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { getServerAuthSession } from "~/server/auth";
-import Loader from "../_components/loader";
 import PasskeyManagement from "./passkeys";
 import UserInfo from "./userInfo";
 import UserInfoDisplay from "./userInfoDisplay";

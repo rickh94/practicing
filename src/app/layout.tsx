@@ -10,7 +10,26 @@ export const metadata = {
   title: "Music Practicing",
   description:
     "Organize your music practicing to be more effective and prevent bad habits.",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  icons: [
+    { rel: "icon", url: "/favicon.ico" },
+    { rel: "apple-touch-icon", url: "/apple-touch-icon.png", sizes: "180x180" },
+    {
+      rel: "icon",
+      url: "/favicon-32x32.png",
+      sizes: "32x32",
+      type: "image/png",
+    },
+    {
+      rel: "icon",
+      url: "/favicon-16x16.png",
+      sizes: "16x16",
+      type: "image/png",
+    },
+    {
+      rel: "manifest",
+      url: "/site.webmanifest",
+    },
+  ],
 };
 
 export default function RootLayout({

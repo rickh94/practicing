@@ -7,12 +7,11 @@ import {
 export default function Loading() {
   return (
     <>
-      <div className="flex items-center justify-center">
+      <div className="-mb-2 flex items-center justify-center">
         <div
           className={`my-2 h-10 w-52 bg-neutral-800/40 sm:w-64 ${shimmer}`}
         />
       </div>
-
       <div className="flex w-full items-center justify-start sm:container">
         <BreadcrumbSkeleton size={3} />
       </div>
