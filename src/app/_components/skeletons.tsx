@@ -21,13 +21,13 @@ export function LibrarySkeleton() {
           <LibraryPieceListSkeleton />
           <div className="mt-4 flex w-full flex-col gap-4 p-4 sm:flex-row">
             <Link
-              className="focusable block flex-grow rounded-xl bg-amber-700/10 px-6 py-3 text-center font-medium text-amber-700 hover:bg-amber-700/20"
+              className="block flex-grow rounded-xl bg-amber-700/10 px-6 py-3 text-center font-medium text-amber-700"
               href="/library/pieces"
             >
               View All Pieces
             </Link>
             <Link
-              className="focusable block flex-grow rounded-xl bg-emerald-700/10 px-6 py-3 text-center font-medium text-emerald-700 hover:bg-emerald-700/20"
+              className="block flex-grow rounded-xl bg-emerald-700/10 px-6 py-3 text-center font-medium text-emerald-700 "
               href="/library/pieces/create"
             >
               Create New Piece
@@ -56,7 +56,7 @@ export function LibraryPieceListSkeleton() {
 
 export function PieceCardSkeleton() {
   return (
-    <div className=" flex flex-col gap-1 rounded-xl bg-neutral-700/10 px-6 py-4 text-neutral-700 hover:bg-neutral-700/20">
+    <div className=" flex flex-col gap-1 rounded-xl bg-neutral-700/10 px-6 py-4 text-neutral-700">
       <div className="flex h-6 w-48 justify-between bg-neutral-600/20" />
       <div className="h-6 w-36 bg-neutral-600/20" />
       <div className="h-6 w-44 bg-neutral-600/20" />
@@ -146,7 +146,7 @@ export function PieceFormSkeleton() {
             <div className="h-8 w-32 bg-neutral-600/20 text-sm font-medium leading-6" />
           </div>
           <div className="text-sm leading-6 text-neutral-700 sm:col-span-2 sm:mt-0">
-            <div className="h-10 w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20" />
+            <div className="h-10 w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 " />
           </div>
         </div>
         <div className="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -154,7 +154,7 @@ export function PieceFormSkeleton() {
             <div className="h-8 w-32 bg-neutral-600/20 text-sm font-medium leading-6" />
           </div>
           <div className="text-sm leading-6 text-neutral-700 sm:col-span-2 sm:mt-0">
-            <div className="h-10 w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20" />
+            <div className="h-10 w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 " />
           </div>
         </div>
         <div className="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -162,7 +162,7 @@ export function PieceFormSkeleton() {
             <div className="h-8 w-32 bg-neutral-600/20 text-sm font-medium leading-6" />
           </div>
           <div className="text-sm leading-6 text-neutral-700 sm:col-span-2 sm:mt-0">
-            <div className="h-24 w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20" />
+            <div className="h-24 w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 " />
           </div>
         </div>
         <div className="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -170,7 +170,7 @@ export function PieceFormSkeleton() {
             <div className="h-8 w-32 bg-neutral-600/20 text-sm font-medium leading-6" />
           </div>
           <div className="text-sm leading-6 text-neutral-700 sm:col-span-2 sm:mt-0">
-            <div className="h-10 w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20" />
+            <div className="h-10 w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 " />
           </div>
         </div>
         <div className="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -178,12 +178,12 @@ export function PieceFormSkeleton() {
             <div className="h-8 w-32 bg-neutral-600/20 text-sm font-medium leading-6" />
           </div>
           <div className="text-sm leading-6 text-neutral-700 sm:col-span-2 sm:mt-0">
-            <div className="h-24 w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20" />
+            <div className="h-24 w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 " />
           </div>
         </div>
       </div>
       <div className="pt-2 text-left text-3xl font-bold">
-        <div className="h-10 w-64 bg-neutral-700/50 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20" />
+        <div className="h-10 w-64 bg-neutral-700/50 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 " />
       </div>
       <div className="grid grid-cols-1 gap-4 py-4 sm:grid-cols-2 md:grid-cols-3">
         <div className="flex h-72 flex-col gap-2 rounded-xl border border-dashed border-neutral-500 bg-white/50 px-4 py-2 text-neutral-700" />
@@ -227,7 +227,7 @@ export function AccountSkeleton() {
             </p>
           </div>
           <UserInfoSkeleton />
-          <div className="focusable mt-4 block h-8 w-32 rounded-xl bg-amber-700/10 px-4 py-2 font-semibold text-amber-700 hover:bg-amber-700/20"></div>
+          <div className="mt-4 block h-8 w-32 rounded-xl bg-amber-700/10 px-4 py-2 font-semibold text-amber-700"></div>
         </div>
         <PasskeySkeleton />
       </div>
@@ -284,7 +284,7 @@ export function PasskeySkeleton() {
             <span>Register a Passkey</span>
           </dt>
           <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-2 sm:mt-0">
-            <div className="focusable h-10 w-48 rounded-xl bg-emerald-700/10 px-4 py-2 font-semibold text-neutral-800 transition duration-200 hover:bg-emerald-700/20" />
+            <div className="h-10 w-48 rounded-xl bg-emerald-700/10 px-4 py-2 font-semibold text-neutral-800 transition duration-200" />
           </dd>
         </div>
         <div className="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -292,10 +292,16 @@ export function PasskeySkeleton() {
             <span>Delete Your Passkeys</span>
           </dt>
           <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-2 sm:mt-0">
-            <div className="focusable h-10 w-40 rounded-xl bg-rose-700/10 px-4 py-2 font-semibold text-neutral-800 transition duration-200 hover:bg-rose-700/20" />
+            <div className="h-10 w-40 rounded-xl bg-rose-700/10 px-4 py-2 font-semibold text-neutral-800 transition duration-200" />
           </dd>
         </div>
       </dl>
     </div>
+  );
+}
+
+export function LinkSkeleton() {
+  return (
+    <div className="flex h-14 w-32 items-center gap-2 rounded-xl bg-neutral-700/10 px-6 py-4 font-semibold text-neutral-700 transition-all duration-200" />
   );
 }

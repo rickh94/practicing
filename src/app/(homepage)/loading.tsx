@@ -1,17 +1,13 @@
 import Link from "next/link";
 import { PageHeroLayout } from "~/app/_components/page-layout";
+import { LinkSkeleton } from "../_components/skeletons";
 
-import { getServerAuthSession } from "~/server/auth";
-import { LibraryLink, LoginLink, LogoutLink } from "~/app/_components/links";
-
-export default async function Home() {
-  const session = await getServerAuthSession();
-
+export default function Home() {
   return (
     <>
       <PageHeroLayout
-        rightButton={session?.user ? <LibraryLink /> : <LoginLink />}
-        leftButton={session?.user && <LogoutLink />}
+        rightButton={<LinkSkeleton />}
+        leftButton={<LinkSkeleton />}
       >
         <svg
           version="1.1"
