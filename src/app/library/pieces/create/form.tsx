@@ -228,10 +228,11 @@ export default function CreatePieceForm() {
         <button
           disabled={!formState.isValid}
           type="submit"
-          className={`focusable flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-lg font-semibold  transition duration-200 ${formState.isValid
+          className={`focusable flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-lg font-semibold  transition duration-200 ${
+            formState.isValid
               ? "bg-emerald-700/10 text-emerald-800 hover:bg-emerald-700/20"
               : "bg-neutral-700/50 text-neutral-800"
-            }`}
+          }`}
         >
           <FolderPlusIcon className="inline h-6 w-6" />
           {isUpdating ? "Saving..." : "Save"}
@@ -257,7 +258,7 @@ function SpotsArray({ control }: { control: Control<CreatePieceData> }) {
 
   const [parent, enableAnimations] = useAutoAnimate();
 
-  const updateWithoutFlashing: UseFieldArrayUpdate<CreatePieceData> = function(
+  const updateWithoutFlashing: UseFieldArrayUpdate<CreatePieceData> = function (
     index,
     data,
   ) {
@@ -273,7 +274,7 @@ function SpotsArray({ control }: { control: Control<CreatePieceData> }) {
       <h3 className="pt-2 text-left text-3xl font-bold">Add Practice Spots</h3>
       <ul
         ref={parent}
-        className="grid grid-cols-1 gap-4 py-4 sm:grid-cols-2 md:grid-cols-3"
+        className="grid grid-cols-1 gap-4 py-4 sm:grid-cols-2 lg:grid-cols-3"
       >
         {fields.map((item, index) => (
           <li
@@ -430,7 +431,7 @@ function AddAudioPrompt({
         type="button"
         onClick={() => setIsOpen(true)}
         className={cn(
-          "focusable flex items-center justify-center gap-1 rounded-xl px-4 py-2 font-semibold text-yellow-800  transition duration-200 hover:bg-yellow-700/20",
+          "focusable flex items-center justify-center gap-1 rounded-xl py-2 font-semibold text-yellow-800  transition duration-200 hover:bg-yellow-700/20",
           {
             "bg-yellow-700/10": !item.audioPrompt,
             "bg-yellow-500/50": item.audioPrompt,
@@ -591,7 +592,7 @@ function AddTextPrompt({
         type="button"
         onClick={() => setIsOpen(true)}
         className={cn(
-          "focusable flex items-center justify-center gap-1 rounded-xl px-4 py-2 font-semibold text-lime-800  transition duration-200 hover:bg-lime-700/20",
+          "focusable flex items-center justify-center gap-1 rounded-xl py-2 font-semibold text-lime-800  transition duration-200 hover:bg-lime-700/20",
           {
             "bg-lime-700/10": !item.textPrompt,
             "bg-lime-500/50": item.textPrompt,
@@ -751,7 +752,7 @@ function AddNotesPrompt({
         type="button"
         onClick={() => setIsOpen(true)}
         className={cn(
-          "focusable flex items-center justify-center gap-1 rounded-xl bg-sky-700/10 px-4 py-2 font-semibold text-sky-800  transition duration-200 hover:bg-sky-700/20",
+          "focusable flex items-center justify-center gap-1 rounded-xl bg-sky-700/10 py-2 font-semibold text-sky-800  transition duration-200 hover:bg-sky-700/20",
           {
             "bg-sky-700/10": !item.notesPrompt,
             "bg-sky-500/50": item.notesPrompt,
