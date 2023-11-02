@@ -1,3 +1,4 @@
+import { BreadcrumbContainer } from "~/app/_components/containers";
 import {
   BreadcrumbSkeleton,
   PieceListSkeleton,
@@ -12,10 +13,10 @@ export default function Loading() {
         </h1>
       </div>
 
-      <div className="flex w-full items-center justify-between">
+      <BreadcrumbContainer>
         <BreadcrumbSkeleton size={2} />
         <div className="focusable flex h-12 w-32 items-center justify-center rounded-xl bg-emerald-700/10 px-6 py-3 text-center font-medium text-emerald-700 hover:bg-emerald-700/20"></div>
-      </div>
+      </BreadcrumbContainer>
       <PieceListSkeleton />
     </>
   );

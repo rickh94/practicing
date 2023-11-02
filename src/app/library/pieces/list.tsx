@@ -1,3 +1,4 @@
+import { TwoColumnPageContainer } from "~/app/_components/containers";
 import PieceCard from "~/app/_components/pieces/piece-card";
 import { api } from "~/trpc/server";
 
@@ -6,10 +7,10 @@ export default async function PieceList({ page }: { page: number }) {
     page,
   });
   return (
-    <div className="grid w-full grid-cols-1 gap-x-2 gap-y-4 sm:grid-cols-2">
+    <TwoColumnPageContainer>
       {selectedPieces.map((piece) => (
         <PieceCard key={piece.id} piece={piece} />
       ))}
-    </div>
+    </TwoColumnPageContainer>
   );
 }

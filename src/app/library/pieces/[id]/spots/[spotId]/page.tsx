@@ -8,6 +8,10 @@ import {
   NotesPromptReveal,
   TextPromptReveal,
 } from "./prompts";
+import {
+  BreadcrumbContainer,
+  NarrowPageContainer,
+} from "~/app/_components/containers";
 
 // TODO: implement edit and delete for spots
 export default async function Page({
@@ -18,6 +22,8 @@ export default async function Page({
     spotId: string;
   };
 }) {
+  // artificial delay
+  await new Promise((resolve) => setTimeout(resolve, 5000));
   const spot = await api.library.getSpotById.query({
     spotId: params.spotId,
     pieceId: params.id,
@@ -32,7 +38,7 @@ export default async function Page({
           {spot.piece.title}
         </h1>
       </div>
-      <div className="flex w-full flex-col gap-2 sm:container sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+      <BreadcrumbContainer>
         <div className="flex">
           <Breadcrumbs
             breadcrumbs={[
@@ -66,8 +72,8 @@ export default async function Page({
             Delete
           </button>
         </div>
-      </div>
-      <div className="flex w-full justify-center p-4 sm:mx-auto sm:max-w-3xl">
+      </BreadcrumbContainer>
+      <NarrowPageContainer>
         <div className="grid grid-cols-1 gap-4 rounded-xl border border-neutral-500 bg-white/80 p-4 text-neutral-900 sm:grid-cols-3">
           <div className="col-span-full flex justify-center text-center">
             <h2 className="border-b-2 border-neutral-500 px-4 text-2xl font-bold">
@@ -101,7 +107,7 @@ export default async function Page({
             <NotesPromptReveal notesPrompt={spot.notesPrompt} />
           </div>
         </div>
-      </div>
+      </NarrowPageContainer>
     </>
   );
 }

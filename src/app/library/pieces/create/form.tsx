@@ -850,10 +850,7 @@ function AddNotesPrompt({
                               </div>
                               {/* TODO: add link to abcjs */}
                               <div className="h-[100px]">
-                                <NotesDisplay
-                                  notes={field.value}
-                                  baseId={field.name}
-                                />
+                                <NotesDisplay notes={field.value} />
                               </div>
                             </>
                           )}

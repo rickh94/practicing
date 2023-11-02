@@ -1,3 +1,4 @@
+import { DocumentMagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import { type PieceForList } from "~/lib/validators/library";
 
@@ -15,15 +16,21 @@ export default function PieceCard({ piece }: { piece: PieceForList }) {
   }
   return (
     <Link
-      className="focusable block rounded-xl bg-neutral-700/10 px-6 py-4 text-neutral-700 hover:bg-neutral-700/20"
+      className="focusable flex rounded-xl bg-neutral-700/10 px-6 py-4 text-neutral-700 hover:bg-neutral-700/20"
       href={`/library/pieces/${piece.id}`}
     >
-      <div>
-        <strong className="text-xl font-bold">{piece.title}</strong> —{" "}
-        {piece.composer}
+      <div className="flex flex-1 flex-grow flex-col gap-1">
+        <div>
+          <strong className="text-xl font-bold">{piece.title}</strong> —{" "}
+          {piece.composer}
+        </div>
+        <div>Active Spots: {activeSpotCount}</div>
+        <div>Finished Spots: {completedSpotCount}</div>
       </div>
-      <div>Active Spots: {activeSpotCount}</div>
-      <div>Finished Spots: {completedSpotCount}</div>
+      <div className="flex flex-grow-0 items-center">
+        <div className="sr-only">Click to view</div>
+        <DocumentMagnifyingGlassIcon className="h-10 w-10" />
+      </div>
     </Link>
   );
 }

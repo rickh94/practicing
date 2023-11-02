@@ -6,6 +6,10 @@ import { PieceListSkeleton } from "~/app/_components/skeletons";
 import Link from "next/link";
 import { DocumentPlusIcon } from "@heroicons/react/20/solid";
 import Breadcrumbs from "~/app/_components/breadcrumb";
+import {
+  BreadcrumbContainer,
+  TwoColumnPageContainer,
+} from "~/app/_components/containers";
 
 export default async function AllPieces({
   searchParams,
@@ -22,7 +26,7 @@ export default async function AllPieces({
           Your Pieces
         </h1>
       </div>
-      <div className="flex w-full flex-col gap-4">
+      <BreadcrumbContainer>
         <div className="flex w-full justify-between">
           <Breadcrumbs
             breadcrumbs={[
@@ -38,12 +42,12 @@ export default async function AllPieces({
             New Piece
           </Link>
         </div>
-        <Suspense fallback={<PieceListSkeleton />}>
-          <PieceList page={currentPage} />
-        </Suspense>
-        <div className="flex w-full justify-center">
-          <Pagination totalPages={totalPages} />
-        </div>
+      </BreadcrumbContainer>
+      <Suspense fallback={<PieceListSkeleton />}>
+        <PieceList page={currentPage} />
+      </Suspense>
+      <div className="flex w-full justify-center">
+        <Pagination totalPages={totalPages} />
       </div>
     </>
   );

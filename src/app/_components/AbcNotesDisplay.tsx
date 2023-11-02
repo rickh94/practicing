@@ -1,9 +1,8 @@
 "use client";
 import ABCJS from "abcjs";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 type NotesDisplayProps = {
-  baseId: string;
   notes: string;
   wrap?: {
     minSpacing: number;
@@ -15,16 +14,16 @@ type NotesDisplayProps = {
 };
 
 export default function NotesDisplay({
-  baseId,
   notes,
   wrap = undefined,
   staffwidth = undefined,
   responsive = undefined,
 }: NotesDisplayProps) {
-  const notesId = `${baseId}notes`;
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    ABCJS.renderAbc(notesId, notes, {
+    if (!ref.current) return;
+    ABCJS.renderAbc(ref.current, notes, {
       scale: 1.1,
       add_classes: true,
       paddingleft: 0,
@@ -35,9 +34,9 @@ export default function NotesDisplay({
       staffwidth,
       responsive,
     });
-  }, [notesId, notes, wrap, staffwidth, responsive]);
+  }, [ref, notes, wrap, staffwidth, responsive]);
 
   return (
-    <div className="notes -pl-2 h-[100px] overflow-x-scroll" id={notesId}></div>
+    <div className="notes -pl-2 h-[100px] overflow-x-scroll" ref={ref}></div>
   );
 }

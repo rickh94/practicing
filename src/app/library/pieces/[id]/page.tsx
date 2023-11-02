@@ -6,6 +6,10 @@ import {
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Breadcrumbs from "~/app/_components/breadcrumb";
+import {
+  BreadcrumbContainer,
+  TwoColumnPageContainer,
+} from "~/app/_components/containers";
 import type { BasicPiece, BasicSpot } from "~/lib/validators/library";
 import { api } from "~/trpc/server";
 
@@ -29,7 +33,7 @@ export default async function SinglePiece({
           {piece.title}
         </h1>
       </div>
-      <div className="flex w-full flex-col gap-2 sm:container sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+      <BreadcrumbContainer>
         <div className="flex">
           <Breadcrumbs
             breadcrumbs={[
@@ -59,11 +63,11 @@ export default async function SinglePiece({
             Delete
           </button>
         </div>
-      </div>
-      <div className="relative grid w-full grid-cols-1 gap-x-2 gap-y-4 sm:max-w-5xl md:grid-cols-2">
+      </BreadcrumbContainer>
+      <TwoColumnPageContainer>
         <PieceInfoDisplay piece={piece} />
         <Spots spots={piece.spots} pieceId={piece.id} />
-      </div>
+      </TwoColumnPageContainer>
     </>
   );
 }

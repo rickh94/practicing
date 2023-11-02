@@ -7,9 +7,9 @@ import {
   MusicalNoteIcon,
   SpeakerWaveIcon,
 } from "@heroicons/react/20/solid";
-import {
-  type TextPrompt,
-  type AudioPrompt,
+import type {
+  TextPrompt,
+  AudioPrompt,
   NotesPrompt,
 } from "~/lib/validators/library";
 import { cn } from "~/app/lib/utils";
@@ -146,10 +146,7 @@ export function NotesPromptReveal({
                 <span className="font-medium">Description:</span>{" "}
                 {notesPrompt.description}
               </p>
-              <NotesDisplay
-                notes={notesPrompt.notes}
-                baseId={`${notesPrompt.id}-notes`}
-              />
+              <NotesDisplay notes={notesPrompt.notes} />
             </Disclosure.Panel>
           </Transition>
         </>

@@ -1,7 +1,9 @@
 import Link from "next/link";
+import { TwoColumnPageContainer } from "./containers";
+import { cn } from "../lib/utils";
 // Loading animation
 export const shimmer =
-  "before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-neutral-700/60 before:to-transparent";
+  "before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/60 before:to-transparent";
 
 export function LibrarySkeleton() {
   return (
@@ -61,7 +63,11 @@ export function LibraryPieceListSkeleton() {
 
 export function PieceCardSkeleton() {
   return (
-    <div className=" flex flex-col gap-1 rounded-xl bg-neutral-700/10 px-6 py-4 text-neutral-700">
+    <div
+      className={cn(
+        "flex flex-col gap-1 rounded-xl bg-neutral-700/10 px-6 py-4 text-neutral-700",
+      )}
+    >
       <div className="flex h-6 w-48 justify-between bg-neutral-600/20" />
       <div className="h-6 w-36 bg-neutral-600/20" />
       <div className="h-6 w-44 bg-neutral-600/20" />
@@ -72,26 +78,24 @@ export function PieceCardSkeleton() {
 export function PieceListSkeleton() {
   return (
     <>
-      <div
-        className={`grid w-full grid-cols-1 gap-x-2 gap-y-4 sm:grid-cols-2 ${shimmer}`}
-      >
+      <TwoColumnPageContainer>
         {[...Array<number>(12)].map((idx) => (
           <PieceCardSkeleton key={idx} />
         ))}
-      </div>
+      </TwoColumnPageContainer>
     </>
   );
 }
 
 export function PieceInfoSkeleton() {
   return (
-    <div>
+    <div className="rounded-xl bg-neutral-700/5 p-4">
       <div className="flex flex-col">
         <h2 className="py-1 text-center text-2xl font-bold">
           About this Piece
         </h2>
       </div>
-      <dl className="divide-y divide-neutral-700 border-y border-neutral-700">
+      <dl className="divide-y divide-neutral-700 border-t border-neutral-700">
         <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
           <dt className="text-sm font-medium leading-6 text-neutral-900">
             Title
@@ -136,6 +140,23 @@ export function PieceInfoSkeleton() {
           </dd>
         </div>
       </dl>
+    </div>
+  );
+}
+
+export function PieceSpotsSkeleton() {
+  return (
+    <div className="rounded-xl bg-neutral-700/5 p-4">
+      <div className="flex flex-col">
+        <h2 className="py-1 text-center text-2xl font-bold">Spots</h2>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="focusable flex h-20 justify-between rounded-xl border border-neutral-500 bg-white/80 px-4 py-2 text-neutral-700 hover:bg-white hover:text-black" />
+        <div className="focusable flex h-20 justify-between rounded-xl border border-neutral-500 bg-white/80 px-4 py-2 text-neutral-700 hover:bg-white hover:text-black" />
+        <div className="focusable flex h-20 justify-between rounded-xl border border-neutral-500 bg-white/80 px-4 py-2 text-neutral-700 hover:bg-white hover:text-black" />
+        <div className="focusable flex h-20 justify-between rounded-xl border border-neutral-500 bg-white/80 px-4 py-2 text-neutral-700 hover:bg-white hover:text-black" />
+      </div>
     </div>
   );
 }
@@ -221,7 +242,7 @@ export function AccountSkeleton() {
           Your Account
         </h1>
       </div>
-      <div className="relative grid w-full grid-cols-1 gap-x-2 gap-y-4 sm:max-w-5xl md:grid-cols-2">
+      <TwoColumnPageContainer>
         <div className="h-72 rounded-xl bg-neutral-700/5 p-4 sm:h-64">
           <div className="px-4 pb-1 sm:px-0">
             <h3 className="text-xl font-semibold leading-7 text-neutral-900">
@@ -235,7 +256,7 @@ export function AccountSkeleton() {
           <div className="mt-4 block h-8 w-32 rounded-xl bg-amber-700/10 px-4 py-2 font-semibold text-amber-700"></div>
         </div>
         <PasskeySkeleton />
-      </div>
+      </TwoColumnPageContainer>
     </>
   );
 }

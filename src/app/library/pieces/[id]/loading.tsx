@@ -1,6 +1,11 @@
 import {
+  BreadcrumbContainer,
+  TwoColumnPageContainer,
+} from "~/app/_components/containers";
+import {
   BreadcrumbSkeleton,
   PieceInfoSkeleton,
+  PieceSpotsSkeleton,
   shimmer,
 } from "~/app/_components/skeletons";
 
@@ -12,12 +17,17 @@ export default function Loading() {
           className={`my-2 h-10 w-52 bg-neutral-800/40 sm:w-64 ${shimmer}`}
         />
       </div>
-      <div className="flex w-full items-center justify-start sm:container">
+      <BreadcrumbContainer>
         <BreadcrumbSkeleton size={3} />
-      </div>
-      <div className="relative grid w-full grid-cols-1 gap-x-2 gap-y-4 sm:max-w-5xl md:grid-cols-2">
+        <div className="flex justify-end gap-2">
+          <div className="focusable flex h-10 w-28 items-center justify-center rounded-xl bg-yellow-700/10 px-6 py-3 text-center font-medium text-yellow-700 hover:bg-yellow-700/20"></div>
+          <div className="focusable flex h-10 w-28 items-center justify-center rounded-xl bg-red-700/10 px-6 py-3 text-center font-medium text-red-700 hover:bg-red-700/20"></div>
+        </div>
+      </BreadcrumbContainer>
+      <TwoColumnPageContainer>
         <PieceInfoSkeleton />
-      </div>
+        <PieceSpotsSkeleton />
+      </TwoColumnPageContainer>
     </>
   );
 }
