@@ -2,9 +2,11 @@ import { TRPCError } from "@trpc/server";
 import { sql } from "drizzle-orm";
 import { z } from "zod";
 import {
+  basicSpotWithPrompts,
   createPieceData,
   pieceForList,
   pieceWithSpots,
+  spotWithPromptsAndPieceTitle,
 } from "~/lib/validators/library";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
@@ -113,7 +115,7 @@ export const libraryRouter = createTRPCRouter({
     }),
   getPieceById: protectedProcedure
     .input(z.object({ id: z.string() }))
-    .output(pieceWithSpots)
+    .output(pieceWithSpots.nullable())
     .query(async ({ ctx, input }) => {
       const piece = await ctx.db.query.pieces.findFirst({
         where: and(
@@ -126,10 +128,7 @@ export const libraryRouter = createTRPCRouter({
         },
       });
       if (!piece) {
-        throw new TRPCError({
-          message: "Piece does not exist",
-          code: "NOT_FOUND",
-        });
+        return null;
       }
       return piece;
     }),
@@ -208,5 +207,36 @@ export const libraryRouter = createTRPCRouter({
         });
       }
       return { totalPages: Math.ceil(result[0].count / limit) };
+    }),
+
+  getSpotById: protectedProcedure
+    .input(z.object({ spotId: z.string(), pieceId: z.string() }))
+    .output(spotWithPromptsAndPieceTitle.nullable())
+    .query(async ({ ctx, input }) => {
+      const spot = await ctx.db.query.spots.findFirst({
+        where: and(
+          eq(spots.id, input.spotId),
+          eq(spots.pieceId, input.pieceId),
+        ),
+        with: {
+          audioPrompt: true,
+          textPrompt: true,
+          notesPrompt: true,
+          piece: {
+            columns: {
+              title: true,
+              userId: true,
+              id: true,
+            },
+          },
+        },
+      });
+      if (!spot) {
+        return null;
+      }
+      if (spot.piece.userId !== ctx.session.user.id) {
+        return null;
+      }
+      return spot;
     }),
 });

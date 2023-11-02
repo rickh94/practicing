@@ -1,4 +1,8 @@
-import { PencilIcon, TrashIcon } from "@heroicons/react/20/solid";
+import {
+  ArrowTopRightOnSquareIcon,
+  PencilIcon,
+  TrashIcon,
+} from "@heroicons/react/20/solid";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Breadcrumbs from "~/app/_components/breadcrumb";
@@ -16,7 +20,7 @@ export default async function SinglePiece({
     id: params.id,
   });
   if (!piece) {
-    notFound();
+    return notFound();
   }
   return (
     <>
@@ -25,7 +29,7 @@ export default async function SinglePiece({
           {piece.title}
         </h1>
       </div>
-      <div className="flex w-full flex-col gap-2 sm:container sm:flex sm:items-center sm:justify-between">
+      <div className="flex w-full flex-col gap-2 sm:container sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         <div className="flex">
           <Breadcrumbs
             breadcrumbs={[
@@ -58,7 +62,7 @@ export default async function SinglePiece({
       </div>
       <div className="relative grid w-full grid-cols-1 gap-x-2 gap-y-4 sm:max-w-5xl md:grid-cols-2">
         <PieceInfoDisplay piece={piece} />
-        <Spots spots={piece.spots} />
+        <Spots spots={piece.spots} pieceId={piece.id} />
       </div>
     </>
   );
@@ -67,13 +71,13 @@ export default async function SinglePiece({
 // TODO: add edit for a piece
 function PieceInfoDisplay({ piece }: { piece: BasicPiece }) {
   return (
-    <div>
+    <div className="rounded-xl bg-neutral-700/5 p-4">
       <div className="flex flex-col">
         <h2 className="py-1 text-center text-2xl font-bold">
           About this Piece
         </h2>
       </div>
-      <dl className="divide-y divide-neutral-700 border-y border-neutral-700">
+      <dl className="divide-y divide-neutral-700 border-t border-neutral-700">
         <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
           <dt className="text-sm font-medium leading-6 text-neutral-900">
             Title
@@ -134,17 +138,37 @@ function PieceInfoDisplay({ piece }: { piece: BasicPiece }) {
   );
 }
 
-function Spots({ spots }: { spots: BasicSpot[] }) {
+// TODO: add stage display component and information about practice stages
+function Spots({ spots, pieceId }: { spots: BasicSpot[]; pieceId: string }) {
   return (
-    <div>
+    <div className="rounded-xl bg-neutral-700/5 p-4">
       <div className="flex flex-col">
         <h2 className="py-1 text-center text-2xl font-bold">Spots</h2>
       </div>
-      <div>
-        {spots.map((spot) => (
-          <div key={spot.id}>{JSON.stringify(spot)}</div>
-        ))}
-      </div>
+      <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {spots
+          .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+          .map((spot) => (
+            <li key={spot.id}>
+              <Link
+                href={`/library/pieces/${pieceId}/spots/${spot.id}`}
+                className="focusable flex justify-between rounded-xl border border-neutral-500 bg-white/80 px-4 py-2 text-neutral-700 hover:bg-white hover:text-black"
+              >
+                <div className="flex flex-grow flex-col">
+                  <h3 className="text-lg font-bold">{spot.name}</h3>
+                  <p className="text-sm">
+                    Measures: <em className="italic">{spot.measures}</em>
+                  </p>
+                  <p className="text-sm">
+                    Stage: <em className="italic">{spot.stage}</em>
+                  </p>
+                </div>
+                <ArrowTopRightOnSquareIcon className="mt-4 h-6 w-6" />
+                <span className="sr-only">View Spot</span>
+              </Link>
+            </li>
+          ))}
+      </ul>
     </div>
   );
 }

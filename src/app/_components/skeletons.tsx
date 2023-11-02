@@ -11,6 +11,11 @@ export function LibrarySkeleton() {
           Library
         </h1>
       </div>
+      <div className="flex w-full flex-col gap-2 sm:container sm:flex-row sm:items-center sm:justify-start sm:gap-4">
+        <div className="flex">
+          <BreadcrumbSkeleton size={1} />
+        </div>
+      </div>
       <div className="grid w-full grid-cols-1 gap-x-2 gap-y-4 sm:grid-cols-2">
         <div className="flex flex-col">
           <h2 className="py-1 text-center text-2xl font-bold">

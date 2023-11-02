@@ -264,6 +264,9 @@ function SpotsArray({ control }: { control: Control<CreatePieceData> }) {
   ) {
     enableAnimations(false);
     update(index, data);
+    // this needs to be pushed into the next tick. if it runs in the same tick, it
+    // animates and does a weird flash thing when it updates, but i want it to animate
+    // when a new one is actually added, so i do need to turn the animation back on.
     setTimeout(() => {
       enableAnimations(true);
     }, 1);

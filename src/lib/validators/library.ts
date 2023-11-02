@@ -44,6 +44,13 @@ export const basicSpotWithPrompts = basicSpot.extend({
   notesPrompt: notesPrompt.nullish().optional(),
 });
 
+export const spotWithPromptsAndPieceTitle = basicSpotWithPrompts.extend({
+  piece: z.object({
+    title: z.string(),
+    id: z.string(),
+  }),
+});
+
 export const pieceWithSpots = z.object({
   id: z.string(),
   title: z.string().min(1).max(255),
@@ -86,3 +93,6 @@ export type BasicSpot = z.infer<typeof basicSpot>;
 export type CreateAudioPrompt = z.infer<typeof createAudioPrompt>;
 export type CreateTextPrompt = z.infer<typeof createTextPrompt>;
 export type CreateNotesPrompt = z.infer<typeof createNotesPrompt>;
+export type AudioPrompt = z.infer<typeof audioPrompt>;
+export type TextPrompt = z.infer<typeof textPrompt>;
+export type NotesPrompt = z.infer<typeof notesPrompt>;

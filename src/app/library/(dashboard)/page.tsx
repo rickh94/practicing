@@ -5,6 +5,7 @@ import { LibraryPieceListSkeleton } from "~/app/_components/skeletons";
 import LibraryPieceList from "./piece-list";
 import Link from "next/link";
 import { DocumentPlusIcon, ViewColumnsIcon } from "@heroicons/react/20/solid";
+import Breadcrumbs from "~/app/_components/breadcrumb";
 
 // TODO: recently practiced, practice plan for the day, spots, pieces
 
@@ -21,7 +22,14 @@ export default async function Dashboard() {
           Library
         </h1>
       </div>
-      <div className="grid w-full grid-cols-1 gap-x-2 gap-y-4 sm:grid-cols-2">
+      <div className="flex w-full flex-col gap-2 sm:container sm:flex-row sm:items-center sm:justify-start sm:gap-4">
+        <div className="flex">
+          <Breadcrumbs
+            breadcrumbs={[{ label: "Library", href: "/library", active: true }]}
+          />
+        </div>
+      </div>
+      <div className="grid w-full grid-cols-1 gap-x-2 gap-y-4 sm:grid-cols-2 ">
         <div className="flex flex-col">
           <h2 className="py-1 text-center text-2xl font-bold">
             Practicing Today
