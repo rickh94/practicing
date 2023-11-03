@@ -96,3 +96,4 @@ export type CreateNotesPrompt = z.infer<typeof createNotesPrompt>;
 export type AudioPrompt = z.infer<typeof audioPrompt>;
 export type TextPrompt = z.infer<typeof textPrompt>;
 export type NotesPrompt = z.infer<typeof notesPrompt>;
+export type CreatePieceData = z.infer<typeof createPieceData>;

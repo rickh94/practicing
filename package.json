@@ -30,6 +30,7 @@
     "@trpc/next": "^10.37.1",
     "@trpc/react-query": "^10.37.1",
     "@trpc/server": "^10.37.1",
+    "@uploadthing/react": "^5.7.0",
     "@upstash/redis": "^1.23.4",
     "abcjs": "^6.2.2",
     "base64url": "^3.0.1",
@@ -49,6 +50,7 @@
     "react-hot-toast": "^2.4.1",
     "superjson": "^1.13.1",
     "tailwind-merge": "^1.14.0",
+    "uploadthing": "^5.7.4",
     "zod": "^3.22.4"
   },
   "devDependencies": {

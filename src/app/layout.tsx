@@ -6,6 +6,10 @@ import { Toaster } from "react-hot-toast";
 import { TRPCReactProvider } from "~/trpc/react";
 import { workSans } from "./_components/page-layout";
 
+import { extractRouterConfig } from "uploadthing/server";
+import { pFileRouter } from "~/app/api/uploadthing/core";
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+
 export const metadata = {
   title: "Music Practicing",
   description:
@@ -40,8 +44,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`font-sans ${workSans.variable} antialiased`}>
-        <TRPCReactProvider headers={headers()}>{children}</TRPCReactProvider>
         <Toaster position="bottom-right" />
+        <NextSSRPlugin routerConfig={extractRouterConfig(pFileRouter)} />
+        <TRPCReactProvider headers={headers()}>{children}</TRPCReactProvider>
       </body>
     </html>
   );
