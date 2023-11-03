@@ -22,8 +22,6 @@ export default async function Page({
     spotId: string;
   };
 }) {
-  // artificial delay
-  await new Promise((resolve) => setTimeout(resolve, 5000));
   const spot = await api.library.getSpotById.query({
     spotId: params.spotId,
     pieceId: params.id,

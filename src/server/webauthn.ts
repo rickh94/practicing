@@ -1,4 +1,5 @@
 import redis from "~/server/redis";
+import { decryptText, encryptText } from "./encrypt";
 
 if (!process.env.NEXTAUTH_URL && !process.env.VERCEL_URL) {
   throw new Error("NEXTAUTH_URL is not set");
@@ -19,16 +20,19 @@ export async function saveChallenge({
   challenge: string;
   userID: string;
 }) {
-  await redis.set(`${userID}-challenge`, challenge, {
+  const cryptChallenge = encryptText(challenge);
+  await redis.set(`${rpID}-${userID}-challenge`, cryptChallenge, {
     ex: 60 * 5,
   });
 }
 
 export async function getChallenge(userID: string): Promise<string | null> {
-  const challenge = await redis.get<string | null>(`${userID}-challenge`);
-  if (!challenge) {
+  const cryptChallenge = await redis.get<string | null>(
+    `${rpID}-${userID}-challenge`,
+  );
+  if (!cryptChallenge) {
     return null;
   }
-  await redis.del(`${userID}-challenge`);
-  return challenge;
+  await redis.del(`${rpID}-${userID}-challenge`);
+  return decryptText(cryptChallenge);
 }
