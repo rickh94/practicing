@@ -3,18 +3,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import {
-  createPieceData,
-  type CreatePieceData,
-} from "~/lib/validators/library";
+import { pieceFormData, type PieceFormData } from "~/lib/validators/library";
 import { api } from "~/trpc/react";
 import PieceFormFields from "~/app/_components/forms/piece-form";
 
 export default function CreatePieceForm() {
-  const { control, handleSubmit, formState } = useForm<CreatePieceData>({
+  const { control, handleSubmit, formState } = useForm<PieceFormData>({
     mode: "onBlur",
     reValidateMode: "onBlur",
-    resolver: zodResolver(createPieceData),
+    resolver: zodResolver(pieceFormData),
     defaultValues: {
       title: "",
       description: "",
@@ -46,7 +43,7 @@ export default function CreatePieceForm() {
     },
   );
 
-  function onSubmit(data: CreatePieceData) {
+  function onSubmit(data: PieceFormData) {
     mutate(data);
   }
 

@@ -6,7 +6,7 @@ export const audioPrompt = z.object({
   url: z.string(),
 });
 
-export const createAudioPrompt = audioPrompt.omit({ id: true });
+export const audioPromptData = audioPrompt.omit({ id: true });
 
 export const textPrompt = z.object({
   id: z.string(),
@@ -14,7 +14,7 @@ export const textPrompt = z.object({
   text: z.string(),
 });
 
-export const createTextPrompt = textPrompt.omit({ id: true });
+export const textPromptData = textPrompt.omit({ id: true });
 
 export const notesPrompt = z.object({
   id: z.string(),
@@ -22,7 +22,7 @@ export const notesPrompt = z.object({
   notes: z.string(),
 });
 
-export const createNotesPrompt = notesPrompt.omit({ id: true });
+export const notesPromptData = notesPrompt.omit({ id: true });
 
 export const basicSpot = z.object({
   id: z.string(),
@@ -45,7 +45,7 @@ export const basicSpotWithPrompts = basicSpot.extend({
   notesPrompt: notesPrompt.nullish().optional(),
 });
 
-export const createSpotWithPrompts = basicSpot
+export const spotWithPromptsFormData = basicSpot
   .omit({ id: true, order: true })
   .extend({
     id: z.string().optional(),
@@ -90,18 +90,18 @@ export const pieceForList = pieceWithSpots.omit({
   practiceNotes: true,
 });
 
-export const createPieceData = z.object({
+export const pieceFormData = z.object({
   title: z.string().min(1).max(255),
   description: z.string(),
   composer: z.string(),
   recordingLink: z.union([z.string().url(), z.enum([""])]),
   practiceNotes: z.string(),
-  spots: z.array(createSpotWithPrompts),
+  spots: z.array(spotWithPromptsFormData),
 });
 
 export const basicPiece = pieceWithSpots.omit({ spots: true });
 
-export const updatePieceWithSpots = createPieceData.extend({
+export const updatePieceWithSpots = pieceFormData.extend({
   id: z.string().optional(),
 });
 
@@ -109,12 +109,15 @@ export type PieceForList = z.infer<typeof pieceForList>;
 export type BasicPiece = z.infer<typeof basicPiece>;
 export type PieceWithSpots = z.infer<typeof pieceWithSpots>;
 export type BasicSpot = z.infer<typeof basicSpot>;
-export type CreateAudioPrompt = z.infer<typeof createAudioPrompt>;
-export type CreateTextPrompt = z.infer<typeof createTextPrompt>;
-export type CreateNotesPrompt = z.infer<typeof createNotesPrompt>;
+export type AudioPromptData = z.infer<typeof audioPromptData>;
+export type TextPromptData = z.infer<typeof textPromptData>;
+export type NotesPromptData = z.infer<typeof notesPromptData>;
 export type AudioPrompt = z.infer<typeof audioPrompt>;
 export type TextPrompt = z.infer<typeof textPrompt>;
 export type NotesPrompt = z.infer<typeof notesPrompt>;
-export type CreatePieceData = z.infer<typeof createPieceData>;
-export type CreateSpotWithPrompts = z.infer<typeof createSpotWithPrompts>;
+export type PieceFormData = z.infer<typeof pieceFormData>;
+export type SpotWithPromptsFormData = z.infer<typeof spotWithPromptsFormData>;
 export type UpdatePieceData = z.infer<typeof updatePieceWithSpots>;
+export type SpotWithPromptsAndPieceTitle = z.infer<
+  typeof spotWithPromptsAndPieceTitle
+>;

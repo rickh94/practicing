@@ -8,36 +8,39 @@ import SpotFormFields from "~/app/_components/forms/spot-form";
 import {
   type SpotWithPromptsFormData,
   spotWithPromptsFormData,
+  type SpotWithPromptsAndPieceTitle,
 } from "~/lib/validators/library";
 import { api } from "~/trpc/react";
 
-export default function SpotCreationForm({ pieceId }: { pieceId: string }) {
-  const { control, handleSubmit, formState, setValue, reset } =
+// TODO: add a way to delete prompts
+
+export default function SpotUpdateForm({
+  spot,
+}: {
+  spot: SpotWithPromptsAndPieceTitle;
+}) {
+  const { control, handleSubmit, formState, setValue } =
     useForm<SpotWithPromptsFormData>({
       mode: "onBlur",
       reValidateMode: "onBlur",
       resolver: zodResolver(spotWithPromptsFormData),
       defaultValues: {
-        name: "",
-        order: 1,
-        measures: "",
-        audioPrompt: null,
-        textPrompt: null,
-        notesPrompt: null,
-        stage: "repeat",
+        name: spot.name,
+        order: spot.order ?? undefined,
+        measures: spot.measures,
+        audioPrompt: spot.audioPrompt,
+        textPrompt: spot.textPrompt,
+        notesPrompt: spot.notesPrompt,
+        stage: spot.stage,
       },
     });
 
   const router = useRouter();
-  const { mutate, isLoading: isCreating } =
-    api.library.addSpotToPiece.useMutation({
-      onSuccess: (data) => {
-        if (!data) {
-          toast.error("Missing data in return");
-          return;
-        }
+  const { mutate, isLoading: isUpdating } =
+    api.library.updateSpotById.useMutation({
+      onSuccess: () => {
         router.refresh();
-        reset();
+        router.push(`/library/pieces/${spot.piece.id}/spots/${spot.id}`);
       },
       onError: (e) => {
         const errorMessage = e.data?.zodError?.fieldErrors.content;
@@ -50,7 +53,8 @@ export default function SpotCreationForm({ pieceId }: { pieceId: string }) {
     });
 
   function onSubmit(data: SpotWithPromptsFormData) {
-    mutate({ pieceId, spot: data });
+    console.log(data);
+    mutate({ pieceId: spot.piece.id, spotId: spot.id, update: data });
   }
 
   return (
@@ -59,8 +63,8 @@ export default function SpotCreationForm({ pieceId }: { pieceId: string }) {
         control={control}
         formState={formState}
         setValue={setValue}
-        isUpdating={isCreating}
-        backTo={`/library/pieces/${pieceId}`}
+        isUpdating={isUpdating}
+        backTo={`/library/pieces/${spot.piece.id}/spots/${spot.id}`}
       />
     </form>
   );

@@ -3,9 +3,8 @@ import { sql } from "drizzle-orm";
 import { z } from "zod";
 import {
   basicSpot,
-  basicSpotWithPrompts,
-  createPieceData,
-  createSpotWithPrompts,
+  pieceFormData,
+  spotWithPromptsFormData,
   pieceForList,
   pieceWithSpots,
   spotWithPromptsAndPieceTitle,
@@ -25,7 +24,7 @@ import { eq, and, desc } from "drizzle-orm";
 // TODO: implement quota
 export const libraryRouter = createTRPCRouter({
   createPiece: protectedProcedure
-    .input(createPieceData)
+    .input(pieceFormData)
     .output(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const result = await ctx.db.transaction(async (tx) => {
@@ -122,7 +121,7 @@ export const libraryRouter = createTRPCRouter({
     .input(
       z.object({
         pieceId: z.string(),
-        spot: createSpotWithPrompts,
+        spot: spotWithPromptsFormData,
       }),
     )
     .output(z.object({ id: z.string() }))
@@ -252,7 +251,6 @@ export const libraryRouter = createTRPCRouter({
             practiceNotes: update.practiceNotes,
           })
           .where(eq(pieces.id, id));
-        // TODO: below
         for (const spot of update.spots) {
           let audioPromptId,
             textPromptId,
@@ -548,6 +546,130 @@ export const libraryRouter = createTRPCRouter({
         return null;
       }
       return spot;
+    }),
+
+  updateSpotById: protectedProcedure
+    .input(
+      z.object({
+        spotId: z.string(),
+        pieceId: z.string(),
+        update: spotWithPromptsFormData,
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.transaction(async (tx) => {
+        const piece = await tx.query.pieces.findFirst({
+          where: and(
+            eq(pieces.id, input.pieceId),
+            eq(pieces.userId, ctx.session.user.id),
+          ),
+        });
+        let audioPromptId,
+          textPromptId,
+          notesPromptId = null;
+        if (!piece) {
+          throw new TRPCError({
+            message: "You do not own this piece",
+            code: "UNAUTHORIZED",
+          });
+        }
+        if (input.update.audioPrompt) {
+          if (input.update.audioPrompt.id) {
+            await tx
+              .update(audioPrompts)
+              .set({
+                description: input.update.audioPrompt.description,
+                url: input.update.audioPrompt.url,
+              })
+              .where(eq(audioPrompts.id, input.update.audioPrompt.id));
+            audioPromptId = input.update.audioPrompt.id;
+          } else {
+            const [result] = await tx
+              .insert(audioPrompts)
+              .values({
+                description: input.update.audioPrompt.description,
+                url: input.update.audioPrompt.url,
+              })
+              .returning({ id: audioPrompts.id });
+            if (!result) {
+              throw new TRPCError({
+                message: "Something went wrong",
+                code: "INTERNAL_SERVER_ERROR",
+              });
+            }
+            audioPromptId = result.id;
+          }
+        }
+        if (input.update.textPrompt) {
+          if (input.update.textPrompt.id) {
+            await tx
+              .update(textPrompts)
+              .set({
+                description: input.update.textPrompt.description,
+                text: input.update.textPrompt.text,
+              })
+              .where(eq(textPrompts.id, input.update.textPrompt.id));
+            textPromptId = input.update.textPrompt.id;
+          } else {
+            const [result] = await tx
+              .insert(textPrompts)
+              .values({
+                description: input.update.textPrompt.description,
+                text: input.update.textPrompt.text,
+              })
+              .returning({ id: textPrompts.id });
+            if (!result) {
+              throw new TRPCError({
+                message: "Something went wrong",
+                code: "INTERNAL_SERVER_ERROR",
+              });
+            }
+            textPromptId = result.id;
+          }
+        }
+
+        if (input.update.notesPrompt) {
+          if (input.update.notesPrompt.id) {
+            await tx
+              .update(notesPrompts)
+              .set({
+                description: input.update.notesPrompt.description,
+                notes: input.update.notesPrompt.notes,
+              })
+              .where(eq(notesPrompts.id, input.update.notesPrompt.id));
+            notesPromptId = input.update.notesPrompt.id;
+          } else {
+            const [result] = await tx
+              .insert(notesPrompts)
+              .values({
+                description: input.update.notesPrompt.description,
+                notes: input.update.notesPrompt.notes,
+              })
+              .returning({ id: notesPrompts.id });
+            if (!result) {
+              throw new TRPCError({
+                message: "Something went wrong",
+                code: "INTERNAL_SERVER_ERROR",
+              });
+            }
+            notesPromptId = result.id;
+          }
+        }
+        await tx
+          .update(spots)
+          .set({
+            name: input.update.name,
+            order: input.update.order,
+            stage: input.update.stage,
+            measures: input.update.measures,
+            audioPromptId,
+            textPromptId,
+            notesPromptId,
+          })
+          .where(
+            and(eq(spots.id, input.spotId), eq(spots.pieceId, input.pieceId)),
+          );
+      });
     }),
 
   getSpotsForPiece: protectedProcedure

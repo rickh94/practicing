@@ -1,12 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
 import {
-  type CreateNotesPrompt,
-  type CreateTextPrompt,
-  type CreateAudioPrompt,
-  createAudioPrompt,
-  createNotesPrompt,
-  createTextPrompt,
+  type NotesPromptData,
+  type TextPromptData,
+  type AudioPromptData,
+  audioPromptData,
+  notesPromptData,
+  textPromptData,
 } from "~/lib/validators/library";
 import {
   SpeakerWaveIcon,
@@ -43,6 +43,7 @@ export function AudioUploader({ setUrl }: { setUrl: (url: string) => void }) {
         toast.loading("Uploading audio...");
       }}
       onClientUploadComplete={(res) => {
+        toast.dismiss();
         if (!res?.[0]) {
           toast.error("Error uploading audio");
           return;
@@ -61,21 +62,21 @@ export function AddAudioPrompt({
   save,
   item,
 }: {
-  save: (data: CreateAudioPrompt) => void;
+  save: (data: AudioPromptData) => void;
   item?: { description: string; url: string } | null;
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const { control, handleSubmit, setValue } = useForm<CreateAudioPrompt>({
+  const { control, handleSubmit, setValue } = useForm<AudioPromptData>({
     mode: "onBlur",
     reValidateMode: "onBlur",
-    resolver: zodResolver(createAudioPrompt),
+    resolver: zodResolver(audioPromptData),
     defaultValues: {
       url: item?.url ?? "",
       description: item?.description ?? "",
     },
   });
 
-  function onSubmit(data: CreateAudioPrompt) {
+  function onSubmit(data: AudioPromptData) {
     save(data);
     setIsOpen(false);
   }
@@ -224,21 +225,21 @@ export function AddTextPrompt({
   save,
   item,
 }: {
-  save: (data: CreateTextPrompt) => void;
+  save: (data: TextPromptData) => void;
   item?: { description: string; text: string } | null;
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const { control, handleSubmit } = useForm<CreateTextPrompt>({
+  const { control, handleSubmit } = useForm<TextPromptData>({
     mode: "onBlur",
     reValidateMode: "onBlur",
-    resolver: zodResolver(createTextPrompt),
+    resolver: zodResolver(textPromptData),
     defaultValues: {
       text: item?.text ?? "",
       description: item?.description ?? "",
     },
   });
 
-  function onSubmit(data: CreateTextPrompt) {
+  function onSubmit(data: TextPromptData) {
     save(data);
     setIsOpen(false);
   }
@@ -379,21 +380,21 @@ export function AddNotesPrompt({
   save,
   item,
 }: {
-  save: (data: CreateNotesPrompt) => void;
+  save: (data: NotesPromptData) => void;
   item?: { description: string; notes: string } | null;
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const { control, handleSubmit } = useForm<CreateNotesPrompt>({
+  const { control, handleSubmit } = useForm<NotesPromptData>({
     mode: "onBlur",
     reValidateMode: "onBlur",
-    resolver: zodResolver(createNotesPrompt),
+    resolver: zodResolver(notesPromptData),
     defaultValues: {
       notes: item?.notes ?? "",
       description: item?.description ?? "",
     },
   });
 
-  function onSubmit(data: CreateNotesPrompt) {
+  function onSubmit(data: NotesPromptData) {
     save(data);
     setIsOpen(false);
   }

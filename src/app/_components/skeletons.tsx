@@ -156,10 +156,10 @@ export function PieceSpotsSkeleton({
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="focusable flex h-20 justify-between rounded-xl border border-neutral-500 bg-white/80 px-4 py-2 text-neutral-700 hover:bg-white hover:text-black" />
-        <div className="focusable flex h-20 justify-between rounded-xl border border-neutral-500 bg-white/80 px-4 py-2 text-neutral-700 hover:bg-white hover:text-black" />
-        <div className="focusable flex h-20 justify-between rounded-xl border border-neutral-500 bg-white/80 px-4 py-2 text-neutral-700 hover:bg-white hover:text-black" />
-        <div className="focusable flex h-20 justify-between rounded-xl border border-neutral-500 bg-white/80 px-4 py-2 text-neutral-700 hover:bg-white hover:text-black" />
+        <div className="flex h-20 justify-between rounded-xl border border-neutral-500 bg-white/80 px-4 py-2 text-neutral-700" />
+        <div className="flex h-20 justify-between rounded-xl border border-neutral-500 bg-white/80 px-4 py-2 text-neutral-700" />
+        <div className="flex h-20 justify-between rounded-xl border border-neutral-500 bg-white/80 px-4 py-2 text-neutral-700" />
+        <div className="flex h-20 justify-between rounded-xl border border-neutral-500 bg-white/80 px-4 py-2 text-neutral-700" />
       </div>
     </div>
   );
@@ -219,8 +219,8 @@ export function PieceFormSkeleton() {
         <div className="flex h-72 flex-col gap-2 rounded-xl border border-dashed border-neutral-500 bg-white/50 px-4 py-2 text-neutral-700" />
       </div>
       <div className="flex flex-row-reverse justify-start gap-4 py-4">
-        <div className="h-12 w-24 rounded-xl bg-amber-700/10 px-4 py-2 font-semibold" />
-        <div className="h-12 w-24 rounded-xl bg-emerald-700/10 px-4 py-2 font-semibold" />
+        <div className="h-12 w-32 rounded-xl bg-amber-700/10 px-4 py-2 font-semibold" />
+        <div className="h-12 w-32 rounded-xl bg-emerald-700/10 px-4 py-2 font-semibold" />
       </div>
     </>
   );
@@ -264,6 +264,7 @@ export function AccountSkeleton() {
     </>
   );
 }
+
 export function UserInfoSkeleton() {
   return (
     <div className="px-4 pb-1 sm:px-0">
@@ -333,5 +334,49 @@ export function PasskeySkeleton() {
 export function LinkSkeleton() {
   return (
     <div className="flex h-14 w-32 items-center gap-2 rounded-xl bg-neutral-700/10 px-6 py-4 font-semibold text-neutral-700 transition-all duration-200" />
+  );
+}
+
+export function SpotFormSkeleton() {
+  return (
+    <div className="space-y-2">
+      <div className="flex flex-col gap-2">
+        <div className="leading-6">
+          <div className="h-4 w-32 rounded bg-neutral-600/20 text-sm font-medium leading-6" />
+        </div>
+        <div className="h-10 w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20" />
+      </div>
+      <div className="flex gap-2">
+        <div className="flex w-1/2 flex-col gap-1">
+          <div className="leading-6">
+            <div className="h-4 w-32 rounded bg-neutral-600/20 text-sm font-medium leading-6" />
+          </div>
+          <div className="h-10 w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20" />
+        </div>
+        <div className="flex w-1/2 flex-col gap-1">
+          <div className="leading-6">
+            <div className="h-4 w-32 rounded bg-neutral-600/20 text-sm font-medium leading-6" />
+          </div>
+          <div className="h-10 w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20" />
+        </div>
+      </div>
+      <div className="flex flex-col gap-2">
+        <div>
+          <h4 className="text-sm font-medium leading-6 text-neutral-900">
+            <div className="h-8 w-52 rounded bg-neutral-600/20 text-sm font-medium leading-6" />
+          </h4>
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          <div className="flex h-8 items-center justify-center gap-1 rounded-xl bg-yellow-700/10 py-2 font-semibold text-yellow-800  transition duration-200" />
+          <div className="flex h-8 items-center justify-center gap-1 rounded-xl bg-lime-700/10 py-2 font-semibold text-lime-800  transition duration-200" />
+          <div className="flex h-8 items-center justify-center gap-1 rounded-xl bg-sky-700/10 py-2 font-semibold text-sky-800  transition duration-200" />
+        </div>
+      </div>
+
+      <div className="flex flex-row-reverse justify-start gap-4">
+        <div className="h-12 w-32 rounded-xl bg-amber-700/10 px-4 py-2 font-semibold" />
+        <div className="h-12 w-32 rounded-xl bg-emerald-700/10 px-4 py-2 font-semibold" />
+      </div>
+    </div>
   );
 }

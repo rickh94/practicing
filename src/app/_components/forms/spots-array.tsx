@@ -5,10 +5,10 @@ import {
   type UseFieldArrayUpdate,
 } from "react-hook-form";
 import type {
-  CreateAudioPrompt,
-  CreateTextPrompt,
-  CreatePieceData,
-  CreateNotesPrompt,
+  AudioPromptData,
+  TextPromptData,
+  PieceFormData,
+  NotesPromptData,
   UpdatePieceData,
 } from "~/lib/validators/library";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
@@ -17,15 +17,11 @@ import {
   AddAudioPrompt,
   AddNotesPrompt,
   AddTextPrompt,
-} from "~/app/library/pieces/prompts";
+} from "~/app/_components/forms/add-prompts";
 
-export function SpotsArray({
-  control,
-}: {
-  control: Control<CreatePieceData | UpdatePieceData>;
-}) {
+export function SpotsArray({ control }: { control: Control<PieceFormData> }) {
   const { fields, append, remove, update } = useFieldArray<
-    CreatePieceData | UpdatePieceData
+    PieceFormData | UpdatePieceData
   >({
     control,
     name: "spots",
@@ -33,7 +29,7 @@ export function SpotsArray({
 
   const [parent, enableAnimations] = useAutoAnimate();
 
-  const updateWithoutFlashing: UseFieldArrayUpdate<CreatePieceData> = function (
+  const updateWithoutFlashing: UseFieldArrayUpdate<PieceFormData> = function (
     index,
     data,
   ) {
@@ -139,7 +135,7 @@ export function SpotsArray({
               </h4>
               <div className="grid grid-cols-3 gap-2">
                 <AddAudioPrompt
-                  save={(data: CreateAudioPrompt) =>
+                  save={(data: AudioPromptData) =>
                     updateWithoutFlashing(index, {
                       ...item,
                       audioPrompt: data,
@@ -148,7 +144,7 @@ export function SpotsArray({
                   item={item.audioPrompt}
                 />
                 <AddTextPrompt
-                  save={(data: CreateTextPrompt) =>
+                  save={(data: TextPromptData) =>
                     updateWithoutFlashing(index, {
                       ...item,
                       textPrompt: data,
@@ -157,7 +153,7 @@ export function SpotsArray({
                   item={item.textPrompt}
                 />
                 <AddNotesPrompt
-                  save={(data: CreateNotesPrompt) =>
+                  save={(data: NotesPromptData) =>
                     updateWithoutFlashing(index, {
                       ...item,
                       notesPrompt: data,

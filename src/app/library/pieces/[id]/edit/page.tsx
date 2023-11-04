@@ -35,6 +35,7 @@ export default async function SinglePiece({
               {
                 label: "Update",
                 href: `/library/pieces/${piece.id}/edit`,
+                active: true,
               },
             ]}
           />

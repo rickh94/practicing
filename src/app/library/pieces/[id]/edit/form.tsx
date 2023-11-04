@@ -5,18 +5,18 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import {
   type PieceWithSpots,
-  type CreatePieceData,
-  createPieceData,
+  type PieceFormData,
+  pieceFormData,
 } from "~/lib/validators/library";
 import { api } from "~/trpc/react";
 import PieceFormFields from "~/app/_components/forms/piece-form";
 
 export default function UpdatePieceForm({ piece }: { piece: PieceWithSpots }) {
-  const { control, handleSubmit, formState } = useForm<CreatePieceData>({
+  const { control, handleSubmit, formState } = useForm<PieceFormData>({
     mode: "onBlur",
     reValidateMode: "onBlur",
-    resolver: zodResolver(createPieceData),
-    defaultValues: createPieceData.parse(piece),
+    resolver: zodResolver(pieceFormData),
+    defaultValues: pieceFormData.parse(piece),
   });
 
   const router = useRouter();
@@ -38,7 +38,7 @@ export default function UpdatePieceForm({ piece }: { piece: PieceWithSpots }) {
     },
   );
 
-  function onSubmit(data: CreatePieceData) {
+  function onSubmit(data: PieceFormData) {
     mutate({ id: piece.id, update: data });
   }
 

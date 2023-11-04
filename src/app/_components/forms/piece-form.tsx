@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { Controller, type Control, type FormState } from "react-hook-form";
-import { type CreatePieceData } from "~/lib/validators/library";
+import { type PieceFormData } from "~/lib/validators/library";
 import { FolderPlusIcon } from "@heroicons/react/20/solid";
 import { SpotsArray } from "~/app/_components/forms/spots-array";
 
@@ -11,8 +11,8 @@ export default function PieceFormFields({
   isUpdating,
   backTo = "/library/pieces",
 }: {
-  control: Control<CreatePieceData>;
-  formState: FormState<CreatePieceData>;
+  control: Control<PieceFormData>;
+  formState: FormState<PieceFormData>;
   isUpdating: boolean;
   backTo?: string;
 }) {

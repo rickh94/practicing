@@ -5,4 +5,4 @@ export const updateUserData = z.object({
   email: z.string().email(),
 });
 
-type UserInfo = z.infer<typeof updateUserData>;
+export type UserInfo = z.infer<typeof updateUserData>;

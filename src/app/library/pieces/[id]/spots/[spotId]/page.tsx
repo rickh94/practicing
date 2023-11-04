@@ -57,7 +57,7 @@ export default async function Page({
         </div>
         <div className="flex justify-end gap-2">
           <Link
-            href={`/library/pieces/${spot.piece.id}/spot/${spot.id}/edit`}
+            href={`/library/pieces/${spot.piece.id}/spots/${spot.id}/edit`}
             className="focusable flex items-center justify-center gap-1 rounded-xl bg-amber-700/10 px-4 py-2 font-semibold text-amber-800  transition duration-200 hover:bg-amber-700/20"
           >
             <PencilIcon className="h-6 w-6" />
