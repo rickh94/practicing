@@ -21,18 +21,18 @@ export async function saveChallenge({
   userID: string;
 }) {
   const cryptChallenge = encryptText(challenge);
-  await redis.set(`${rpID}-${userID}-challenge`, cryptChallenge, {
+  await redis.set(`${rpID}:${userID}:challenge`, cryptChallenge, {
     ex: 60 * 5,
   });
 }
 
 export async function getChallenge(userID: string): Promise<string | null> {
   const cryptChallenge = await redis.get<string | null>(
-    `${rpID}-${userID}-challenge`,
+    `${rpID}:${userID}:challenge`,
   );
   if (!cryptChallenge) {
     return null;
   }
-  await redis.del(`${rpID}-${userID}-challenge`);
+  await redis.del(`${rpID}:${userID}:challenge`);
   return decryptText(cryptChallenge);
 }
