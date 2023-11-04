@@ -12,6 +12,7 @@ import {
 } from "~/app/_components/containers";
 import type { BasicPiece, BasicSpot } from "~/lib/validators/library";
 import { api } from "~/trpc/server";
+import { SmallSpotCard } from "../SmallSpotCard";
 
 // TODO: implement edit and delete for pieces
 
@@ -154,24 +155,21 @@ function Spots({ spots, pieceId }: { spots: BasicSpot[]; pieceId: string }) {
           .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
           .map((spot) => (
             <li key={spot.id}>
-              <Link
-                href={`/library/pieces/${pieceId}/spots/${spot.id}`}
-                className="focusable flex justify-between rounded-xl border border-neutral-500 bg-white/80 px-4 py-2 text-neutral-700 hover:bg-white hover:text-black"
-              >
-                <div className="flex flex-grow flex-col">
-                  <h3 className="text-lg font-bold">{spot.name}</h3>
-                  <p className="text-sm">
-                    Measures: <em className="italic">{spot.measures}</em>
-                  </p>
-                  <p className="text-sm">
-                    Stage: <em className="italic">{spot.stage}</em>
-                  </p>
-                </div>
-                <ArrowTopRightOnSquareIcon className="mt-4 h-6 w-6" />
-                <span className="sr-only">View Spot</span>
-              </Link>
+              <SmallSpotCard spot={spot} pieceId={pieceId} />
             </li>
           ))}
+        <li>
+          <Link
+            href={`/library/pieces/${pieceId}/spots/add`}
+            className="focusable flex h-full items-center justify-between rounded-xl border border-dashed border-neutral-500 bg-white/50 px-4 py-6 text-neutral-700 hover:bg-white/90 hover:text-black"
+          >
+            <div className="flex h-full flex-grow flex-col items-center justify-center">
+              <h3 className="text-lg font-bold">Add Spot</h3>
+            </div>
+            <ArrowTopRightOnSquareIcon className="h-6 w-6" />
+            <span className="sr-only">Create Spot</span>
+          </Link>
+        </li>
       </ul>
     </div>
   );

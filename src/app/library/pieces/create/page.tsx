@@ -18,7 +18,7 @@ export default function CreatePiece() {
           ]}
         />
       </div>
-      <div className="w-full sm:container">
+      <div className="w-full sm:mx-auto sm:max-w-6xl">
         <CreatePieceForm />
       </div>
     </>

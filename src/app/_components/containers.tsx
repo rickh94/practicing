@@ -49,3 +49,22 @@ export function NarrowPageContainer({
     </div>
   );
 }
+
+export function FiveColumnPageContainer({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "relative grid w-full grid-cols-1 gap-x-2 gap-y-4 sm:max-w-6xl md:grid-cols-5",
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
+}

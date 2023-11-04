@@ -8,6 +8,7 @@ import { DocumentPlusIcon, ViewColumnsIcon } from "@heroicons/react/20/solid";
 import Breadcrumbs from "~/app/_components/breadcrumb";
 
 // TODO: recently practiced, practice plan for the day, spots, pieces
+// TODO: fix weird middle size layout bug
 
 export default async function Dashboard() {
   const session = await getServerAuthSession();

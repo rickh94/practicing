@@ -4,36 +4,28 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import {
-  createPieceData,
+  type PieceWithSpots,
   type CreatePieceData,
+  createPieceData,
 } from "~/lib/validators/library";
 import { api } from "~/trpc/react";
 import PieceFormFields from "~/app/_components/forms/piece-form";
 
-export default function CreatePieceForm() {
+export default function UpdatePieceForm({ piece }: { piece: PieceWithSpots }) {
   const { control, handleSubmit, formState } = useForm<CreatePieceData>({
     mode: "onBlur",
     reValidateMode: "onBlur",
     resolver: zodResolver(createPieceData),
-    defaultValues: {
-      title: "",
-      description: "",
-      composer: "",
-      recordingLink: "",
-      practiceNotes: "",
-      spots: [],
-    },
+    defaultValues: createPieceData.parse(piece),
   });
 
   const router = useRouter();
-  const { mutate, isLoading: isUpdating } = api.library.createPiece.useMutation(
+  const { mutate, isLoading: isUpdating } = api.library.updatePiece.useMutation(
     {
-      onSuccess: (data) => {
-        if (!data) {
-          toast.error("Missing data in return");
-          return;
-        }
-        router.push(`/library/pieces/${data.id}`);
+      onSuccess: () => {
+        toast.success("Piece updated");
+        router.push(`/library/pieces/${piece.id}`);
+        router.refresh();
       },
       onError: (e) => {
         const errorMessage = e.data?.zodError?.fieldErrors.content;
@@ -47,7 +39,7 @@ export default function CreatePieceForm() {
   );
 
   function onSubmit(data: CreatePieceData) {
-    mutate(data);
+    mutate({ id: piece.id, update: data });
   }
 
   return (

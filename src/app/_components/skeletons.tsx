@@ -144,9 +144,13 @@ export function PieceInfoSkeleton() {
   );
 }
 
-export function PieceSpotsSkeleton() {
+export function PieceSpotsSkeleton({
+  extraClasses = "",
+}: {
+  extraClasses?: string;
+}) {
   return (
-    <div className="rounded-xl bg-neutral-700/5 p-4">
+    <div className={cn("rounded-xl bg-neutral-700/5 p-4", extraClasses)}>
       <div className="flex flex-col">
         <h2 className="py-1 text-center text-2xl font-bold">Spots</h2>
       </div>

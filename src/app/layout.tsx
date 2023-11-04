@@ -44,7 +44,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`font-sans ${workSans.variable} antialiased`}>
-        <Toaster position="bottom-right" />
+        <Toaster position="top-center" />
         <NextSSRPlugin routerConfig={extractRouterConfig(pFileRouter)} />
         <TRPCReactProvider headers={headers()}>{children}</TRPCReactProvider>
       </body>

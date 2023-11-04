@@ -13,6 +13,7 @@ import {
   NarrowPageContainer,
 } from "~/app/_components/containers";
 
+// TODO: figure out how to delete files from uploadthing on delete
 // TODO: implement edit and delete for spots
 export default async function Page({
   params,

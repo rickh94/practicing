@@ -1,14 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  useForm,
-  Controller,
-  type UseFieldArrayUpdate,
-  type FieldArrayWithId,
-} from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import {
   type CreateNotesPrompt,
   type CreateTextPrompt,
-  type CreatePieceData,
   type CreateAudioPrompt,
   createAudioPrompt,
   createNotesPrompt,
@@ -45,6 +39,9 @@ export function AudioUploader({ setUrl }: { setUrl: (url: string) => void }) {
         button: "Upload Audio",
       }}
       endpoint="audioUploader"
+      onUploadBegin={() => {
+        toast.loading("Uploading audio...");
+      }}
       onClientUploadComplete={(res) => {
         if (!res?.[0]) {
           toast.error("Error uploading audio");
@@ -61,13 +58,11 @@ export function AudioUploader({ setUrl }: { setUrl: (url: string) => void }) {
 }
 
 export function AddAudioPrompt({
-  update,
-  index,
+  save,
   item,
 }: {
-  update: UseFieldArrayUpdate<CreatePieceData>;
-  index: number;
-  item: FieldArrayWithId<CreatePieceData, "spots">;
+  save: (data: CreateAudioPrompt) => void;
+  item?: { description: string; url: string } | null;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const { control, handleSubmit, setValue } = useForm<CreateAudioPrompt>({
@@ -75,16 +70,13 @@ export function AddAudioPrompt({
     reValidateMode: "onBlur",
     resolver: zodResolver(createAudioPrompt),
     defaultValues: {
-      url: item.audioPrompt?.url ?? "",
-      description: item.audioPrompt?.description ?? "",
+      url: item?.url ?? "",
+      description: item?.description ?? "",
     },
   });
 
   function onSubmit(data: CreateAudioPrompt) {
-    update(index, {
-      ...item,
-      audioPrompt: data,
-    });
+    save(data);
     setIsOpen(false);
   }
 
@@ -100,12 +92,12 @@ export function AddAudioPrompt({
         className={cn(
           "focusable flex items-center justify-center gap-1 rounded-xl py-2 font-semibold text-yellow-800  transition duration-200 hover:bg-yellow-700/20",
           {
-            "bg-yellow-700/10": !item.audioPrompt,
-            "bg-yellow-500/50": item.audioPrompt,
+            "bg-yellow-700/10": !item,
+            "bg-yellow-500/50": item,
           },
         )}
       >
-        {item.audioPrompt ? (
+        {item ? (
           <>
             <span className="sr-only">Checked</span>
             <CheckIcon className="h-4 w-4" />
@@ -229,13 +221,11 @@ export function AddAudioPrompt({
 }
 
 export function AddTextPrompt({
-  update,
-  index,
+  save,
   item,
 }: {
-  update: UseFieldArrayUpdate<CreatePieceData>;
-  index: number;
-  item: FieldArrayWithId<CreatePieceData, "spots">;
+  save: (data: CreateTextPrompt) => void;
+  item?: { description: string; text: string } | null;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const { control, handleSubmit } = useForm<CreateTextPrompt>({
@@ -243,16 +233,13 @@ export function AddTextPrompt({
     reValidateMode: "onBlur",
     resolver: zodResolver(createTextPrompt),
     defaultValues: {
-      text: item.textPrompt?.text ?? "",
-      description: item.textPrompt?.description ?? "",
+      text: item?.text ?? "",
+      description: item?.description ?? "",
     },
   });
 
   function onSubmit(data: CreateTextPrompt) {
-    update(index, {
-      ...item,
-      textPrompt: data,
-    });
+    save(data);
     setIsOpen(false);
   }
 
@@ -264,12 +251,12 @@ export function AddTextPrompt({
         className={cn(
           "focusable flex items-center justify-center gap-1 rounded-xl py-2 font-semibold text-lime-800  transition duration-200 hover:bg-lime-700/20",
           {
-            "bg-lime-700/10": !item.textPrompt,
-            "bg-lime-500/50": item.textPrompt,
+            "bg-lime-700/10": !item,
+            "bg-lime-500/50": item,
           },
         )}
       >
-        {item.textPrompt ? (
+        {item ? (
           <>
             <span className="sr-only">Checked</span>
             <CheckIcon className="h-4 w-4" />
@@ -389,13 +376,11 @@ export function AddTextPrompt({
 }
 
 export function AddNotesPrompt({
-  update,
-  index,
+  save,
   item,
 }: {
-  update: UseFieldArrayUpdate<CreatePieceData>;
-  index: number;
-  item: FieldArrayWithId<CreatePieceData, "spots">;
+  save: (data: CreateNotesPrompt) => void;
+  item?: { description: string; notes: string } | null;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const { control, handleSubmit } = useForm<CreateNotesPrompt>({
@@ -403,16 +388,13 @@ export function AddNotesPrompt({
     reValidateMode: "onBlur",
     resolver: zodResolver(createNotesPrompt),
     defaultValues: {
-      notes: item.notesPrompt?.notes ?? "",
-      description: item.notesPrompt?.description ?? "",
+      notes: item?.notes ?? "",
+      description: item?.description ?? "",
     },
   });
 
   function onSubmit(data: CreateNotesPrompt) {
-    update(index, {
-      ...item,
-      notesPrompt: data,
-    });
+    save(data);
     setIsOpen(false);
   }
 
@@ -424,12 +406,12 @@ export function AddNotesPrompt({
         className={cn(
           "focusable flex items-center justify-center gap-1 rounded-xl bg-sky-700/10 py-2 font-semibold text-sky-800  transition duration-200 hover:bg-sky-700/20",
           {
-            "bg-sky-700/10": !item.notesPrompt,
-            "bg-sky-500/50": item.notesPrompt,
+            "bg-sky-700/10": !item,
+            "bg-sky-500/50": item,
           },
         )}
       >
-        {item.notesPrompt ? (
+        {item ? (
           <>
             <span className="sr-only">Checked</span>
             <CheckIcon className="h-4 w-4" />
@@ -517,7 +499,10 @@ export function AddNotesPrompt({
                               </div>
                               {/* TODO: add link to abcjs */}
                               <div className="h-[100px]">
-                                <NotesDisplay notes={field.value} />
+                                <NotesDisplay
+                                  notes={field.value}
+                                  responsive="resize"
+                                />
                               </div>
                             </>
                           )}
