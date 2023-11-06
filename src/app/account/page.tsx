@@ -7,12 +7,10 @@ import UserInfoDisplay from "./userInfoDisplay";
 import { PasskeySkeleton } from "../_components/skeletons";
 import { TwoColumnPageContainer } from "../_components/containers";
 
-// TODO: make skeletons, maybe move userInfo query down.
-
 export default async function Page() {
   const session = await getServerAuthSession();
   if (!session?.user) {
-    redirect("/login");
+    redirect("/api/auth/signin");
   }
 
   return (

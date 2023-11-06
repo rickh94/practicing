@@ -5,8 +5,9 @@ import { LeftLink, RightLink } from "./links";
 import { Suspense } from "react";
 import { LinkSkeleton } from "../_components/skeletons";
 
+// TODO: switch button to account info link from logout link
+
 export default function Home() {
-  // artificial delay
   return (
     <>
       <PageHeroLayout

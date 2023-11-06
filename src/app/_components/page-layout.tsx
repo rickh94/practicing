@@ -46,7 +46,6 @@ export function PageHeroLayout({
   );
 }
 
-// TODO: proper nav menu
 export function PageColumnLayout({
   children,
   leftButton = null,

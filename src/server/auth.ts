@@ -47,6 +47,9 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
+  pages: {
+    signIn: "/signin",
+  },
   callbacks: {
     session: ({ session, token }: { session: Session; token: JWT }) => {
       if (token?.id && typeof token?.id === "string") {
@@ -144,9 +147,6 @@ export const authOptions: NextAuthOptions = {
       from: env.EMAIL_FROM,
     }),
   ],
-  pages: {
-    signIn: "/signin",
-  },
 };
 
 function getWebauthnBody(req: RequestInternal): AuthenticationResponseJSON {

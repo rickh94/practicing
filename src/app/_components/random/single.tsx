@@ -1,5 +1,5 @@
 import { Transition } from "@headlessui/react";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import { type RandomMode, type PracticeSummaryItem } from "~/lib/random";
 import Summary from "./summary";
 import { CreateSpots } from "./createSpots";
@@ -27,7 +27,7 @@ export default function SingleTab({
       leaveTo="opacity-0 -translate-x-full"
     >
       <Transition
-        className="absolute left-0 top-0 flex w-full flex-col items-center"
+        className="absolute left-0 top-0 w-full"
         show={mode === "setup"}
         enter="transition ease-out transform duration-200 delay-200"
         enterFrom="opacity-0 scale-95"
@@ -36,11 +36,13 @@ export default function SingleTab({
         leaveFrom="opacity-100 scale-100"
         leaveTo="opacity-0 scale-95"
       >
-        <SingleSetupForm
-          setSpots={setSpots}
-          spots={spots}
-          submit={() => setMode("practice")}
-        />
+        <div className="relative w-full sm:mx-auto sm:max-w-3xl">
+          <SingleSetupForm
+            setSpots={setSpots}
+            spots={spots}
+            submit={() => setMode("practice")}
+          />
+        </div>
       </Transition>
       <Transition
         show={mode === "practice"}
@@ -92,19 +94,19 @@ function SingleSetupForm({
 }) {
   return (
     <>
-      <div className="flex flex-col items-center justify-around py-2 sm:flex-row">
+      <div className="flex w-full flex-col py-4">
         <div>
-          <h1 className="py-1 text-center text-2xl font-bold sm:text-left">
+          <h1 className="py-1 text-left text-2xl font-bold">
             Single Random Spots
           </h1>
-          <p className="max-w-xl text-center text-lg sm:text-left">
-            Generates random spots to practice one at a time with an optional
-            animation. Enter the number of spots or the names individually
+          <p className="text-left text-base">
+            Enter your spots one at a time, or generate a bunch of spots at
+            once.
           </p>
         </div>
         <div className="flex-shrink-0 flex-grow"></div>
       </div>
-      <div className="grid grid-cols-1 gap-x-2 gap-y-4">
+      <div className="flex w-full flex-col gap-y-4">
         <CreateSpots setSpots={setSpots} spots={spots} />
         <div className="col-span-full my-16 flex w-full items-center justify-center">
           <button

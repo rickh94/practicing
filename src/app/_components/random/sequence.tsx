@@ -146,10 +146,11 @@ function SequenceSetupForm({
       <div className="py-2">
         <h1 className="py-1 text-2xl font-bold">Random Spots Sequence</h1>
         <p className="text-lg">
-          Generates a random sequence of spots to practice to practice.
+          Add some spots then choose whether to make them completely random, or
+          practice each one time.
         </p>
       </div>
-      <div className="grid grid-cols-1 gap-x-2 gap-y-4 sm:grid-cols-2">
+      <div className="flex flex-col gap-2">
         <div className="flex flex-col">
           <CreateSpots setSpots={setSpots} spots={spots} />
         </div>

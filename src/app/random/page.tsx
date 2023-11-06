@@ -7,8 +7,6 @@ import { BackToHome } from "~/app/_components/links";
 import Help from "~/app/_components/random/help";
 import TabChooser from "~/app/_components/random/tabchooser";
 
-// TODO: allow manual entry of spot names/numbers
-
 export default function Random() {
   // TODO: fix back button so it scrolls off
   const [helpOpen, setHelpOpen] = useState(false);
@@ -33,7 +31,7 @@ export default function Random() {
       >
         <Help open={helpOpen} setOpen={setHelpOpen} />
         <div className="flex items-center justify-center">
-          <h1 className="text-5xl font-extrabold tracking-tight text-neutral-800 sm:text-[3rem]">
+          <h1 className="text-4xl font-extrabold tracking-tight text-neutral-800">
             Practice Randomizer
           </h1>
         </div>

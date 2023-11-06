@@ -12,7 +12,6 @@ export const rpID =
 
 export const domain = `https://${rpID}`;
 
-// TODO: maybe encrypt challenges
 export async function saveChallenge({
   userID,
   challenge,
