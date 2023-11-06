@@ -126,10 +126,11 @@ export default function UserInfoForm({
             <button
               disabled={!formState.isValid}
               type="submit"
-              className={`focusable rounded-xl px-4 py-2 font-semibold text-neutral-800 transition duration-200 ${formState.isValid
+              className={`focusable rounded-xl px-4 py-2 font-semibold text-neutral-800 transition duration-200 ${
+                formState.isValid
                   ? "bg-emerald-700/10 hover:bg-emerald-700/20"
                   : "bg-neutral-700/50"
-                }`}
+              }`}
             >
               {isUpdating ? "Saving..." : "Save"}
             </button>

@@ -24,17 +24,19 @@ export default function TabChooser() {
           <div className="flex w-full items-center justify-center rounded-xl bg-neutral-700/10 p-1 sm:max-w-lg">
             <button
               type="button"
-              className={`w-1/2 rounded-xl py-2 transition-all duration-200 ${tab === "single" && "bg-neutral-700/20 font-semibold text-black"
-                }`}
+              className={`w-1/2 rounded-xl py-2 transition-all duration-200 ${
+                tab === "single" && "bg-neutral-700/20 font-semibold text-black"
+              }`}
               onClick={() => setTab("single")}
             >
               Single
             </button>
             <button
               type="button"
-              className={`w-1/2 rounded-xl py-2 transition-all duration-200 ${tab === "sequence" &&
+              className={`w-1/2 rounded-xl py-2 transition-all duration-200 ${
+                tab === "sequence" &&
                 "bg-neutral-700/20 font-semibold text-black"
-                }`}
+              }`}
               onClick={() => setTab("sequence")}
             >
               Sequence

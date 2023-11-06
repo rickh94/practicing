@@ -16,8 +16,9 @@ export default function RadioBox({
   return (
     <label
       htmlFor={`${name}-${value}`}
-      className={`focusable relative flex cursor-pointer rounded-xl py-3 pl-4 pr-2 ${selected ? " bg-neutral-700/20 shadow" : " bg-neutral-700/10"
-        }`}
+      className={`focusable relative flex cursor-pointer rounded-xl py-3 pl-4 pr-2 ${
+        selected ? " bg-neutral-700/20 shadow" : " bg-neutral-700/10"
+      }`}
     >
       <input
         type="radio"
@@ -32,8 +33,9 @@ export default function RadioBox({
       <span className="flex flex-1">
         <span className="flex-col">
           <span
-            className={`block text-sm text-neutral-800 ${selected ? "font-bold" : "font-semibold"
-              }`}
+            className={`block text-sm text-neutral-800 ${
+              selected ? "font-bold" : "font-semibold"
+            }`}
             id={`${name}-${value}-label`}
           >
             {text}
@@ -41,13 +43,15 @@ export default function RadioBox({
         </span>
       </span>
       <CheckCircleIcon
-        className={`ml-1 h-5 w-5 text-neutral-800 ${selected ? "" : " invisible"
-          }`}
+        className={`ml-1 h-5 w-5 text-neutral-800 ${
+          selected ? "" : " invisible"
+        }`}
         aria-hidden="true"
       />
       <span
-        className={`pointer-events-none absolute -inset-px rounded-xl border-2${selected ? " border-neutral-800" : " border-transparent"
-          }`}
+        className={`pointer-events-none absolute -inset-px rounded-xl border-2${
+          selected ? " border-neutral-800" : " border-transparent"
+        }`}
         aria-hidden="true"
       />
     </label>

@@ -80,10 +80,11 @@ export default function SignInComponent() {
           disabled={!isValid}
           onClick={handleSignIn}
           type="button"
-          className={`focusable rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 transition duration-200 ${isValid
+          className={`focusable rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 transition duration-200 ${
+            isValid
               ? "bg-neutral-700/10 shadow hover:bg-neutral-700/20"
               : "bg-neutral-700/50"
-            }`}
+          }`}
         >
           Sign in
         </button>
