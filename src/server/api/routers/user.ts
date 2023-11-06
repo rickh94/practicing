@@ -9,19 +9,39 @@ export const userRouter = createTRPCRouter({
   updateUserInfo: protectedProcedure
     .input(updateUserData)
     .mutation(async ({ ctx, input }) => {
-      await ctx.db
+      const oldUser = await ctx.db.query.users.findFirst({
+        where: (users, { eq }) => eq(users.id, ctx.session.user?.id),
+        columns: {
+          email: true,
+          emailVerified: true,
+        },
+      });
+      if (!oldUser) {
+        throw new TRPCError({
+          message: "User does not exist",
+          code: "BAD_REQUEST",
+        });
+      }
+      let emailVerified = oldUser.emailVerified;
+      if (input.email !== oldUser.email) {
+        emailVerified = null;
+      }
+      return await ctx.db
         .update(users)
         .set({
           name: input.name,
           email: input.email,
+          emailVerified: emailVerified,
         })
         .where(eq(users.id, ctx.session.user?.id))
         .returning({
           name: users.name,
           email: users.email,
+          emailVerified: users.emailVerified,
         });
     }),
   getUserInfo: protectedProcedure.query(async ({ ctx }) => {
+    console.log(ctx.session.user?.id);
     const user = await ctx.db.query.users.findFirst({
       where: (users, { eq }) => eq(users.id, ctx.session.user?.id),
     });

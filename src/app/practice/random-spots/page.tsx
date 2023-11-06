@@ -6,10 +6,9 @@ import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { BackToHome } from "~/app/_components/links";
 import Help from "~/app/_components/random/help";
 import TabChooser from "~/app/_components/random/tabchooser";
+import { TitleLinkMenu } from "~/app/_components/practicing/title-link-menu";
 
-// TODO: allow manual entry of spot names/numbers
-
-export default function Random() {
+export default function Page() {
   // TODO: fix back button so it scrolls off
   const [helpOpen, setHelpOpen] = useState(false);
   return (
@@ -33,9 +32,7 @@ export default function Random() {
       >
         <Help open={helpOpen} setOpen={setHelpOpen} />
         <div className="flex items-center justify-center">
-          <h1 className="text-5xl font-extrabold tracking-tight text-neutral-800 sm:text-[3rem]">
-            Practice Randomizer
-          </h1>
+          <TitleLinkMenu />
         </div>
         <TabChooser />
       </PageColumnLayout>

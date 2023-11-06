@@ -1,4 +1,3 @@
-import { Transition } from "@headlessui/react";
 import { CheckCircleIcon as CheckCircleSolid } from "@heroicons/react/20/solid";
 import { CheckCircleIcon as CheckCircleOutline } from "@heroicons/react/24/outline";
 import { useState, type Dispatch, type SetStateAction } from "react";
@@ -6,18 +5,35 @@ import RadioBox from "~/app/_components/radio";
 import { type PracticeSummaryItem, type RandomMode } from "~/lib/random";
 import { CreateSpots } from "./createSpots";
 import Summary from "./summary";
+import { cn } from "~/lib/util";
+import { AnimatePresence, motion } from "framer-motion";
+
+const variants = {
+  initial: {
+    scale: 0.95,
+    opacity: 0,
+  },
+  animate: {
+    scale: 1,
+    opacity: 1,
+    transition: { bounce: 0, duration: 0.2 },
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.95,
+    transition: { duration: 0.2, bounce: 0, from: 1 },
+  },
+};
 
 export default function SequenceTab({
-  show,
   mode,
   setMode,
 }: {
-  show: boolean;
   mode: RandomMode;
   setMode: (mode: RandomMode) => void;
 }) {
   const [fullyRandom, setFullyRandom] = useState(false);
-  const [spots, setSpots] = useState<{ name: string }[]>([]);
+  const [spots, setSpots] = useState<{ name: string; id: string }[]>([]);
   const [randomizedSpots, setRandomizedSpots] = useState<{ name: string }[]>(
     [],
   );
@@ -58,71 +74,43 @@ export default function SequenceTab({
   }
 
   return (
-    <Transition
-      show={show}
-      enter="transition ease-out transform duration-300"
-      enterFrom="opacity-0 translate-x-full"
-      enterTo="opacity-100 translate-x-0"
-      leave="transition ease-in transform duration-300"
-      leaveFrom="opacity-100 translate-x-0"
-      leaveTo="opacity-0 translate-x-full"
-    >
-      <Transition
-        className="absolute left-0 top-0 w-full"
-        show={mode === "setup"}
-        enter="transition ease-out transform duration-200 delay-200"
-        enterFrom="opacity-0 scale-95"
-        enterTo="opacity-100 scale-100"
-        leave="transition ease-in transform duration-200"
-        leaveFrom="opacity-100 scale-100"
-        leaveTo="opacity-0 scale-95"
-      >
-        <SequenceSetupForm
-          spots={spots}
-          setSpots={setSpots}
-          fullyRandom={fullyRandom}
-          setFullyRandom={setFullyRandom}
-          submit={submit}
-        />
-      </Transition>
-      <Transition
-        show={mode === "practice"}
-        className="absolute left-0 top-0 -mt-12 w-full"
-        enter="transition ease-out transform duration-200 delay-200"
-        enterFrom="opacity-0 scale-95"
-        enterTo="opacity-100 scale-100"
-        leave="transition ease-in transform duration-200"
-        leaveFrom="opacity-100 scale-100"
-        leaveTo="opacity-0 scale-95"
-      >
-        <SequencePractice
-          spots={randomizedSpots}
-          setup={() => setMode("setup")}
-          finish={(finalSummary) => {
-            setSummary(finalSummary);
-            setMode("summary");
-          }}
-          moreSpots={moreSpots}
-          fullyRandom={fullyRandom}
-        />
-      </Transition>
-      <Transition
-        show={mode === "summary"}
-        className="absolute left-0 top-0 -mt-12 w-full"
-        enter="transition ease-out transform duration-200 delay-200"
-        enterFrom="opacity-0 scale-95"
-        enterTo="opacity-100 scale-100"
-        leave="transition ease-in transform duration-200"
-        leaveFrom="opacity-100 scale-100"
-        leaveTo="opacity-0 scale-95"
-      >
-        <Summary
-          summary={summary}
-          setup={() => setMode("setup")}
-          practice={() => setMode("practice")}
-        />
-      </Transition>
-    </Transition>
+    <div className="absolute left-0 top-0 w-full sm:mx-auto sm:max-w-5xl">
+      <Content
+        component={
+          {
+            setup: (
+              <SequenceSetupForm
+                spots={spots}
+                setSpots={setSpots}
+                fullyRandom={fullyRandom}
+                setFullyRandom={setFullyRandom}
+                submit={submit}
+              />
+            ),
+            practice: (
+              <SequencePractice
+                spots={randomizedSpots}
+                setup={() => setMode("setup")}
+                finish={(finalSummary) => {
+                  setSummary(finalSummary);
+                  setMode("summary");
+                }}
+                moreSpots={moreSpots}
+                fullyRandom={fullyRandom}
+              />
+            ),
+            summary: (
+              <Summary
+                summary={summary}
+                setup={() => setMode("setup")}
+                practice={() => setMode("practice")}
+              />
+            ),
+          }[mode]
+        }
+        id={mode}
+      />
+    </div>
   );
 }
 
@@ -133,8 +121,8 @@ function SequenceSetupForm({
   setFullyRandom,
   submit,
 }: {
-  setSpots: Dispatch<SetStateAction<{ name: string }[]>>;
-  spots: { name: string }[];
+  setSpots: Dispatch<SetStateAction<{ name: string; id: string }[]>>;
+  spots: { name: string; id: string }[];
   fullyRandom: boolean;
   setFullyRandom: (fullyRandom: boolean) => void;
   submit: () => void;
@@ -143,13 +131,14 @@ function SequenceSetupForm({
 
   return (
     <>
-      <div className="py-2">
+      <div className="py-4">
         <h1 className="py-1 text-2xl font-bold">Random Spots Sequence</h1>
-        <p className="text-lg">
-          Generates a random sequence of spots to practice to practice.
+        <p className="text-left text-base">
+          Add some spots then choose whether to make them completely random, or
+          practice each spot one time.
         </p>
       </div>
-      <div className="grid grid-cols-1 gap-x-2 gap-y-4 sm:grid-cols-2">
+      <div className="flex flex-col gap-2">
         <div className="flex flex-col">
           <CreateSpots setSpots={setSpots} spots={spots} />
         </div>
@@ -181,8 +170,15 @@ function SequenceSetupForm({
         </div>
         <div className="col-span-full my-16 flex w-full items-center justify-center">
           <button
+            disabled={spots.length === 0}
             type="button"
-            className="focusable rounded-xl bg-neutral-700/10 px-6 py-3 text-2xl font-bold text-neutral-900 transition duration-200 hover:bg-neutral-700/20 sm:px-8 sm:py-4 sm:text-4xl"
+            className={cn(
+              "focusable rounded-xl px-6 py-3 text-2xl font-bold text-neutral-900 transition duration-200 sm:px-8 sm:py-4 sm:text-4xl",
+              {
+                "bg-neutral-700/10 hover:bg-neutral-700/20": spots.length > 0,
+                "pointer-events-none bg-neutral-700/50": spots.length === 0,
+              },
+            )}
             onClick={submit}
           >
             Start Practicing
@@ -229,7 +225,7 @@ function SequencePractice({
 
   return (
     <div className="relative mb-8 grid grid-cols-1">
-      <div className="absolute left-0 top-0 sm:p-8">
+      <div className="absolute left-0 top-0 sm:py-4">
         <button
           onClick={setup}
           type="button"
@@ -299,5 +295,28 @@ function SpotItem({ spot }: { spot: { name: string } }) {
         )}
       </button>
     </li>
+  );
+}
+
+function Content({
+  component,
+  id,
+}: {
+  component: React.ReactNode;
+  id: RandomMode;
+}) {
+  return (
+    <AnimatePresence initial={false} mode="wait">
+      <motion.div
+        className="relative"
+        key={id}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        variants={variants}
+      >
+        {component}
+      </motion.div>
+    </AnimatePresence>
   );
 }

@@ -14,8 +14,9 @@ export default async function Dashboard() {
   const session = await getServerAuthSession();
 
   if (!session?.user?.id) {
-    return redirect("/login");
+    return redirect("/api/auth/signin");
   }
+
   return (
     <>
       <div className="flex items-center justify-center">

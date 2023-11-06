@@ -1,5 +1,5 @@
 import { getServerAuthSession } from "~/server/auth";
-import { LibraryLink, LoginLink, LogoutLink } from "~/app/_components/links";
+import { AccountLink, LibraryLink, LoginLink } from "~/app/_components/links";
 
 export async function RightLink() {
   const session = await getServerAuthSession();
@@ -8,5 +8,5 @@ export async function RightLink() {
 
 export async function LeftLink() {
   const session = await getServerAuthSession();
-  return session?.user ? <LogoutLink /> : null;
+  return session?.user ? <AccountLink /> : null;
 }

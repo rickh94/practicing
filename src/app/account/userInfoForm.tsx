@@ -1,18 +1,21 @@
-import { updateUserData, type UserInfo } from "~/lib/validators/user";
-import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { api } from "~/trpc/react";
-import toast from "react-hot-toast";
-import directApi from "~/trpc/direct";
 import { useRouter } from "next/navigation";
+import { type Dispatch, type SetStateAction } from "react";
+import { Controller, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { UserInfoSkeleton } from "~/app/_components/skeletons";
+import { type UserInfo, updateUserData } from "~/lib/validators/user";
+import directApi from "~/trpc/direct";
+import { api } from "~/trpc/react";
 // TODO: reset email verified if email changes
 // TODO: fix form buttons on different sizes
 
 export default function UserInfoForm({
   stopEditing,
+  setNeedsReverify,
 }: {
   stopEditing: () => void;
+  setNeedsReverify: Dispatch<SetStateAction<boolean>>;
 }) {
   const { control, handleSubmit, reset, clearErrors, formState } =
     useForm<UserInfo>({
@@ -32,11 +35,19 @@ export default function UserInfoForm({
   // TODO: add loader for update
   const { mutate, isLoading: isUpdating } = api.user.updateUserInfo.useMutation(
     {
-      onSuccess: () => {
+      onSuccess: (data) => {
         router.refresh();
         clearErrors();
         reset();
         stopEditing();
+        if (!data[0]?.emailVerified) {
+          setNeedsReverify(true);
+          toast.success(
+            "Updated! You’ll need to sign out and back in to verify your email",
+          );
+        } else {
+          toast.success("User info updated");
+        }
       },
       onError: (e) => {
         const errorMessage = e.data?.zodError?.fieldErrors.content;

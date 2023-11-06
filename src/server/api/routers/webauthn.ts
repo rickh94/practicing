@@ -18,15 +18,8 @@ import { type AuthenticatorTransportFuture } from "@simplewebauthn/typescript-ty
 
 export const webauthnRouter = createTRPCRouter({
   handlePreRegister: protectedProcedure.query(async ({ ctx }) => {
-    const email = ctx.session.user?.email;
-    if (!email) {
-      throw new TRPCError({
-        message: "User does not have associated email",
-        code: "BAD_REQUEST",
-      });
-    }
     const user = await ctx.db.query.users.findFirst({
-      where: (users, { eq }) => eq(users.email, email),
+      where: (users, { eq }) => eq(users.id, ctx.session.user?.id),
     });
     if (!user) {
       throw new TRPCError({
@@ -184,6 +177,9 @@ export const webauthnRouter = createTRPCRouter({
           code: "BAD_REQUEST",
           message: "Invalid user",
         });
+      }
+      if (!user.emailVerified) {
+        return null;
       }
       const credentials = await ctx.db.query.credentials.findMany({
         where: (credentials, { eq }) => eq(credentials.userId, user.id),

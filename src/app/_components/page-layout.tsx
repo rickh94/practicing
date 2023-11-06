@@ -30,7 +30,7 @@ export function PageHeroLayout({
   }
   return (
     <main
-      className={`flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-[#ffefce] to-[#ffffff] ${workSans.className}`}
+      className={`flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-[#ffefce] to-white ${workSans.className}`}
     >
       <div className="absolute left-0 top-0 w-full p-4">
         <div className={`mx-auto flex sm:container ${justifyClass()}`}>
@@ -46,7 +46,6 @@ export function PageHeroLayout({
   );
 }
 
-// TODO: proper nav menu
 export function PageColumnLayout({
   children,
   leftButton = null,

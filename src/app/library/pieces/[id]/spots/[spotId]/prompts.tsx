@@ -12,7 +12,7 @@ import type {
   AudioPrompt,
   NotesPrompt,
 } from "~/lib/validators/library";
-import { cn } from "~/app/lib/utils";
+import { cn } from "~/lib/util";
 import NotesDisplay from "~/app/_components/AbcNotesDisplay";
 
 export function AudioPromptReveal({

@@ -37,3 +37,7 @@ export function generatePagination(currentPage: number, totalPages: number) {
     totalPages,
   ];
 }
+
+export function uniqueID() {
+  return `${Math.floor(Math.random() * Math.random() * Date.now())}`;
+}

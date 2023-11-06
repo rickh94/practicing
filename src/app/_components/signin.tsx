@@ -16,9 +16,7 @@ export default function SignInComponent() {
   async function handleSignIn() {
     try {
       await signInWithWebauthn();
-      console.log("signin complete");
     } catch (error) {
-      console.log(error);
       await signInWithEmail();
     }
   }
@@ -37,7 +35,7 @@ export default function SignInComponent() {
   async function signInWithWebauthn() {
     const options = await directApi.webauthn.startAuthentication.query(email);
     if (!options) {
-      alert("error getting options");
+      throw new Error("No options");
     }
     const credential = await startAuthentication(options);
 
@@ -92,4 +90,3 @@ export default function SignInComponent() {
     </>
   );
 }
-// TODO: restyle this

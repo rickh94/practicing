@@ -6,10 +6,7 @@ import { PieceListSkeleton } from "~/app/_components/skeletons";
 import Link from "next/link";
 import { DocumentPlusIcon } from "@heroicons/react/20/solid";
 import Breadcrumbs from "~/app/_components/breadcrumb";
-import {
-  BreadcrumbContainer,
-  TwoColumnPageContainer,
-} from "~/app/_components/containers";
+import { BreadcrumbContainer } from "~/app/_components/containers";
 
 export default async function AllPieces({
   searchParams,

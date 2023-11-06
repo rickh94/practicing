@@ -1,83 +1,72 @@
 import { Transition } from "@headlessui/react";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import { type RandomMode, type PracticeSummaryItem } from "~/lib/random";
 import Summary from "./summary";
 import { CreateSpots } from "./createSpots";
+import { cn } from "~/lib/util";
+import { AnimatePresence, motion } from "framer-motion";
+
+const variants = {
+  initial: {
+    scale: 0.95,
+    opacity: 0,
+  },
+  animate: {
+    scale: 1,
+    opacity: 1,
+    transition: { bounce: 0, duration: 0.2 },
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.95,
+    transition: { duration: 0.2, bounce: 0, from: 1 },
+  },
+};
 
 export default function SingleTab({
-  show,
   mode,
   setMode,
 }: {
-  show: boolean;
   mode: RandomMode;
   setMode: (mode: RandomMode) => void;
 }) {
-  const [spots, setSpots] = useState<{ name: string }[]>([]);
+  const [spots, setSpots] = useState<{ name: string; id: string }[]>([]);
   const [summary, setSummary] = useState<PracticeSummaryItem[]>([]);
 
   return (
-    <Transition
-      show={show}
-      enter="transition ease-out transform duration-300"
-      enterFrom="opacity-0 -translate-x-full"
-      enterTo="opacity-100 translate-x-0"
-      leave="transition ease-in transform duration-300"
-      leaveFrom="opacity-100 translate-x-0"
-      leaveTo="opacity-0 -translate-x-full"
-    >
-      <Transition
-        className="absolute left-0 top-0 flex w-full flex-col items-center"
-        show={mode === "setup"}
-        enter="transition ease-out transform duration-200 delay-200"
-        enterFrom="opacity-0 scale-95"
-        enterTo="opacity-100 scale-100"
-        leave="transition ease-in transform duration-200"
-        leaveFrom="opacity-100 scale-100"
-        leaveTo="opacity-0 scale-95"
-      >
-        <SingleSetupForm
-          setSpots={setSpots}
-          spots={spots}
-          submit={() => setMode("practice")}
-        />
-      </Transition>
-      <Transition
-        show={mode === "practice"}
-        className="absolute left-0 top-0 -mt-12 w-full"
-        enter="transition ease-out transform duration-200 delay-200"
-        enterFrom="opacity-0 scale-95"
-        enterTo="opacity-100 scale-100"
-        leave="transition ease-in transform duration-200"
-        leaveFrom="opacity-100 scale-100"
-        leaveTo="opacity-0 scale-95"
-      >
-        <SinglePractice
-          spots={spots}
-          setup={() => setMode("setup")}
-          finish={(finalSummary) => {
-            setSummary(finalSummary);
-            setMode("summary");
-          }}
-        />
-      </Transition>
-      <Transition
-        show={mode === "summary"}
-        className="absolute left-0 top-0 -mt-12 w-full"
-        enter="transition ease-out transform duration-200 delay-200"
-        enterFrom="opacity-0 scale-95"
-        enterTo="opacity-100 scale-100"
-        leave="transition ease-in transform duration-200"
-        leaveFrom="opacity-100 scale-100"
-        leaveTo="opacity-0 scale-95"
-      >
-        <Summary
-          summary={summary}
-          setup={() => setMode("setup")}
-          practice={() => setMode("practice")}
-        />
-      </Transition>
-    </Transition>
+    <div className="absolute left-0 top-0 w-full sm:mx-auto sm:max-w-5xl">
+      <Content
+        component={
+          {
+            setup: (
+              <SingleSetupForm
+                setSpots={setSpots}
+                spots={spots}
+                submit={() => setMode("practice")}
+              />
+            ),
+            practice: (
+              <SinglePractice
+                spots={spots}
+                setup={() => setMode("setup")}
+                finish={(finalSummary) => {
+                  setSummary(finalSummary);
+                  setMode("summary");
+                }}
+              />
+            ),
+            summary: (
+              <Summary
+                summary={summary}
+                setup={() => setMode("setup")}
+                practice={() => setMode("practice")}
+              />
+            ),
+          }[mode]
+        }
+        id={mode}
+      />
+    </div>
   );
 }
 
@@ -86,30 +75,37 @@ function SingleSetupForm({
   spots,
   submit,
 }: {
-  setSpots: Dispatch<SetStateAction<{ name: string }[]>>;
+  setSpots: Dispatch<SetStateAction<{ name: string; id: string }[]>>;
   submit: () => void;
-  spots: { name: string }[];
+  spots: { name: string; id: string }[];
 }) {
   return (
     <>
-      <div className="flex flex-col items-center justify-around py-2 sm:flex-row">
+      <div className="flex w-full flex-col py-4">
         <div>
-          <h1 className="py-1 text-center text-2xl font-bold sm:text-left">
+          <h1 className="py-1 text-left text-2xl font-bold">
             Single Random Spots
           </h1>
-          <p className="max-w-xl text-center text-lg sm:text-left">
-            Generates random spots to practice one at a time with an optional
-            animation. Enter the number of spots or the names individually
+          <p className="text-left text-base">
+            Enter your spots one at a time, or generate a bunch of spots at
+            once.
           </p>
         </div>
         <div className="flex-shrink-0 flex-grow"></div>
       </div>
-      <div className="grid grid-cols-1 gap-x-2 gap-y-4">
+      <div className="flex w-full flex-col gap-y-4">
         <CreateSpots setSpots={setSpots} spots={spots} />
         <div className="col-span-full my-16 flex w-full items-center justify-center">
           <button
+            disabled={spots.length === 0}
             type="button"
-            className="focusable rounded-xl bg-neutral-700/10 px-6 py-3 text-2xl font-bold text-neutral-900 transition duration-200 hover:bg-neutral-700/20 sm:px-8 sm:py-4 sm:text-4xl"
+            className={cn(
+              "focusable rounded-xl px-6 py-3 text-2xl font-bold text-neutral-900 transition duration-200 sm:px-8 sm:py-4 sm:text-4xl",
+              {
+                "bg-neutral-700/10 hover:bg-neutral-700/20": spots.length > 0,
+                "pointer-events-none bg-neutral-700/50": spots.length === 0,
+              },
+            )}
             onClick={submit}
           >
             Start Practicing
@@ -125,7 +121,7 @@ function SinglePractice({
   setup,
   finish,
 }: {
-  spots: { name: string }[];
+  spots: { name: string; id: string }[];
   setup: () => void;
   finish: (summary: PracticeSummaryItem[]) => void;
 }) {
@@ -170,8 +166,8 @@ function SinglePractice({
   }
 
   return (
-    <div className="relative mb-8 grid grid-cols-1">
-      <div className="absolute left-0 top-0 sm:p-8">
+    <div className="relative grid grid-cols-1">
+      <div className="absolute left-0 top-0 sm:py-4">
         <button
           onClick={setup}
           type="button"
@@ -187,7 +183,7 @@ function SinglePractice({
         </div>
         <div className="relative h-32 w-full">
           <Transition
-            className="absolute left-1/2 top-0 mt-4 w-max -translate-x-1/2 transform rounded-xl border border-neutral-500 bg-neutral-400/10 px-8 pb-5 pt-4 text-3xl font-bold text-black shadow-lg sm:pb-8 sm:pt-7 sm:text-[3rem]"
+            className="absolute left-1/2 top-0 mt-4 w-max -translate-x-1/2 transform rounded-xl border border-neutral-500 bg-white/90 px-8 pb-5 pt-4 text-3xl font-bold text-black shadow-lg sm:pb-8 sm:pt-7 sm:text-[3rem]"
             show={!changingSpot}
             enter="transition ease-out transform duration-100"
             enterFrom="opacity-0 scale-95"
@@ -219,5 +215,28 @@ function SinglePractice({
         </div>
       </div>
     </div>
+  );
+}
+
+function Content({
+  component,
+  id,
+}: {
+  component: React.ReactNode;
+  id: RandomMode;
+}) {
+  return (
+    <AnimatePresence initial={false} mode="wait">
+      <motion.div
+        className="relative"
+        key={id}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        variants={variants}
+      >
+        {component}
+      </motion.div>
+    </AnimatePresence>
   );
 }

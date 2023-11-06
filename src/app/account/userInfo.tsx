@@ -3,9 +3,11 @@ import { Suspense, useState } from "react";
 import UserInfoForm from "./userInfoForm";
 import { Transition } from "@headlessui/react";
 import { UserInfoSkeleton } from "../_components/skeletons";
+import { signOut } from "next-auth/react";
 
 export default function UserInfo({ display }: { display: React.ReactNode }) {
   const [isEditing, setIsEditing] = useState(false);
+  const [needsReverify, setNeedsReverify] = useState(false);
   return (
     <div className="h-72 rounded-xl bg-neutral-700/5 p-4 sm:h-64">
       <div className="px-4 pb-1 sm:px-0">
@@ -27,7 +29,10 @@ export default function UserInfo({ display }: { display: React.ReactNode }) {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <UserInfoForm stopEditing={() => setIsEditing(false)} />
+          <UserInfoForm
+            stopEditing={() => setIsEditing(false)}
+            setNeedsReverify={setNeedsReverify}
+          />
         </Transition>
         <Transition
           className="absolute left-0 top-0 w-full"
@@ -49,6 +54,16 @@ export default function UserInfo({ display }: { display: React.ReactNode }) {
           </button>
         </Transition>
       </div>
+      {needsReverify && (
+        <div className="col-span-full mt-72 flex w-full items-center justify-center px-4 py-8">
+          <button
+            className="focusable rounded-xl bg-amber-700/10 px-8 py-4 text-2xl font-semibold text-amber-800  transition duration-200 hover:bg-amber-700/20"
+            onClick={() => signOut()}
+          >
+            Sign out to verify your email
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -19,7 +19,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
 import { workSans } from "~/app/_components/page-layout";
 import NotesDisplay from "~/app/_components/AbcNotesDisplay";
-import { cn } from "~/app/lib/utils";
+import { cn } from "~/lib/util";
 
 import { UploadButton } from "~/app/_components/uploadthing";
 import toast from "react-hot-toast";

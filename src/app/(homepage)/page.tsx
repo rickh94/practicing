@@ -5,8 +5,9 @@ import { LeftLink, RightLink } from "./links";
 import { Suspense } from "react";
 import { LinkSkeleton } from "../_components/skeletons";
 
+// TODO: switch button to account info link from logout link
+
 export default function Home() {
-  // artificial delay
   return (
     <>
       <PageHeroLayout
@@ -45,7 +46,7 @@ export default function Home() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
           <Link
             className="focusable flex max-w-xs flex-col gap-4 rounded-xl bg-neutral-700/10 p-4 text-neutral-700 transition-all duration-200 hover:bg-neutral-700/20"
-            href="/random"
+            href="/practice/random-spots"
           >
             <h3 className="text-2xl font-bold text-neutral-800">
               Start Practicing →
