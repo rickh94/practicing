@@ -1,11 +1,11 @@
 import { Transition } from "@headlessui/react";
-import { useEffect, useState } from "react";
-import RadioBox from "~/app/_components/radio";
-import { type RandomMode } from "~/lib/random";
-import Summary from "./summary";
-import { type PracticeSummaryItem } from "~/lib/random";
-import { CheckCircleIcon as CheckCircleOutline } from "@heroicons/react/24/outline";
 import { CheckCircleIcon as CheckCircleSolid } from "@heroicons/react/20/solid";
+import { CheckCircleIcon as CheckCircleOutline } from "@heroicons/react/24/outline";
+import { useState, type Dispatch, type SetStateAction } from "react";
+import RadioBox from "~/app/_components/radio";
+import { type PracticeSummaryItem, type RandomMode } from "~/lib/random";
+import { CreateSpots } from "./createSpots";
+import Summary from "./summary";
 
 export default function SequenceTab({
   show,
@@ -16,45 +16,45 @@ export default function SequenceTab({
   mode: RandomMode;
   setMode: (mode: RandomMode) => void;
 }) {
-  const [numSpots, setNumSpots] = useState(5);
   const [fullyRandom, setFullyRandom] = useState(false);
-  const [spots, setSpots] = useState<string[]>([]);
+  const [spots, setSpots] = useState<{ name: string }[]>([]);
+  const [randomizedSpots, setRandomizedSpots] = useState<{ name: string }[]>(
+    [],
+  );
   const [summary, setSummary] = useState<PracticeSummaryItem[]>([]);
 
-  useEffect(() => {
-    const spots: string[] = [];
-    for (let i = 0; i < numSpots; i++) {
-      spots.push(`Spot #${i + 1}`);
-    }
+  function submit() {
     if (fullyRandom) {
-      const randomSpots: string[] = [];
-      for (let i = 0; i < 2 * numSpots; i++) {
+      const randomSpots: { name: string }[] = [];
+      for (let i = 0; i < 2 * spots.length; i++) {
         const randomSpot = spots[Math.floor(Math.random() * spots.length)];
         if (!randomSpot) {
           throw new Error("invalid random spot");
         }
         randomSpots.push(randomSpot);
       }
-      setSpots(randomSpots);
+      setRandomizedSpots(randomSpots);
     } else {
-      spots.sort(() => Math.random() - 0.5);
-      setSpots(spots);
+      const tmpSpots = spots.slice();
+      tmpSpots.sort(() => Math.random() - 0.5);
+      setRandomizedSpots(tmpSpots);
     }
-  }, [numSpots, fullyRandom]);
+    setMode("practice");
+  }
 
   function moreSpots() {
     if (!fullyRandom) {
       return;
     }
-    const randomSpots: string[] = [];
-    for (let i = 0; i < 2 * numSpots; i++) {
+    const randomSpots: { name: string }[] = [];
+    for (let i = 0; i < 2 * spots.length; i++) {
       const randomSpot = spots[Math.floor(Math.random() * spots.length)];
       if (!randomSpot) {
         throw new Error("invalid random spot");
       }
       randomSpots.push(randomSpot);
     }
-    setSpots((spots) => spots.concat(randomSpots));
+    setRandomizedSpots((spots) => spots.concat(randomSpots));
   }
 
   return (
@@ -78,11 +78,11 @@ export default function SequenceTab({
         leaveTo="opacity-0 scale-95"
       >
         <SequenceSetupForm
-          numSpots={numSpots}
-          setNumSpots={setNumSpots}
+          spots={spots}
+          setSpots={setSpots}
           fullyRandom={fullyRandom}
           setFullyRandom={setFullyRandom}
-          submit={() => setMode("practice")}
+          submit={submit}
         />
       </Transition>
       <Transition
@@ -96,7 +96,7 @@ export default function SequenceTab({
         leaveTo="opacity-0 scale-95"
       >
         <SequencePractice
-          spots={spots}
+          spots={randomizedSpots}
           setup={() => setMode("setup")}
           finish={(finalSummary) => {
             setSummary(finalSummary);
@@ -127,19 +127,20 @@ export default function SequenceTab({
 }
 
 function SequenceSetupForm({
-  numSpots,
-  setNumSpots,
+  setSpots,
+  spots,
   fullyRandom,
   setFullyRandom,
   submit,
 }: {
-  numSpots: number;
-  setNumSpots: (numSpots: number) => void;
+  setSpots: Dispatch<SetStateAction<{ name: string }[]>>;
+  spots: { name: string }[];
   fullyRandom: boolean;
   setFullyRandom: (fullyRandom: boolean) => void;
   submit: () => void;
 }) {
   // TODO: add ability to rate spots
+
   return (
     <>
       <div className="py-2">
@@ -150,35 +151,7 @@ function SequenceSetupForm({
       </div>
       <div className="grid grid-cols-1 gap-x-2 gap-y-4 sm:grid-cols-2">
         <div className="flex flex-col">
-          <label className="text-lg font-semibold text-neutral-800">
-            Number of spots
-          </label>
-          <p className="pb-2 text-sm text-neutral-700">
-            How many spots will you be practicing?
-          </p>
-          <div className="flex gap-2">
-            <button
-              className="focusable rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 transition duration-200 hover:bg-neutral-700/20"
-              type="button"
-              onClick={() => numSpots > 1 && setNumSpots(numSpots - 1)}
-            >
-              Decrease
-            </button>
-            <input
-              className="focusable w-20 rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 transition duration-200 focus:bg-neutral-700/20"
-              type="number"
-              min="1"
-              value={numSpots}
-              onChange={(e) => setNumSpots(parseInt(e.target.value))}
-            />
-            <button
-              className="focusable rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 transition duration-200 hover:bg-neutral-700/20"
-              type="button"
-              onClick={() => setNumSpots(numSpots + 1)}
-            >
-              Increase
-            </button>
-          </div>
+          <CreateSpots setSpots={setSpots} spots={spots} />
         </div>
         <div className="flex flex-col">
           <label className="text-lg font-semibold text-neutral-800">
@@ -227,7 +200,7 @@ function SequencePractice({
   moreSpots,
   fullyRandom,
 }: {
-  spots: string[];
+  spots: { name: string }[];
   setup: () => void;
   moreSpots: () => void;
   finish: (summary: PracticeSummaryItem[]) => void;
@@ -236,10 +209,12 @@ function SequencePractice({
   function handleDone() {
     const finalSummary: PracticeSummaryItem[] = [];
     for (const spot of spots) {
-      const spotIndex = finalSummary.findIndex((item) => item.name === spot);
+      const spotIndex = finalSummary.findIndex(
+        (item) => item.name === spot.name,
+      );
       if (spotIndex === -1) {
         finalSummary.push({
-          name: spot ?? "Missing spot name",
+          name: spot.name ?? "Missing spot name",
           reps: 1,
         });
       } else {
@@ -271,7 +246,7 @@ function SequencePractice({
         <div className="w-full">
           <ul className="mx-auto grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2 lg:grid-cols-3">
             {spots.map((spot, idx) => (
-              <SpotItem key={`${spot}-${idx}`} spot={spot} />
+              <SpotItem key={`${spot.name}-${idx}`} spot={spot} />
             ))}
 
             {fullyRandom && (
@@ -299,7 +274,7 @@ function SequencePractice({
   );
 }
 
-function SpotItem({ spot }: { spot: string }) {
+function SpotItem({ spot }: { spot: { name: string } }) {
   const [completed, setCompleted] = useState(false);
   return (
     <li className="w-full">
@@ -309,7 +284,7 @@ function SpotItem({ spot }: { spot: string }) {
         onClick={() => setCompleted((completed) => !completed)}
       >
         <span className={`${completed ? "font-medium" : "font-base"}`}>
-          {spot}
+          {spot.name}
         </span>
         {completed ? (
           <>
