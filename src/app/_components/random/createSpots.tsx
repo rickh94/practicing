@@ -1,14 +1,15 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { TrashIcon } from "@heroicons/react/20/solid";
 import { type Dispatch, type SetStateAction, useRef } from "react";
+import { type Spot } from "~/lib/random";
 import { uniqueID } from "~/lib/util";
 
 export function CreateSpots({
   setSpots,
   spots,
 }: {
-  setSpots: Dispatch<SetStateAction<{ name: string; id: string }[]>>;
-  spots: { name: string; id: string }[];
+  setSpots: Dispatch<SetStateAction<Spot[]>>;
+  spots: Spot[];
 }) {
   const spotNameRef = useRef<HTMLInputElement>(null);
   const numSpotsRef = useRef<HTMLInputElement>(null);

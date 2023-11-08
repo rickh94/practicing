@@ -2,28 +2,15 @@ import { CheckCircleIcon as CheckCircleSolid } from "@heroicons/react/20/solid";
 import { CheckCircleIcon as CheckCircleOutline } from "@heroicons/react/24/outline";
 import { useState, type Dispatch, type SetStateAction } from "react";
 import RadioBox from "~/app/_components/radio";
-import { type PracticeSummaryItem, type RandomMode } from "~/lib/random";
+import {
+  type Spot,
+  type PracticeSummaryItem,
+  type RandomMode,
+} from "~/lib/random";
 import { CreateSpots } from "./createSpots";
 import Summary from "./summary";
 import { cn } from "~/lib/util";
-import { AnimatePresence, motion } from "framer-motion";
-
-const variants = {
-  initial: {
-    scale: 0.95,
-    opacity: 0,
-  },
-  animate: {
-    scale: 1,
-    opacity: 1,
-    transition: { bounce: 0, duration: 0.2 },
-  },
-  exit: {
-    opacity: 0,
-    scale: 0.95,
-    transition: { duration: 0.2, bounce: 0, from: 1 },
-  },
-};
+import { ScaleCrossFadeContent } from "~/app/_components/transitions";
 
 export default function SequenceTab({
   mode,
@@ -33,15 +20,13 @@ export default function SequenceTab({
   setMode: (mode: RandomMode) => void;
 }) {
   const [fullyRandom, setFullyRandom] = useState(false);
-  const [spots, setSpots] = useState<{ name: string; id: string }[]>([]);
-  const [randomizedSpots, setRandomizedSpots] = useState<{ name: string }[]>(
-    [],
-  );
+  const [spots, setSpots] = useState<Spot[]>([]);
+  const [randomizedSpots, setRandomizedSpots] = useState<Spot[]>([]);
   const [summary, setSummary] = useState<PracticeSummaryItem[]>([]);
 
   function submit() {
     if (fullyRandom) {
-      const randomSpots: { name: string }[] = [];
+      const randomSpots: Spot[] = [];
       for (let i = 0; i < 2 * spots.length; i++) {
         const randomSpot = spots[Math.floor(Math.random() * spots.length)];
         if (!randomSpot) {
@@ -62,7 +47,7 @@ export default function SequenceTab({
     if (!fullyRandom) {
       return;
     }
-    const randomSpots: { name: string }[] = [];
+    const randomSpots: Spot[] = [];
     for (let i = 0; i < 2 * spots.length; i++) {
       const randomSpot = spots[Math.floor(Math.random() * spots.length)];
       if (!randomSpot) {
@@ -75,7 +60,7 @@ export default function SequenceTab({
 
   return (
     <div className="absolute left-0 top-0 w-full sm:mx-auto sm:max-w-5xl">
-      <Content
+      <ScaleCrossFadeContent
         component={
           {
             setup: (
@@ -121,8 +106,8 @@ function SequenceSetupForm({
   setFullyRandom,
   submit,
 }: {
-  setSpots: Dispatch<SetStateAction<{ name: string; id: string }[]>>;
-  spots: { name: string; id: string }[];
+  setSpots: Dispatch<SetStateAction<Spot[]>>;
+  spots: Spot[];
   fullyRandom: boolean;
   setFullyRandom: (fullyRandom: boolean) => void;
   submit: () => void;
@@ -196,7 +181,7 @@ function SequencePractice({
   moreSpots,
   fullyRandom,
 }: {
-  spots: { name: string }[];
+  spots: Spot[];
   setup: () => void;
   moreSpots: () => void;
   finish: (summary: PracticeSummaryItem[]) => void;
@@ -205,13 +190,12 @@ function SequencePractice({
   function handleDone() {
     const finalSummary: PracticeSummaryItem[] = [];
     for (const spot of spots) {
-      const spotIndex = finalSummary.findIndex(
-        (item) => item.name === spot.name,
-      );
+      const spotIndex = finalSummary.findIndex((item) => item.id === spot.id);
       if (spotIndex === -1) {
         finalSummary.push({
           name: spot.name ?? "Missing spot name",
           reps: 1,
+          id: spot.id,
         });
       } else {
         if (!finalSummary[spotIndex]) {
@@ -270,7 +254,7 @@ function SequencePractice({
   );
 }
 
-function SpotItem({ spot }: { spot: { name: string } }) {
+function SpotItem({ spot }: { spot: Spot }) {
   const [completed, setCompleted] = useState(false);
   return (
     <li className="w-full">
@@ -295,28 +279,5 @@ function SpotItem({ spot }: { spot: { name: string } }) {
         )}
       </button>
     </li>
-  );
-}
-
-function Content({
-  component,
-  id,
-}: {
-  component: React.ReactNode;
-  id: RandomMode;
-}) {
-  return (
-    <AnimatePresence initial={false} mode="wait">
-      <motion.div
-        className="relative"
-        key={id}
-        initial="initial"
-        animate="animate"
-        exit="exit"
-        variants={variants}
-      >
-        {component}
-      </motion.div>
-    </AnimatePresence>
   );
 }

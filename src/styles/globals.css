@@ -17,3 +17,7 @@ body {
     var(--tw-ring-color);
   @apply outline-none ring-2;
 }
+
+.balanced {
+  text-wrap: balance;
+}

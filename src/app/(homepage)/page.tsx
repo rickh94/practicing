@@ -5,7 +5,7 @@ import { LeftLink, RightLink } from "./links";
 import { Suspense } from "react";
 import { LinkSkeleton } from "../_components/skeletons";
 
-// TODO: switch button to account info link from logout link
+// TODO: move buttons around to have a practice tool selector (in a suspense?)
 
 export default function Home() {
   return (

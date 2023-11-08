@@ -3,8 +3,10 @@ import {
   type SetStateAction,
   useState,
   useCallback,
+  useMemo,
 } from "react";
 import { cn, uniqueID } from "~/lib/util";
+import { ScaleCrossFadeContent } from "~/app/_components/transitions";
 
 type Section = {
   startingPoint: {
@@ -18,61 +20,81 @@ type Section = {
   id: string;
 };
 
+type StartingPointMode = "setup" | "practice" | "summary";
+
+// TODO: add option for sentence or grid layout
+// TODO: add option for time signature changes
+//
 export default function StartingPoint() {
   const [measures, setMeasures] = useState<number>(100);
   const [beats, setBeats] = useState<number>(4);
-  const [mode, setMode] = useState<"setup" | "practice" | "summary">("setup");
+  const [mode, setMode] = useState<StartingPointMode>("setup");
   const [maxLength, setMaxLength] = useState<number>(5);
   const [summary, setSummary] = useState<Section[]>([]);
 
+  const setModePractice = useCallback(
+    function () {
+      setMode("practice");
+    },
+    [setMode],
+  );
+
+  const setModeSetup = useCallback(
+    function () {
+      setMode("setup");
+    },
+    [setMode],
+  );
+
+  const finishPracticing = useCallback(
+    function (finalSummary: Section[]) {
+      setMode("summary");
+      setSummary(finalSummary);
+    },
+    [setSummary, setMode],
+  );
+
   return (
-    <>
-      {mode === "setup" && (
-        <StartingPointSetupForm
-          beats={beats}
-          measures={measures}
-          maxLength={maxLength}
-          setMaxLength={setMaxLength}
-          setBeats={setBeats}
-          setMeasures={setMeasures}
-          submit={() => setMode("practice")}
-        />
-      )}
-      {mode === "practice" && (
-        <StartingPointPractice
-          beats={beats}
-          measures={measures}
-          maxLength={maxLength}
-          setup={() => setMode("setup")}
-          finish={(finalSummary) => {
-            setSummary(finalSummary);
-            console.log(finalSummary);
-            setMode("summary");
-          }}
-        />
-      )}
-      {/*
-      <Transition
-        show={mode === "summary"}
-        className="absolute left-0 top-0 -mt-12 w-full"
-        enter="transition ease-out transform duration-200 delay-200"
-        enterFrom="opacity-0 scale-95"
-        enterTo="opacity-100 scale-100"
-        leave="transition ease-in transform duration-200"
-        leaveFrom="opacity-100 scale-100"
-        leaveTo="opacity-0 scale-95"
-      >
-        <Summary
-          summary={summary}
-          setup={() => setMode("setup")}
-          practice={() => setMode("practice")}
-        />
-      </Transition>
-      */}
-    </>
+    <div className="relative left-0 top-0 w-full sm:mx-auto sm:max-w-5xl">
+      <ScaleCrossFadeContent
+        component={
+          {
+            setup: (
+              <StartingPointSetupForm
+                beats={beats}
+                measures={measures}
+                maxLength={maxLength}
+                setMaxLength={setMaxLength}
+                setBeats={setBeats}
+                setMeasures={setMeasures}
+                submit={setModePractice}
+              />
+            ),
+            practice: (
+              <StartingPointPractice
+                beats={beats}
+                measures={measures}
+                maxLength={maxLength}
+                setup={setModeSetup}
+                finish={finishPracticing}
+              />
+            ),
+            summary: (
+              <Summary
+                summary={summary}
+                setup={setModeSetup}
+                practice={setModePractice}
+              />
+            ),
+          }[mode]
+        }
+        id={mode}
+      />
+    </div>
   );
 }
 
+// TODO: rewrite description
 function StartingPointSetupForm({
   beats,
   measures,
@@ -129,7 +151,7 @@ function StartingPointSetupForm({
               id="measures"
               className="focusable w-24 rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 transition duration-200 focus:bg-neutral-700/20"
               type="number"
-              min="1"
+              min="2"
               value={measures}
               onChange={(e) => setMeasures(parseInt(e.target.value))}
               onFocus={autoSelect}
@@ -208,18 +230,19 @@ function StartingPointSetupForm({
   );
 }
 
+// TODO: maybe write a test for this function
 function makeRandomSection(
   measures: number,
   beats: number,
   maxLength: number,
 ): Section {
   // subtract one so we never start in the last measure
-  const randomStartingMeasure = Math.floor(Math.random() * (measures - 1));
+  const randomStartingMeasure = Math.floor(Math.random() * (measures - 1)) + 1;
   // make sure we don't go past the end
   const maxOffset = Math.min(maxLength, measures - randomStartingMeasure);
   // add back in the measure we subtracted earlier.
   const randomEndingMeasure =
-    Math.floor(Math.random() * (maxOffset + 1)) + randomStartingMeasure;
+    Math.floor(Math.random() * maxOffset) + randomStartingMeasure + 1;
 
   return {
     startingPoint: {
@@ -235,8 +258,6 @@ function makeRandomSection(
   };
 }
 
-// TODO: change layout so back to setup button doesn't move around
-// TODO: switch to react framer motion
 function StartingPointPractice({
   beats,
   measures,
@@ -265,9 +286,14 @@ function StartingPointPractice({
 
   const handleDone = useCallback(
     function () {
-      finish(practiceSummary);
+      // have to add the last one in manually
+      const finalSummary = [...practiceSummary, section];
+      finalSummary.sort(
+        (a, b) => a.startingPoint.measure - b.startingPoint.measure,
+      );
+      finish(finalSummary);
     },
-    [practiceSummary, finish],
+    [practiceSummary, finish, section],
   );
 
   return (
@@ -282,14 +308,14 @@ function StartingPointPractice({
         </button>
       </div>
       <div className="h-12" />
-      <div className="flex w-full flex-col items-center justify-center gap-2 pt-8 sm:pt-24">
-        <div className="text-2xl font-semibold text-neutral-700">
-          Practicing:
-        </div>
+      <div className="flex w-full flex-col items-center justify-center gap-2 pt-12 sm:pt-24">
         <div className="relative h-32 w-full">
-          <SectionDisplay section={section} key={section.id} />
+          <ScaleCrossFadeContent
+            component={<SectionDisplay section={section} />}
+            id={section.id}
+          />
         </div>
-        <div className="pt-12">
+        <div className="pt-8">
           <button
             type="button"
             onClick={nextStartingPoint}
@@ -312,13 +338,171 @@ function StartingPointPractice({
   );
 }
 
-// TODO: style this
 function SectionDisplay({ section }: { section: Section }) {
   return (
-    <div>
-      Start from beat {section.startingPoint.beat} of measure{" "}
-      {section.startingPoint.measure} and play to {section.endingPoint.beat} of
-      measure {section.endingPoint.measure}.
+    <div className="flex justify-center">
+      <div className="rounded-xl border border-neutral-500 bg-white/90 px-4 pb-5 pt-4 text-center text-lg shadow-lg sm:px-8 sm:text-xl">
+        <div>
+          Start from measure{" "}
+          <strong className="text-xl font-bold sm:text-2xl">
+            {section.startingPoint.measure}
+          </strong>
+          {", "}beat{" "}
+          <strong className="text-xl font-bold sm:text-2xl">
+            {section.startingPoint.beat}
+          </strong>{" "}
+        </div>
+        <div>
+          and play until measure{" "}
+          <strong className="text-xl font-bold sm:text-2xl">
+            {section.endingPoint.measure}
+          </strong>
+          {", "}
+          beat{" "}
+          <strong className="text-xl font-bold sm:text-2xl">
+            {section.endingPoint.beat}
+          </strong>
+          .
+        </div>
+      </div>
     </div>
+  );
+}
+
+function Summary({
+  summary,
+  setup,
+  practice,
+}: {
+  summary: Section[];
+  setup: () => void;
+  practice: () => void;
+}) {
+  const measuresPracticed = useMemo(
+    function () {
+      const measureSet = new Set<number>();
+      for (const { startingPoint, endingPoint } of summary) {
+        for (let i = startingPoint.measure; i <= endingPoint.measure; i++) {
+          measureSet.add(i);
+        }
+      }
+      const measureList = Array.from(measureSet.values()).sort((a, b) => a - b);
+      console.log(measureList);
+      const ranges: [number, number][] = [];
+
+      // walk the list, while the numbers are sequential, keep increasing the end number,
+      // once we hit a gap, add a range, reset to start at the current number and continue.
+      let start: number | null = null;
+      let end: number | null = null;
+      for (const num of measureList) {
+        if (!start || !end) {
+          start = num;
+          end = num;
+        } else if (num === end + 1) {
+          end = num;
+        } else {
+          if (!end) {
+            end = start;
+          }
+          ranges.push([start, end]);
+          start = num;
+          end = num;
+        }
+      }
+      if (start && end) {
+        ranges.push([start, end]);
+      }
+      return ranges;
+    },
+    [summary],
+  );
+  return (
+    <>
+      <div className="flex w-full flex-col items-center justify-center gap-2 pt-12">
+        <div className="flex w-full  justify-center py-4">
+          <div className="rounded-xl border border-neutral-500 bg-white/80 px-6 py-4 text-center shadow">
+            <div className="flex w-full justify-center">
+              <h2 className="border-b border-black px-2 text-center text-xl font-semibold text-black">
+                Measures Practiced
+              </h2>
+            </div>
+            <div className="balanced pt-1">
+              {measuresPracticed.map(([start, end], idx) => (
+                <>
+                  <span
+                    key={`${start}-${end}`}
+                    className="whitespace-nowrap text-xl font-medium text-neutral-800"
+                  >
+                    {start === end ? start : `${start}-${end}`}
+                    {idx < measuresPracticed.length - 1 && ","}
+                  </span>{" "}
+                </>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="flex w-full flex-col justify-center gap-4 pb-8 pt-4 sm:flex-row sm:gap-6">
+          <button
+            className="focusable rounded-xl bg-amber-700/10 px-4 py-2 font-semibold text-amber-800 transition duration-200 hover:bg-amber-700/20"
+            type="button"
+            onClick={setup}
+          >
+            Back to Setup
+          </button>
+          <button
+            className="focusable rounded-xl bg-emerald-700/10 px-4 py-2 font-semibold text-emerald-800 transition duration-200 hover:bg-emerald-700/20"
+            type="button"
+            onClick={practice}
+          >
+            Practice More
+          </button>
+        </div>
+        <h2 className="inline pr-2 text-xl font-semibold text-black">
+          Section Summary
+        </h2>
+        <table className="min-w-full divide-y divide-neutral-700">
+          <thead>
+            <tr>
+              <th
+                scope="col"
+                className="py-3 pl-4 pr-3 text-center text-xs font-medium uppercase tracking-wide text-neutral-500 sm:pl-0"
+              >
+                Starting Point
+              </th>
+              <th
+                scope="col"
+                className="hidden py-3 pl-4 pr-3 text-center text-xs font-medium uppercase tracking-wide text-neutral-500 sm:block sm:pl-0"
+              >
+                Through
+              </th>
+              <th
+                scope="col"
+                className="py-3 pl-4 pr-3 text-center text-xs font-medium uppercase tracking-wide text-neutral-500 sm:pl-0"
+              >
+                Ending Point
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-neutral-700 text-sm sm:text-base">
+            {summary.map(({ startingPoint, endingPoint, id }, idx) => (
+              <tr
+                key={id}
+                className={`${idx % 2 === 0 && "bg-neutral-700/10"}`}
+              >
+                <td className="whitespace-nowrap py-2 pl-4 pr-3 text-center font-medium text-neutral-900 sm:pl-0">
+                  Measure {startingPoint.measure}, beat {startingPoint.beat}
+                </td>
+                <td className="hidden whitespace-nowrap py-2 pl-4 pr-3 text-center font-medium text-neutral-900 sm:block sm:pl-0">
+                  —
+                </td>
+                <td className="whitespace-nowrap px-3 py-2 text-center text-neutral-800">
+                  Measure {endingPoint.measure}, beat {endingPoint.beat}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }

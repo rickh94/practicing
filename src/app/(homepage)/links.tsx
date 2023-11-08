@@ -1,5 +1,6 @@
 import { getServerAuthSession } from "~/server/auth";
 import { AccountLink, LibraryLink, LoginLink } from "~/app/_components/links";
+import { TitleLinkMenu } from "../_components/practicing/title-link-menu";
 
 export async function RightLink() {
   const session = await getServerAuthSession();
@@ -8,5 +9,11 @@ export async function RightLink() {
 
 export async function LeftLink() {
   const session = await getServerAuthSession();
-  return session?.user ? <AccountLink /> : null;
+  return session?.user ? (
+    <AccountLink />
+  ) : (
+    <div className="mt-4">
+      <TitleLinkMenu />
+    </div>
+  );
 }

@@ -1,5 +1,7 @@
 import { type PracticeSummaryItem } from "~/lib/random";
 
+// TODO: implement some kind of sorting, or find a way to retain entered order,
+// possibly switch to a hashmap
 export default function Summary({
   summary,
   setup,
@@ -30,9 +32,9 @@ export default function Summary({
             </tr>
           </thead>
           <tbody className="divide-y divide-neutral-700">
-            {summary.map(({ name, reps }, idx) => (
+            {summary.map(({ name, reps, id }, idx) => (
               <tr
-                key={`${name}-${reps}-${idx}`}
+                key={id}
                 className={`${idx % 2 === 0 && "bg-neutral-700/10"}`}
               >
                 <td className="whitespace-nowrap py-2 pl-4 pr-3 text-center font-medium text-neutral-900 sm:pl-0">

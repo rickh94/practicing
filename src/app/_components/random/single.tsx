@@ -1,27 +1,14 @@
 import { Transition } from "@headlessui/react";
 import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
-import { type RandomMode, type PracticeSummaryItem } from "~/lib/random";
+import {
+  type RandomMode,
+  type PracticeSummaryItem,
+  type Spot,
+} from "~/lib/random";
 import Summary from "./summary";
 import { CreateSpots } from "./createSpots";
 import { cn } from "~/lib/util";
-import { AnimatePresence, motion } from "framer-motion";
-
-const variants = {
-  initial: {
-    scale: 0.95,
-    opacity: 0,
-  },
-  animate: {
-    scale: 1,
-    opacity: 1,
-    transition: { bounce: 0, duration: 0.2 },
-  },
-  exit: {
-    opacity: 0,
-    scale: 0.95,
-    transition: { duration: 0.2, bounce: 0, from: 1 },
-  },
-};
+import { ScaleCrossFadeContent } from "~/app/_components/transitions";
 
 export default function SingleTab({
   mode,
@@ -30,12 +17,12 @@ export default function SingleTab({
   mode: RandomMode;
   setMode: (mode: RandomMode) => void;
 }) {
-  const [spots, setSpots] = useState<{ name: string; id: string }[]>([]);
+  const [spots, setSpots] = useState<Spot[]>([]);
   const [summary, setSummary] = useState<PracticeSummaryItem[]>([]);
 
   return (
     <div className="absolute left-0 top-0 w-full sm:mx-auto sm:max-w-5xl">
-      <Content
+      <ScaleCrossFadeContent
         component={
           {
             setup: (
@@ -75,9 +62,9 @@ function SingleSetupForm({
   spots,
   submit,
 }: {
-  setSpots: Dispatch<SetStateAction<{ name: string; id: string }[]>>;
+  setSpots: Dispatch<SetStateAction<Spot[]>>;
   submit: () => void;
-  spots: { name: string; id: string }[];
+  spots: Spot[];
 }) {
   return (
     <>
@@ -140,11 +127,12 @@ function SinglePractice({
 
   function handleDone() {
     addSpotRep(currentSpotIdx);
-    const finalSummary = [];
+    const finalSummary: PracticeSummaryItem[] = [];
     for (let i = 0; i < spots.length; i++) {
       finalSummary.push({
         name: spots[i]?.name ?? "Missing spot name",
         reps: practiceSummary[i] ?? 0,
+        id: spots[i]?.id ?? "Missing spot id",
       });
     }
     finish(finalSummary);
@@ -166,8 +154,8 @@ function SinglePractice({
   }
 
   return (
-    <div className="relative grid grid-cols-1">
-      <div className="absolute left-0 top-0 sm:py-4">
+    <div className="relative w-full">
+      <div className="absolute left-0 top-0 py-2 sm:py-4">
         <button
           onClick={setup}
           type="button"
@@ -215,28 +203,5 @@ function SinglePractice({
         </div>
       </div>
     </div>
-  );
-}
-
-function Content({
-  component,
-  id,
-}: {
-  component: React.ReactNode;
-  id: RandomMode;
-}) {
-  return (
-    <AnimatePresence initial={false} mode="wait">
-      <motion.div
-        className="relative"
-        key={id}
-        initial="initial"
-        animate="animate"
-        exit="exit"
-        variants={variants}
-      >
-        {component}
-      </motion.div>
-    </AnimatePresence>
   );
 }

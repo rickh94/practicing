@@ -1,9 +1,11 @@
+"use client";
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/20/solid";
 import { cn } from "~/lib/util";
+import { CrossFadeContent } from "../transitions";
 
 const links = [
   { href: "/practice/random-spots", label: "Spot Randomizer" },
@@ -15,18 +17,44 @@ const links = [
 export function TitleLinkMenu() {
   const pathname = usePathname();
   const current = links.find((link) => link.href === pathname);
-  if (!current) return <div>This cannot be used on this page</div>;
   return (
     <Menu as="div" className="relative -mt-4 inline-block text-left">
       <Menu.Button className="focusable inline-flex w-full items-center justify-center gap-x-1.5 rounded-xl bg-neutral-700/10 px-4 py-2 shadow-sm hover:bg-neutral-700/20">
-        <h1 className="text-2xl font-extrabold tracking-tight text-neutral-800">
-          {current.label}
-        </h1>
-        <div className="sr-only">Open Practice Tools Menu</div>
-        <ChevronDownIcon
-          className="-mr-1 h-10 w-10 text-neutral-800"
-          aria-hidden="true"
-        />
+        {({ open }) => (
+          <>
+            {!!current?.label ? (
+              <h1 className="text-xl font-extrabold tracking-tight text-neutral-800 sm:text-2xl">
+                {current.label}
+              </h1>
+            ) : (
+              <span className="font-semibold text-neutral-700">
+                Practice Tools
+              </span>
+            )}
+            <CrossFadeContent
+              id={open ? "open" : "closed"}
+              component={
+                open ? (
+                  <>
+                    <div className="sr-only">Close Practice Tools Menu</div>
+                    <XMarkIcon
+                      className="-mr-1 h-5 w-6 text-neutral-800"
+                      aria-hidden="true"
+                    />
+                  </>
+                ) : (
+                  <>
+                    <div className="sr-only">Open Practice Tools Menu</div>
+                    <Bars3Icon
+                      className="-mr-1 h-5 w-6 text-neutral-800"
+                      aria-hidden="true"
+                    />
+                  </>
+                )
+              }
+            />
+          </>
+        )}
       </Menu.Button>
       <Transition
         as={Fragment}
@@ -38,7 +66,7 @@ export function TitleLinkMenu() {
         leaveTo="transform opacity-0 scale-95"
       >
         <Menu.Items
-          className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-lg bg-[#fffaf0]/90 shadow-lg  ring-1 ring-black ring-opacity-5 backdrop-blur focus:outline-none"
+          className="absolute left-0 z-10 mt-2 w-56 origin-top-left rounded-lg bg-[#fffaf0]/90 shadow-lg  ring-1 ring-black ring-opacity-5 backdrop-blur focus:outline-none"
           as="nav"
         >
           <ul className="flex flex-col gap-0">

@@ -73,7 +73,7 @@ export default function TabChooser() {
             Sequence
           </button>
         </div>
-        <Content
+        <SlideTransition
           component={
             tab === "single" ? (
               <SingleTab mode={mode} setMode={setMode} />
@@ -163,7 +163,7 @@ export default function TabChooser() {
   );
 }
 
-function Content({
+function SlideTransition({
   component,
   id,
 }: {
