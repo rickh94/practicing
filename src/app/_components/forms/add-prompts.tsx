@@ -214,7 +214,7 @@ export function AddAudioPrompt({
                         )}
                       >
                         {isUploading ? (
-                          <ArrowPathIcon />
+                          <ArrowPathIcon className="h-6 w-6" />
                         ) : (
                           <CheckIcon className="h-6 w-6" />
                         )}
@@ -420,7 +420,11 @@ export function AddImagePrompt({
                           },
                         )}
                       >
-                        <CheckIcon className="h-6 w-6" />
+                        {isUploading ? (
+                          <ArrowPathIcon className="h-6 w-6" />
+                        ) : (
+                          <CheckIcon className="h-6 w-6" />
+                        )}
                         {isUploading ? "Please Wait..." : "Done"}
                       </button>
                     </div>

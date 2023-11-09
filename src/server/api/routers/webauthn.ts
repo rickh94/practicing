@@ -116,15 +116,15 @@ export const webauthnRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const email = ctx.session.user?.email;
-      if (!email) {
+      const id = ctx.session.user?.id;
+      if (!id) {
         throw new TRPCError({
           message: "User does not have associated email",
           code: "BAD_REQUEST",
         });
       }
       const user = await ctx.db.query.users.findFirst({
-        where: (users, { eq }) => eq(users.email, email),
+        where: (users, { eq }) => eq(users.id, id),
       });
       if (!user) {
         throw new TRPCError({
