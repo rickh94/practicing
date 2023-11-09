@@ -9,8 +9,11 @@ import {
   SpeakerWaveIcon,
 } from "@heroicons/react/20/solid";
 import { cn } from "~/lib/util";
-import NotesDisplay from "~/app/_components/AbcNotesDisplay";
+// import NotesDisplay from "~/app/_components/AbcNotesDisplay";
 import Image from "next/image";
+import { Suspense, lazy } from "react";
+
+const NotesDisplay = lazy(() => import("~/app/_components/AbcNotesDisplay"));
 
 export function AudioPromptReveal({
   audioPromptUrl,
@@ -180,7 +183,9 @@ export function NotesPromptReveal({
             leaveTo="transform -translate-y-4 opacity-0"
           >
             <Disclosure.Panel className="py-1">
-              <NotesDisplay notes={notesPrompt} />
+              <Suspense fallback={<div>Loading notes...</div>}>
+                <NotesDisplay notes={notesPrompt} />
+              </Suspense>
             </Disclosure.Panel>
           </Transition>
         </>

@@ -3,6 +3,8 @@ import { PageColumnLayout } from "~/app/_components/page-layout";
 import { BackToHome } from "~/app/_components/links";
 import Chart from "../_components/about/chart";
 
+// TODO: update to reflect new practicing tools
+
 export default function About() {
   return (
     <>
@@ -76,7 +78,7 @@ export default function About() {
             <div className="flex">
               <Link
                 className="flex flex-col gap-4 rounded-xl bg-neutral-700/10 px-6 py-4 text-neutral-700 no-underline hover:bg-neutral-700/20"
-                href="/random"
+                href="/practice"
               >
                 <h3 className="m-0 p-0 text-xl font-bold text-neutral-800 no-underline">
                   Get Started →
