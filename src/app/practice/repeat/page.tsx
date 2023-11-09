@@ -4,8 +4,9 @@ import { useState } from "react";
 import { PageColumnLayout } from "~/app/_components/page-layout";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { BackToHome } from "~/app/_components/links";
-import Help from "~/app/_components/random/help";
-import { TitleLinkMenu } from "~/app/_components/practicing/title-link-menu";
+import Help from "~/app/_components/practice/repeat-help";
+import { TitleLinkMenu } from "~/app/_components/practice/title-link-menu";
+import Repeat from "~/app/_components/practice/repeat";
 
 // TODO: change help
 
@@ -35,6 +36,7 @@ export default function Page() {
         <div className="flex items-center justify-center">
           <TitleLinkMenu />
         </div>
+        <Repeat />
       </PageColumnLayout>
     </>
   );

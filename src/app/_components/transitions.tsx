@@ -13,7 +13,7 @@ const scaleCrossFadeVariants = {
   exit: {
     opacity: 0,
     scale: 0.95,
-    transition: { duration: 0.2, bounce: 0, from: 1 },
+    transition: { duration: 0.2, bounce: 0 },
   },
 };
 export function ScaleCrossFadeContent({
@@ -49,9 +49,10 @@ const crossFadeVariants = {
   },
   exit: {
     opacity: 0,
-    transition: { duration: 0.2, bounce: 0, from: 1 },
+    transition: { duration: 0.2, bounce: 0 },
   },
 };
+
 export function CrossFadeContent({
   component,
   id,
@@ -68,6 +69,43 @@ export function CrossFadeContent({
         animate="animate"
         exit="exit"
         variants={crossFadeVariants}
+      >
+        {component}
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
+const crossFadeFastVariants = {
+  initial: {
+    opacity: 0,
+  },
+  animate: {
+    opacity: 1,
+    transition: { bounce: 0, duration: 0.1 },
+  },
+  exit: {
+    opacity: 0,
+    transition: { duration: 0.1, bounce: 0 },
+  },
+};
+
+export function CrossFadeContentFast({
+  component,
+  id,
+}: {
+  component: React.ReactNode;
+  id: string;
+}) {
+  return (
+    <AnimatePresence initial={false} mode="wait">
+      <motion.div
+        className="relative"
+        key={id}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        variants={crossFadeFastVariants}
       >
         {component}
       </motion.div>

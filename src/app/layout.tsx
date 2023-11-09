@@ -1,14 +1,13 @@
 import "~/styles/globals.css";
 
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import { Analytics } from "@vercel/analytics/react";
 import { headers } from "next/headers";
 import { Toaster } from "react-hot-toast";
-
-import { TRPCReactProvider } from "~/trpc/react";
-import { workSans } from "./_components/page-layout";
-
 import { extractRouterConfig } from "uploadthing/server";
+import { workSans } from "~/app/_components/page-layout";
 import { pFileRouter } from "~/app/api/uploadthing/core";
-import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import { TRPCReactProvider } from "~/trpc/react";
 
 export const metadata = {
   title: "Music Practicing",
@@ -47,6 +46,7 @@ export default function RootLayout({
         <Toaster position="top-center" />
         <NextSSRPlugin routerConfig={extractRouterConfig(pFileRouter)} />
         <TRPCReactProvider headers={headers()}>{children}</TRPCReactProvider>
+        <Analytics />
       </body>
     </html>
   );

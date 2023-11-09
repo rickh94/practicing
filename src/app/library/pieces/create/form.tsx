@@ -31,6 +31,7 @@ export default function CreatePieceForm() {
           return;
         }
         router.push(`/library/pieces/${data.id}`);
+        router.refresh();
       },
       onError: (e) => {
         const errorMessage = e.data?.zodError?.fieldErrors.content;

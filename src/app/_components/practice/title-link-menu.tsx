@@ -5,15 +5,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Bars3CenterLeftIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { cn } from "~/lib/util";
-import { CrossFadeContent } from "../transitions";
+import { CrossFadeContentFast } from "~/app/_components/transitions";
 
 const links = [
-  { href: "/practice/random-spots", label: "Spot Randomizer" },
-  { href: "/practice/repeat", label: "Repeat Practicer" },
-  { href: "/practice/starting-point", label: "Starting Point Randomizer" },
+  { href: "/practice/random-spots", label: "Random Spots" },
+  { href: "/practice/repeat", label: "Repeat Practice" },
+  { href: "/practice/starting-point", label: "Random Starting Point" },
 ];
 
-// TODO: play with sizing and padding
 export function TitleLinkMenu() {
   const pathname = usePathname();
   const current = links.find((link) => link.href === pathname);
@@ -22,7 +21,7 @@ export function TitleLinkMenu() {
       <Menu.Button className="focusable inline-flex h-14 w-full items-center justify-center gap-x-1.5 rounded-xl bg-neutral-700/10 px-6 py-4 shadow-sm hover:bg-neutral-700/20">
         {({ open }) => (
           <>
-            <CrossFadeContent
+            <CrossFadeContentFast
               id={open ? "open" : "closed"}
               component={
                 open ? (

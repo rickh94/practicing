@@ -1,6 +1,6 @@
 import { getServerAuthSession } from "~/server/auth";
 import { AccountLink, LibraryLink, LoginLink } from "~/app/_components/links";
-import { TitleLinkMenu } from "../_components/practicing/title-link-menu";
+import { TitleLinkMenu } from "~/app/_components/practice/title-link-menu";
 
 export async function RightLink() {
   const session = await getServerAuthSession();

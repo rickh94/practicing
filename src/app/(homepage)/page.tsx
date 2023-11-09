@@ -5,9 +5,7 @@ import { LeftLink, RightLink } from "./links";
 import { Suspense } from "react";
 import { LinkSkeleton } from "../_components/skeletons";
 
-// TODO: maybe move buttons again
-// TODO: have a way to get to ad-hoc practice tools quickly
-
+// TODO: add cta to ad-hoc practice tools for conversion
 export default function Home() {
   return (
     <>
@@ -41,13 +39,13 @@ export default function Home() {
           You Can Practice Better
         </h1>
         <p className="text-xl text-neutral-700">
-          Your practicing habits might be holding you back, get started
-          practicing more efficiently today!
+          Don’t practice aimlessly! Add some organization and novelty to keep
+          yourself out of the rut of playing it wrong until you get it right.
         </p>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
           <Link
             className="focusable flex max-w-xs flex-col gap-4 rounded-xl bg-neutral-700/10 p-4 text-neutral-700 transition-all duration-200 hover:bg-neutral-700/20"
-            href="/practice/random-spots"
+            href="/practice"
           >
             <h3 className="text-2xl font-bold text-neutral-800">
               Start Practicing →

@@ -6,7 +6,7 @@ import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { BackToHome } from "~/app/_components/links";
 import Help from "~/app/_components/random/help";
 import TabChooser from "~/app/_components/random/tabchooser";
-import { TitleLinkMenu } from "~/app/_components/practicing/title-link-menu";
+import { TitleLinkMenu } from "~/app/_components/practice/title-link-menu";
 
 export default function Page() {
   // TODO: fix back button so it scrolls off

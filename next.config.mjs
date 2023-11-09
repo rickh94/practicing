@@ -6,6 +6,9 @@ await import("./src/env.mjs");
 
 /** @type {import("next").NextConfig} */
 const config = {
+  experimental: {
+    optimizePackageImports: ["@headlessui/react", "react-hook-form"],
+  },
   typescript: {
     ignoreBuildErrors: true,
   },
