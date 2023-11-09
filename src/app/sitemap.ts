@@ -16,19 +16,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
-      url: `${env.SITE_URL}/practicing/random-spots`,
+      url: `${env.SITE_URL}/practice/random-spots`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.8,
     },
     {
-      url: `${env.SITE_URL}/practicing/repeat`,
+      url: `${env.SITE_URL}/practice/repeat`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.8,
     },
     {
-      url: `${env.SITE_URL}/practicing/starting-point`,
+      url: `${env.SITE_URL}/practice/starting-point`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.8,
