@@ -1,1 +1,0 @@
-ALTER TABLE spot ADD `measures` text DEFAULT '' NOT NULL;

@@ -420,11 +420,7 @@ export function AddImagePrompt({
                           },
                         )}
                       >
-                        {isUploading ? (
-                          <ArrowPathIcon className="h-6 w-6" />
-                        ) : (
-                          <CheckIcon className="h-6 w-6" />
-                        )}
+                        <CheckIcon className="h-6 w-6" />
                         {isUploading ? "Please Wait..." : "Done"}
                       </button>
                     </div>

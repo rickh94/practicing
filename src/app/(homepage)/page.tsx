@@ -5,7 +5,8 @@ import { LeftLink, RightLink } from "./links";
 import { Suspense } from "react";
 import { LinkSkeleton } from "../_components/skeletons";
 
-// TODO: move buttons around to have a practice tool selector (in a suspense?)
+// TODO: maybe move buttons again
+// TODO: have a way to get to ad-hoc practice tools quickly
 
 export default function Home() {
   return (

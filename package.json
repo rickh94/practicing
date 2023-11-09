@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "next build",
-    "deploy": "drizzle-kit push:sqlite && next build",
+    "build": "dotenv -c -- tsx ./drizzle/migrate.ts && next build",
     "db:push": "drizzle-kit push:sqlite",
     "db:studio": "dotenv drizzle-kit studio",
+    "db:migrate": "dotenv -c -- tsx ./drizzle/migrate.ts",
     "db:generate": "drizzle-kit generate:sqlite --out ./drizzle/migrations --breakpoints --schema=./src/server/db/schema.ts",
     "dev": "next dev",
     "lint": "next lint",
@@ -69,12 +69,13 @@
     "drizzle-kit": "^0.19.13",
     "eslint": "^8.47.0",
     "eslint-config-next": "^13.5.4",
+    "husky": "^8.0.0",
     "postcss": "^8.4.27",
     "prettier": "^3.0.0",
     "prettier-plugin-tailwindcss": "^0.5.1",
     "tailwindcss": "^3.3.3",
-    "typescript": "^5.1.6",
-    "husky": "^8.0.0"
+    "tsx": "^3.14.0",
+    "typescript": "^5.1.6"
   },
   "ct3aMetadata": {
     "initVersion": "7.22.0"
