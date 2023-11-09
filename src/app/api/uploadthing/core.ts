@@ -14,10 +14,27 @@ export const pFileRouter = {
 
       return { userId: session.user.id };
     })
-    .onUploadComplete(({ file, metadata }) => {
-      console.log("Upload complete for userId:", metadata.userId);
+    .onUploadComplete(({}) => {
+      // TODO: subtract from quota
+      // console.log("Upload complete for userId:", metadata.userId);
+      //
+      // console.log("file url", file.url);
+    }),
+  imageUploader: f({ image: { maxFileSize: "2MB" } })
+    .middleware(async () => {
+      const session = await getServerAuthSession();
+      // TODO: implement some kind of max quota
+      if (!session?.user?.id) {
+        throw new Error("Unauthorized");
+      }
 
-      console.log("file url", file.url);
+      return { userId: session.user.id };
+    })
+    .onUploadComplete(({}) => {
+      // TODO: subtract from quota
+      // console.log("Upload complete for userId:", metadata.userId);
+      //
+      // console.log("file url", file.url);
     }),
 } satisfies FileRouter;
 

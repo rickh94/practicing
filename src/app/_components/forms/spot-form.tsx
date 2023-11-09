@@ -5,18 +5,15 @@ import {
   type FormState,
   type UseFormSetValue,
 } from "react-hook-form";
-import type {
-  AudioPromptData,
-  NotesPromptData,
-  TextPromptData,
-  SpotWithPromptsFormData,
-} from "~/lib/validators/library";
+import type { SpotWithPromptsFormData } from "~/lib/validators/library";
 import { FolderPlusIcon } from "@heroicons/react/20/solid";
 import {
   AddAudioPrompt,
+  AddImagePrompt,
   AddNotesPrompt,
   AddTextPrompt,
 } from "~/app/_components/forms/add-prompts";
+import { useCallback } from "react";
 
 export default function SpotFormFields({
   control,
@@ -31,6 +28,30 @@ export default function SpotFormFields({
   isUpdating: boolean;
   backTo: string;
 }) {
+  const setAudioPromptUrl = useCallback(
+    function (url: string) {
+      setValue("audioPromptUrl", url);
+    },
+    [setValue],
+  );
+  const setImagePromptUrl = useCallback(
+    function (data: string) {
+      setValue("imagePromptUrl", data);
+    },
+    [setValue],
+  );
+  const setTextPrompt = useCallback(
+    function (data: string) {
+      setValue("textPrompt", data);
+    },
+    [setValue],
+  );
+  const setNotesPrompt = useCallback(
+    function (data: string) {
+      setValue("notesPrompt", data);
+    },
+    [setValue],
+  );
   return (
     <>
       <Controller
@@ -115,16 +136,24 @@ export default function SpotFormFields({
             Add small prompts to help you play this spot correctly
           </p>
         </div>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 grid-rows-2 gap-2">
           <Controller
-            name="audioPrompt"
+            name="audioPromptUrl"
             control={control}
             render={({ field }) => (
               <AddAudioPrompt
-                save={(data: AudioPromptData) => {
-                  setValue("audioPrompt", data);
-                }}
-                item={field.value}
+                save={setAudioPromptUrl}
+                audioPromptUrl={field.value}
+              />
+            )}
+          />
+          <Controller
+            name="imagePromptUrl"
+            control={control}
+            render={({ field }) => (
+              <AddImagePrompt
+                save={setImagePromptUrl}
+                imagePromptUrl={field.value}
               />
             )}
           />
@@ -132,24 +161,14 @@ export default function SpotFormFields({
             name="textPrompt"
             control={control}
             render={({ field }) => (
-              <AddTextPrompt
-                save={(data: TextPromptData) => {
-                  setValue("textPrompt", data);
-                }}
-                item={field.value}
-              />
+              <AddTextPrompt save={setTextPrompt} textPrompt={field.value} />
             )}
           />
           <Controller
             name="notesPrompt"
             control={control}
             render={({ field }) => (
-              <AddNotesPrompt
-                save={(data: NotesPromptData) => {
-                  setValue("notesPrompt", data);
-                }}
-                item={field.value}
-              />
+              <AddNotesPrompt save={setNotesPrompt} notesPrompt={field.value} />
             )}
           />
         </div>

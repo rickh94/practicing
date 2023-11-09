@@ -12,14 +12,26 @@ import {
 } from "~/lib/validators/library";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import {
-  audioPrompts,
-  notesPrompts,
-  pieces,
-  spots,
-  textPrompts,
-} from "~/server/db/schema";
+import { pieces, spots } from "~/server/db/schema";
 import { eq, and, desc } from "drizzle-orm";
+// import { utapi } from "~/server/uploadthing";
+
+/*
+// TODO: make this a cron quotas can be handled by pieces per user and spots per piece
+// which will create a defacto max upload quota
+async function deleteUploadthingFile(url?: string | null) {
+  if (!url) return;
+  if (url.startsWith("https://utfs.io/")) {
+    const parts = url.split("/");
+    const fname = parts[parts.length - 1];
+    if (!fname) {
+      return;
+    }
+    console.log("deleted", fname);
+    await utapi.deleteFiles(fname);
+  }
+}
+*/
 
 // TODO: implement quota
 export const libraryRouter = createTRPCRouter({
@@ -49,67 +61,16 @@ export const libraryRouter = createTRPCRouter({
           });
         }
         for (const spot of input.spots) {
-          let audioPromptId,
-            textPromptId,
-            notesPromptId = null;
-          if (spot.audioPrompt) {
-            const [result] = await tx
-              .insert(audioPrompts)
-              .values({
-                description: spot.audioPrompt.description,
-                url: spot.audioPrompt.url,
-              })
-              .returning({ id: audioPrompts.id });
-            if (!result) {
-              throw new TRPCError({
-                message: "Something went wrong",
-                code: "INTERNAL_SERVER_ERROR",
-              });
-            }
-            audioPromptId = result.id;
-          }
-          if (spot.textPrompt) {
-            const [result] = await tx
-              .insert(textPrompts)
-              .values({
-                description: spot.textPrompt.description,
-                text: spot.textPrompt.text,
-              })
-              .returning({ id: textPrompts.id });
-            if (!result) {
-              throw new TRPCError({
-                message: "Something went wrong",
-                code: "INTERNAL_SERVER_ERROR",
-              });
-            }
-            textPromptId = result.id;
-          }
-
-          if (spot.notesPrompt) {
-            const [result] = await tx
-              .insert(notesPrompts)
-              .values({
-                description: spot.notesPrompt.description,
-                notes: spot.notesPrompt.notes,
-              })
-              .returning({ id: notesPrompts.id });
-            if (!result) {
-              throw new TRPCError({
-                message: "Something went wrong",
-                code: "INTERNAL_SERVER_ERROR",
-              });
-            }
-            notesPromptId = result.id;
-          }
           await tx.insert(spots).values({
             name: spot.name,
             order: spot.order,
             stage: spot.stage,
             measures: spot.measures,
             pieceId: piece.id,
-            audioPromptId,
-            textPromptId,
-            notesPromptId,
+            audioPromptUrl: spot.audioPromptUrl,
+            textPrompt: spot.textPrompt,
+            notesPrompt: spot.notesPrompt,
+            imagePromptUrl: spot.imagePromptUrl,
           });
         }
         return piece;
@@ -139,58 +100,6 @@ export const libraryRouter = createTRPCRouter({
         });
       }
       const result = await ctx.db.transaction(async (tx) => {
-        let audioPromptId,
-          textPromptId,
-          notesPromptId = null;
-        if (spot.audioPrompt) {
-          const [result] = await tx
-            .insert(audioPrompts)
-            .values({
-              description: spot.audioPrompt.description,
-              url: spot.audioPrompt.url,
-            })
-            .returning({ id: audioPrompts.id });
-          if (!result) {
-            throw new TRPCError({
-              message: "Something went wrong",
-              code: "INTERNAL_SERVER_ERROR",
-            });
-          }
-          audioPromptId = result.id;
-        }
-        if (spot.textPrompt) {
-          const [result] = await tx
-            .insert(textPrompts)
-            .values({
-              description: spot.textPrompt.description,
-              text: spot.textPrompt.text,
-            })
-            .returning({ id: textPrompts.id });
-          if (!result) {
-            throw new TRPCError({
-              message: "Something went wrong",
-              code: "INTERNAL_SERVER_ERROR",
-            });
-          }
-          textPromptId = result.id;
-        }
-
-        if (spot.notesPrompt) {
-          const [result] = await tx
-            .insert(notesPrompts)
-            .values({
-              description: spot.notesPrompt.description,
-              notes: spot.notesPrompt.notes,
-            })
-            .returning({ id: notesPrompts.id });
-          if (!result) {
-            throw new TRPCError({
-              message: "Something went wrong",
-              code: "INTERNAL_SERVER_ERROR",
-            });
-          }
-          notesPromptId = result.id;
-        }
         return await tx
           .insert(spots)
           .values({
@@ -199,9 +108,10 @@ export const libraryRouter = createTRPCRouter({
             stage: spot.stage,
             measures: spot.measures,
             pieceId,
-            audioPromptId,
-            textPromptId,
-            notesPromptId,
+            audioPromptUrl: spot.audioPromptUrl,
+            textPrompt: spot.textPrompt,
+            notesPrompt: spot.notesPrompt,
+            imagePromptUrl: spot.imagePromptUrl,
           })
           .returning({ id: spots.id });
       }); // end of transaction
@@ -252,91 +162,6 @@ export const libraryRouter = createTRPCRouter({
           })
           .where(eq(pieces.id, id));
         for (const spot of update.spots) {
-          let audioPromptId,
-            textPromptId,
-            notesPromptId = null;
-          if (spot.audioPrompt) {
-            if (spot.audioPrompt.id) {
-              await tx
-                .update(audioPrompts)
-                .set({
-                  description: spot.audioPrompt.description,
-                  url: spot.audioPrompt.url,
-                })
-                .where(eq(audioPrompts.id, spot.audioPrompt.id));
-              audioPromptId = spot.audioPrompt.id;
-            } else {
-              const [result] = await tx
-                .insert(audioPrompts)
-                .values({
-                  description: spot.audioPrompt.description,
-                  url: spot.audioPrompt.url,
-                })
-                .returning({ id: audioPrompts.id });
-              if (!result) {
-                throw new TRPCError({
-                  message: "Something went wrong",
-                  code: "INTERNAL_SERVER_ERROR",
-                });
-              }
-              audioPromptId = result.id;
-            }
-          }
-          if (spot.textPrompt) {
-            if (spot.textPrompt.id) {
-              await tx
-                .update(textPrompts)
-                .set({
-                  description: spot.textPrompt.description,
-                  text: spot.textPrompt.text,
-                })
-                .where(eq(textPrompts.id, spot.textPrompt.id));
-              textPromptId = spot.textPrompt.id;
-            } else {
-              const [result] = await tx
-                .insert(textPrompts)
-                .values({
-                  description: spot.textPrompt.description,
-                  text: spot.textPrompt.text,
-                })
-                .returning({ id: textPrompts.id });
-              if (!result) {
-                throw new TRPCError({
-                  message: "Something went wrong",
-                  code: "INTERNAL_SERVER_ERROR",
-                });
-              }
-              textPromptId = result.id;
-            }
-          }
-
-          if (spot.notesPrompt) {
-            if (spot.notesPrompt.id) {
-              await tx
-                .update(notesPrompts)
-                .set({
-                  description: spot.notesPrompt.description,
-                  notes: spot.notesPrompt.notes,
-                })
-                .where(eq(notesPrompts.id, spot.notesPrompt.id));
-              notesPromptId = spot.notesPrompt.id;
-            } else {
-              const [result] = await tx
-                .insert(notesPrompts)
-                .values({
-                  description: spot.notesPrompt.description,
-                  notes: spot.notesPrompt.notes,
-                })
-                .returning({ id: notesPrompts.id });
-              if (!result) {
-                throw new TRPCError({
-                  message: "Something went wrong",
-                  code: "INTERNAL_SERVER_ERROR",
-                });
-              }
-              notesPromptId = result.id;
-            }
-          }
           if (spot.id) {
             oldSpotIds.delete(spot.id);
             await tx
@@ -347,9 +172,10 @@ export const libraryRouter = createTRPCRouter({
                 stage: spot.stage,
                 measures: spot.measures,
                 pieceId: id,
-                audioPromptId,
-                textPromptId,
-                notesPromptId,
+                audioPromptUrl: spot.audioPromptUrl,
+                textPrompt: spot.textPrompt,
+                notesPrompt: spot.notesPrompt,
+                imagePromptUrl: spot.imagePromptUrl,
               })
               .where(eq(spots.id, spot.id));
           } else {
@@ -359,9 +185,10 @@ export const libraryRouter = createTRPCRouter({
               stage: spot.stage,
               measures: spot.measures,
               pieceId: id,
-              audioPromptId,
-              textPromptId,
-              notesPromptId,
+              audioPromptUrl: spot.audioPromptUrl,
+              textPrompt: spot.textPrompt,
+              notesPrompt: spot.notesPrompt,
+              imagePromptUrl: spot.imagePromptUrl,
             });
           }
         }
@@ -402,13 +229,7 @@ export const libraryRouter = createTRPCRouter({
           eq(pieces.userId, ctx.session.user.id),
         ),
         with: {
-          spots: {
-            with: {
-              audioPrompt: true,
-              textPrompt: true,
-              notesPrompt: true,
-            },
-          },
+          spots: true,
         },
         columns: {
           userId: false,
@@ -527,9 +348,6 @@ export const libraryRouter = createTRPCRouter({
           eq(spots.pieceId, input.pieceId),
         ),
         with: {
-          audioPrompt: true,
-          textPrompt: true,
-          notesPrompt: true,
           piece: {
             columns: {
               title: true,
@@ -557,6 +375,7 @@ export const libraryRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      // TODO: get old prompt file urls and delete at the top if they've changed to handle all cases, resolve later in background
       await ctx.db.transaction(async (tx) => {
         const piece = await tx.query.pieces.findFirst({
           where: and(
@@ -564,96 +383,11 @@ export const libraryRouter = createTRPCRouter({
             eq(pieces.userId, ctx.session.user.id),
           ),
         });
-        let audioPromptId,
-          textPromptId,
-          notesPromptId = null;
         if (!piece) {
           throw new TRPCError({
             message: "You do not own this piece",
             code: "UNAUTHORIZED",
           });
-        }
-        if (input.update.audioPrompt) {
-          if (input.update.audioPrompt.id) {
-            await tx
-              .update(audioPrompts)
-              .set({
-                description: input.update.audioPrompt.description,
-                url: input.update.audioPrompt.url,
-              })
-              .where(eq(audioPrompts.id, input.update.audioPrompt.id));
-            audioPromptId = input.update.audioPrompt.id;
-          } else {
-            const [result] = await tx
-              .insert(audioPrompts)
-              .values({
-                description: input.update.audioPrompt.description,
-                url: input.update.audioPrompt.url,
-              })
-              .returning({ id: audioPrompts.id });
-            if (!result) {
-              throw new TRPCError({
-                message: "Something went wrong",
-                code: "INTERNAL_SERVER_ERROR",
-              });
-            }
-            audioPromptId = result.id;
-          }
-        }
-        if (input.update.textPrompt) {
-          if (input.update.textPrompt.id) {
-            await tx
-              .update(textPrompts)
-              .set({
-                description: input.update.textPrompt.description,
-                text: input.update.textPrompt.text,
-              })
-              .where(eq(textPrompts.id, input.update.textPrompt.id));
-            textPromptId = input.update.textPrompt.id;
-          } else {
-            const [result] = await tx
-              .insert(textPrompts)
-              .values({
-                description: input.update.textPrompt.description,
-                text: input.update.textPrompt.text,
-              })
-              .returning({ id: textPrompts.id });
-            if (!result) {
-              throw new TRPCError({
-                message: "Something went wrong",
-                code: "INTERNAL_SERVER_ERROR",
-              });
-            }
-            textPromptId = result.id;
-          }
-        }
-
-        if (input.update.notesPrompt) {
-          if (input.update.notesPrompt.id) {
-            await tx
-              .update(notesPrompts)
-              .set({
-                description: input.update.notesPrompt.description,
-                notes: input.update.notesPrompt.notes,
-              })
-              .where(eq(notesPrompts.id, input.update.notesPrompt.id));
-            notesPromptId = input.update.notesPrompt.id;
-          } else {
-            const [result] = await tx
-              .insert(notesPrompts)
-              .values({
-                description: input.update.notesPrompt.description,
-                notes: input.update.notesPrompt.notes,
-              })
-              .returning({ id: notesPrompts.id });
-            if (!result) {
-              throw new TRPCError({
-                message: "Something went wrong",
-                code: "INTERNAL_SERVER_ERROR",
-              });
-            }
-            notesPromptId = result.id;
-          }
         }
         await tx
           .update(spots)
@@ -662,9 +396,10 @@ export const libraryRouter = createTRPCRouter({
             order: input.update.order,
             stage: input.update.stage,
             measures: input.update.measures,
-            audioPromptId,
-            textPromptId,
-            notesPromptId,
+            audioPromptUrl: input.update.audioPromptUrl,
+            imagePromptUrl: input.update.imagePromptUrl,
+            notesPrompt: input.update.notesPrompt,
+            textPrompt: input.update.textPrompt,
           })
           .where(
             and(eq(spots.id, input.spotId), eq(spots.pieceId, input.pieceId)),

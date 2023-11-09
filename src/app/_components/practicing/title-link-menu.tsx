@@ -3,7 +3,7 @@ import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/20/solid";
+import { Bars3CenterLeftIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { cn } from "~/lib/util";
 import { CrossFadeContent } from "../transitions";
 
@@ -19,18 +19,9 @@ export function TitleLinkMenu() {
   const current = links.find((link) => link.href === pathname);
   return (
     <Menu as="div" className="relative -mt-4 inline-block text-left">
-      <Menu.Button className="focusable inline-flex w-full items-center justify-center gap-x-1.5 rounded-xl bg-neutral-700/10 px-4 py-2 shadow-sm hover:bg-neutral-700/20">
+      <Menu.Button className="focusable inline-flex h-14 w-full items-center justify-center gap-x-1.5 rounded-xl bg-neutral-700/10 px-6 py-4 shadow-sm hover:bg-neutral-700/20">
         {({ open }) => (
           <>
-            {!!current?.label ? (
-              <h1 className="text-xl font-extrabold tracking-tight text-neutral-800 sm:text-2xl">
-                {current.label}
-              </h1>
-            ) : (
-              <span className="font-semibold text-neutral-700">
-                Practice Tools
-              </span>
-            )}
             <CrossFadeContent
               id={open ? "open" : "closed"}
               component={
@@ -38,21 +29,30 @@ export function TitleLinkMenu() {
                   <>
                     <div className="sr-only">Close Practice Tools Menu</div>
                     <XMarkIcon
-                      className="-mr-1 h-5 w-6 text-neutral-800"
+                      className="-ml-2 h-6 w-6 text-neutral-800"
                       aria-hidden="true"
                     />
                   </>
                 ) : (
                   <>
                     <div className="sr-only">Open Practice Tools Menu</div>
-                    <Bars3Icon
-                      className="-mr-1 h-5 w-6 text-neutral-800"
+                    <Bars3CenterLeftIcon
+                      className="-ml-2 h-6 w-6 text-neutral-800"
                       aria-hidden="true"
                     />
                   </>
                 )
               }
             />
+            {!!current?.label ? (
+              <h1 className="text-xl font-semibold tracking-tight text-neutral-800 sm:text-2xl">
+                {current.label}
+              </h1>
+            ) : (
+              <span className="font-semibold text-neutral-700">
+                Practice Tools
+              </span>
+            )}
           </>
         )}
       </Menu.Button>

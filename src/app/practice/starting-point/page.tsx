@@ -4,7 +4,7 @@ import { useState } from "react";
 import { PageColumnLayout } from "~/app/_components/page-layout";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { BackToHome } from "~/app/_components/links";
-import Help from "~/app/_components/random/help";
+import Help from "~/app/_components/practicing/starting-point-help";
 import { TitleLinkMenu } from "~/app/_components/practicing/title-link-menu";
 import StartingPoint from "~/app/_components/practicing/starting-point";
 

@@ -23,7 +23,7 @@ export const users = sqliteTable("user", {
     .primaryKey()
     .$default(() => createId()),
   name: text("name", { length: 255 }),
-  email: text("email", { length: 255 }).notNull(),
+  email: text("email", { length: 255 }).notNull().unique(),
   emailVerified: integer("emailVerified", {
     mode: "timestamp",
   }).$defaultFn(() => new Date()),
@@ -147,33 +147,6 @@ export const piecesRelations = relations(pieces, ({ one, many }) => ({
   spots: many(spots),
 }));
 
-export const audioPrompts = sqliteTable("audioPrompt", {
-  id: text("id", { length: 255 })
-    .notNull()
-    .primaryKey()
-    .$default(() => createId()),
-  description: text("description", { length: 255 }).notNull(),
-  url: text("url", { length: 255 }).notNull(),
-});
-
-export const textPrompts = sqliteTable("textPrompt", {
-  id: text("id", { length: 255 })
-    .notNull()
-    .primaryKey()
-    .$default(() => createId()),
-  description: text("description", { length: 255 }).notNull(),
-  text: text("text", { length: 255 }).notNull(),
-});
-
-export const notesPrompts = sqliteTable("notesPrompt", {
-  id: text("id", { length: 255 })
-    .notNull()
-    .primaryKey()
-    .$default(() => createId()),
-  description: text("description", { length: 255 }).notNull(),
-  notes: text("notes", { length: 255 }).notNull(),
-});
-
 export const spots = sqliteTable(
   "spot",
   {
@@ -192,9 +165,10 @@ export const spots = sqliteTable(
       .notNull()
       .default("repeat"),
     measures: text("measures").default("").notNull(),
-    audioPromptId: text("audioPromptId").references(() => audioPrompts.id),
-    textPromptId: text("textPromptId").references(() => textPrompts.id),
-    notesPromptId: text("notesPromptId").references(() => notesPrompts.id),
+    audioPromptUrl: text("audioPromptUrl"),
+    textPrompt: text("textPrompt"),
+    notesPrompt: text("notesPrompt"),
+    imagePromptUrl: text("imagePromptUrl"),
   },
   (spot) => ({
     pieceIdIdx: index("spot_pieceId_idx").on(spot.pieceId),
@@ -206,16 +180,4 @@ export const spots = sqliteTable(
 
 export const spotsRelations = relations(spots, ({ one }) => ({
   piece: one(pieces, { fields: [spots.pieceId], references: [pieces.id] }),
-  audioPrompt: one(audioPrompts, {
-    fields: [spots.audioPromptId],
-    references: [audioPrompts.id],
-  }),
-  textPrompt: one(textPrompts, {
-    fields: [spots.textPromptId],
-    references: [textPrompts.id],
-  }),
-  notesPrompt: one(notesPrompts, {
-    fields: [spots.notesPromptId],
-    references: [notesPrompts.id],
-  }),
 }));

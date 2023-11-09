@@ -21,9 +21,10 @@ export default function SpotCreationForm({ pieceId }: { pieceId: string }) {
         name: "",
         order: 1,
         measures: "",
-        audioPrompt: null,
-        textPrompt: null,
-        notesPrompt: null,
+        audioPromptUrl: "",
+        textPrompt: "",
+        notesPrompt: "",
+        imagePromptUrl: "",
         stage: "repeat",
       },
     });

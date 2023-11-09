@@ -4,19 +4,14 @@ import {
   type Control,
   type UseFieldArrayUpdate,
 } from "react-hook-form";
-import type {
-  AudioPromptData,
-  TextPromptData,
-  PieceFormData,
-  NotesPromptData,
-  UpdatePieceData,
-} from "~/lib/validators/library";
+import type { PieceFormData, UpdatePieceData } from "~/lib/validators/library";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { TrashIcon, PlusIcon } from "@heroicons/react/20/solid";
 import {
   AddAudioPrompt,
   AddNotesPrompt,
   AddTextPrompt,
+  AddImagePrompt,
 } from "~/app/_components/forms/add-prompts";
 
 export function SpotsArray({ control }: { control: Control<PieceFormData> }) {
@@ -53,7 +48,7 @@ export function SpotsArray({ control }: { control: Control<PieceFormData> }) {
         {fields.map((item, index) => (
           <li
             key={item.id}
-            className="flex h-72 flex-col justify-center gap-2 rounded-xl border border-neutral-500 bg-white/80 px-4 text-neutral-700"
+            className="flex h-[21rem] flex-col justify-center gap-2 rounded-xl border border-neutral-500 bg-white/80 px-4 text-neutral-700"
           >
             <Controller
               render={({ field, fieldState }) => (
@@ -133,33 +128,42 @@ export function SpotsArray({ control }: { control: Control<PieceFormData> }) {
               <h4 className="text-sm font-medium leading-6 text-neutral-900">
                 Prompts (optional)
               </h4>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 grid-rows-2 gap-2">
                 <AddAudioPrompt
-                  save={(data: AudioPromptData) =>
+                  save={(audioPromptUrl: string) =>
                     updateWithoutFlashing(index, {
                       ...item,
-                      audioPrompt: data,
+                      audioPromptUrl,
                     })
                   }
-                  item={item.audioPrompt}
+                  audioPromptUrl={item.audioPromptUrl}
+                />
+                <AddImagePrompt
+                  save={(imagePromptUrl: string) =>
+                    updateWithoutFlashing(index, {
+                      ...item,
+                      imagePromptUrl,
+                    })
+                  }
+                  imagePromptUrl={item.imagePromptUrl}
                 />
                 <AddTextPrompt
-                  save={(data: TextPromptData) =>
+                  save={(textPrompt: string) =>
                     updateWithoutFlashing(index, {
                       ...item,
-                      textPrompt: data,
+                      textPrompt,
                     })
                   }
-                  item={item.textPrompt}
+                  textPrompt={item.textPrompt}
                 />
                 <AddNotesPrompt
-                  save={(data: NotesPromptData) =>
+                  save={(notesPrompt: string) =>
                     updateWithoutFlashing(index, {
                       ...item,
-                      notesPrompt: data,
+                      notesPrompt,
                     })
                   }
-                  item={item.notesPrompt}
+                  notesPrompt={item.notesPrompt}
                 />
               </div>
             </div>
@@ -173,7 +177,7 @@ export function SpotsArray({ control }: { control: Control<PieceFormData> }) {
             </button>
           </li>
         ))}
-        <li className="flex h-72 flex-col gap-2 rounded-xl border border-dashed border-neutral-500 bg-white/50 px-4 py-2 text-neutral-700 hover:bg-white/90 hover:text-black">
+        <li className="flex h-[21rem] flex-col gap-2 rounded-xl border border-dashed border-neutral-500 bg-white/50 px-4 py-2 text-neutral-700 hover:bg-white/90 hover:text-black">
           <button
             className="flex h-full w-full items-center justify-center gap-1 text-2xl font-bold"
             type="button"
@@ -183,9 +187,10 @@ export function SpotsArray({ control }: { control: Control<PieceFormData> }) {
                 order: fields.length + 1,
                 stage: "repeat",
                 measures: "mm 1-2",
-                audioPrompt: null,
-                textPrompt: null,
-                notesPrompt: null,
+                audioPromptUrl: "",
+                textPrompt: "",
+                notesPrompt: "",
+                imagePromptUrl: "",
               })
             }
           >

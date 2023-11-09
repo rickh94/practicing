@@ -1,28 +1,16 @@
 import { z } from "zod";
 
-export const audioPrompt = z.object({
-  id: z.string(),
-  description: z.string(),
-  url: z.string(),
-});
+export const urlOrEmpty = z.union([z.string().url(), z.enum([""])]);
 
-export const audioPromptData = audioPrompt.omit({ id: true });
+export const urlOrEmptyForm = z.object({ url: urlOrEmpty });
 
-export const textPrompt = z.object({
-  id: z.string(),
-  description: z.string(),
-  text: z.string(),
-});
-
-export const textPromptData = textPrompt.omit({ id: true });
-
-export const notesPrompt = z.object({
-  id: z.string(),
-  description: z.string(),
+export const notesForm = z.object({
   notes: z.string(),
 });
 
-export const notesPromptData = notesPrompt.omit({ id: true });
+export const textForm = z.object({
+  text: z.string(),
+});
 
 export const basicSpot = z.object({
   id: z.string(),
@@ -36,14 +24,13 @@ export const basicSpot = z.object({
     "completed",
   ]),
   measures: z.string().default(""),
+  audioPromptUrl: z.union([z.string().url(), z.null(), z.enum([""])]),
+  imagePromptUrl: z.union([z.string().url(), z.null(), z.enum([""])]),
+  notesPrompt: z.string().nullable(),
+  textPrompt: z.string().nullable(),
 });
 
-// React hook form gets mad if you pass it something nullalbe, so I omit the order field and re-add it as optional
-export const basicSpotWithPrompts = basicSpot.extend({
-  audioPrompt: audioPrompt.nullish().optional(),
-  textPrompt: textPrompt.nullish().optional(),
-  notesPrompt: notesPrompt.nullish().optional(),
-});
+// React hook form gets mad if you pass it something nullable, so I omit the order field and re-add it as optional
 
 export const spotWithPromptsFormData = basicSpot
   .omit({ id: true, order: true })
@@ -53,21 +40,13 @@ export const spotWithPromptsFormData = basicSpot
       .number()
       .optional()
       .transform((val) => val ?? undefined),
-    audioPrompt: audioPrompt
-      .omit({ id: true })
-      .extend({ id: z.string().optional() })
-      .nullish(),
-    textPrompt: textPrompt
-      .omit({ id: true })
-      .extend({ id: z.string().optional() })
-      .nullish(),
-    notesPrompt: notesPrompt
-      .omit({ id: true })
-      .extend({ id: z.string().optional() })
-      .nullish(),
+    audioPromptUrl: urlOrEmpty,
+    imagePromptUrl: urlOrEmpty,
+    notesPrompt: z.string(),
+    textPrompt: z.string(),
   });
 
-export const spotWithPromptsAndPieceTitle = basicSpotWithPrompts.extend({
+export const spotWithPromptsAndPieceTitle = basicSpot.extend({
   piece: z.object({
     title: z.string(),
     id: z.string(),
@@ -81,7 +60,7 @@ export const pieceWithSpots = z.object({
   composer: z.string(),
   recordingLink: z.union([z.string().url(), z.enum([""]), z.null()]),
   practiceNotes: z.string().nullish(),
-  spots: z.array(basicSpotWithPrompts),
+  spots: z.array(basicSpot),
 });
 
 export const pieceForList = pieceWithSpots.omit({
@@ -108,16 +87,14 @@ export const updatePieceWithSpots = pieceFormData.extend({
 export type PieceForList = z.infer<typeof pieceForList>;
 export type BasicPiece = z.infer<typeof basicPiece>;
 export type PieceWithSpots = z.infer<typeof pieceWithSpots>;
-export type BasicSpot = z.infer<typeof basicSpot>;
-export type AudioPromptData = z.infer<typeof audioPromptData>;
-export type TextPromptData = z.infer<typeof textPromptData>;
-export type NotesPromptData = z.infer<typeof notesPromptData>;
-export type AudioPrompt = z.infer<typeof audioPrompt>;
-export type TextPrompt = z.infer<typeof textPrompt>;
-export type NotesPrompt = z.infer<typeof notesPrompt>;
-export type PieceFormData = z.infer<typeof pieceFormData>;
-export type SpotWithPromptsFormData = z.infer<typeof spotWithPromptsFormData>;
 export type UpdatePieceData = z.infer<typeof updatePieceWithSpots>;
+export type PieceFormData = z.infer<typeof pieceFormData>;
+
+export type BasicSpot = z.infer<typeof basicSpot>;
+export type SpotWithPromptsFormData = z.infer<typeof spotWithPromptsFormData>;
 export type SpotWithPromptsAndPieceTitle = z.infer<
   typeof spotWithPromptsAndPieceTitle
 >;
+export type UrlOrEmptyForm = z.infer<typeof urlOrEmptyForm>;
+export type NotesForm = z.infer<typeof notesForm>;
+export type TextForm = z.infer<typeof textForm>;

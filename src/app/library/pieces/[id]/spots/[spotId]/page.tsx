@@ -5,6 +5,7 @@ import Breadcrumbs from "~/app/_components/breadcrumb";
 import { api } from "~/trpc/server";
 import {
   AudioPromptReveal,
+  ImagePromptReveal,
   NotesPromptReveal,
   TextPromptReveal,
 } from "./prompts";
@@ -73,7 +74,7 @@ export default async function Page({
         </div>
       </BreadcrumbContainer>
       <NarrowPageContainer>
-        <div className="grid grid-cols-1 gap-4 rounded-xl border border-neutral-500 bg-white/80 p-4 text-neutral-900 sm:grid-cols-3">
+        <div className="grid w-full grid-cols-1 gap-4 rounded-xl border border-neutral-500 bg-white/80 p-4 text-neutral-900 sm:grid-cols-3">
           <div className="col-span-full flex justify-center text-center">
             <h2 className="border-b-2 border-neutral-500 px-4 text-2xl font-bold">
               {spot.name}
@@ -82,28 +83,29 @@ export default async function Page({
 
           <div>
             <dl className="divide-y divide-neutral-700 border-y border-neutral-700 text-base">
-              <div className="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+              <div className="px-4 py-2 sm:flex sm:justify-between sm:px-0">
                 <dt className="font-medium leading-6 text-neutral-900">
                   Order
                 </dt>
-                <dd className="mt-1 leading-6 text-neutral-700 sm:col-span-2 sm:mt-0">
+                <dd className="mt-1 leading-6 text-neutral-700 sm:mt-0">
                   {spot.order ?? "Unordered"}
                 </dd>
               </div>
-              <div className="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+              <div className="px-4 py-2 sm:flex sm:justify-between sm:px-0">
                 <dt className="font-medium leading-6 text-neutral-900">
                   Measures
                 </dt>
-                <dd className="mt-1 leading-6 text-neutral-700 sm:col-span-2 sm:mt-0">
+                <dd className="mt-1 leading-6 text-neutral-700 sm:mt-0">
                   {spot.measures}
                 </dd>
               </div>
             </dl>
           </div>
-          <div className="col-span-2 flex flex-col gap-2">
-            <AudioPromptReveal audioPrompt={spot.audioPrompt} />
+          <div className="flex flex-col gap-2 sm:col-span-2">
+            <AudioPromptReveal audioPromptUrl={spot.audioPromptUrl} />
             <TextPromptReveal textPrompt={spot.textPrompt} />
             <NotesPromptReveal notesPrompt={spot.notesPrompt} />
+            <ImagePromptReveal imagePromptUrl={spot.imagePromptUrl} />
           </div>
         </div>
       </NarrowPageContainer>

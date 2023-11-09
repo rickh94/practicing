@@ -28,9 +28,10 @@ export default function SpotUpdateForm({
         name: spot.name,
         order: spot.order ?? undefined,
         measures: spot.measures,
-        audioPrompt: spot.audioPrompt,
-        textPrompt: spot.textPrompt,
-        notesPrompt: spot.notesPrompt,
+        audioPromptUrl: spot.audioPromptUrl ?? "",
+        imagePromptUrl: spot.imagePromptUrl ?? "",
+        textPrompt: spot.textPrompt ?? "",
+        notesPrompt: spot.notesPrompt ?? "",
         stage: spot.stage,
       },
     });

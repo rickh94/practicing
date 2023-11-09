@@ -3,7 +3,7 @@ import Link from "next/link";
 import { UserIcon, UserMinusIcon } from "@heroicons/react/20/solid";
 
 const linkClasses =
-  "focusable flex items-center gap-2 rounded-xl bg-neutral-700/10 px-6 py-4 font-semibold text-neutral-700 transition-all duration-200 hover:bg-neutral-700/20";
+  "focusable flex items-center gap-2 rounded-xl bg-neutral-700/10 px-6 py-4 h-14 font-semibold text-neutral-700 transition-all duration-200 hover:bg-neutral-700/20";
 
 export function BackLink({ to, text }: { to?: string; text?: string }) {
   return (
