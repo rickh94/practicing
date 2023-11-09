@@ -73,7 +73,9 @@ export const env = createEnv({
     ENCRYPTION_KEY: process.env.ENCRYPTION_KEY,
     ENCRYPTION_IV: process.env.ENCRYPTION_IV,
     UPLOADTHING_SECRET: process.env.UPLOADTHING_SECRET,
-    SITE_URL: `https://${process.env.VERCEL_URL ?? "practicing.localhost"}`,
+    SITE_URL: `https://${
+      process.env.NEXT_PUBLIC_VERCEL_URL ?? "practicing.localhost"
+    }`,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
