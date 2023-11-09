@@ -74,7 +74,9 @@ export const env = createEnv({
     ENCRYPTION_IV: process.env.ENCRYPTION_IV,
     UPLOADTHING_SECRET: process.env.UPLOADTHING_SECRET,
     SITE_URL: `https://${
-      process.env.NEXT_PUBLIC_VERCEL_URL ?? "practicing.localhost"
+      process.env.SITE_URL ??
+      process.env.NEXT_PUBLIC_VERCEL_URL ??
+      "practicing.localhost"
     }`,
   },
   /**
