@@ -1,13 +1,1 @@
-{
-  "version": "5",
-  "dialect": "sqlite",
-  "entries": [
-    {
-      "idx": 0,
-      "version": "5",
-      "when": 1699497666922,
-      "tag": "0000_secret_gamora",
-      "breakpoints": true
-    }
-  ]
-}
+{"version":"5","dialect":"sqlite","entries":[{"idx":0,"version":"5","when":1699497666922,"tag":"0000_secret_gamora","breakpoints":true},{"idx":1,"version":"5","when":1699564598352,"tag":"0001_old_skin","breakpoints":true},{"idx":5,"version":"5","when":1699571063247,"tag":"0005_narrow_stature","breakpoints":true}]}

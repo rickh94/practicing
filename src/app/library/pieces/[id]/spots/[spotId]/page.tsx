@@ -1,4 +1,4 @@
-import { PencilIcon, TrashIcon } from "@heroicons/react/20/solid";
+import { PencilIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Breadcrumbs from "~/app/_components/breadcrumb";
@@ -13,9 +13,30 @@ import {
   BreadcrumbContainer,
   NarrowPageContainer,
 } from "~/app/_components/containers";
+import ConfirmDeleteSpot from "~/app/_components/pieces/confirm-delete-spot";
 
-// TODO: figure out how to delete files from uploadthing on delete
-// TODO: implement edit and delete for spots
+import type { ResolvingMetadata, Metadata } from "next";
+
+export async function generateMetadata(
+  { params }: { params: { id: string; spotId: string } },
+  _parent: ResolvingMetadata,
+): Promise<Metadata> {
+  const spot = await api.library.getSpotById.query({
+    pieceId: params.id,
+    spotId: params.spotId,
+  });
+
+  return {
+    title: `${spot?.name} | ${spot?.piece.title} | Practicing`,
+  };
+}
+
+// TODO: implement practicing. repeat practice is easy, just a page. implement way to change spot stage
+// update stage after repeat practicing successfully
+// random practice for all spots in appropriate stage, or config to check off
+// implement way to advance spot stage while practicing or in summary
+// thinking practice session like cart that you can add spots to (last)
+
 export default async function Page({
   params,
 }: {
@@ -64,13 +85,12 @@ export default async function Page({
             <PencilIcon className="h-6 w-6" />
             Edit
           </Link>
-          <button
-            type="button"
-            className="focusable flex items-center justify-center gap-1 rounded-xl bg-red-700/10 px-4 py-2 font-semibold text-red-800  transition duration-200 hover:bg-red-700/20"
-          >
-            <TrashIcon className="h-6 w-6" />
-            Delete
-          </button>
+          <ConfirmDeleteSpot
+            spotId={spot.id}
+            spotName={spot.name}
+            pieceId={spot.piece.id}
+            pieceTitle={spot.piece.title}
+          />
         </div>
       </BreadcrumbContainer>
       <NarrowPageContainer>

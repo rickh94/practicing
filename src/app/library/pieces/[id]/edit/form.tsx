@@ -14,7 +14,7 @@ import PieceFormFields from "~/app/_components/forms/piece-form";
 export default function UpdatePieceForm({ piece }: { piece: PieceWithSpots }) {
   const { control, handleSubmit, formState } = useForm<PieceFormData>({
     mode: "onBlur",
-    reValidateMode: "onBlur",
+    reValidateMode: "onChange",
     resolver: zodResolver(pieceFormData),
     defaultValues: pieceFormData.parse(piece),
   });

@@ -161,9 +161,9 @@ export function AddAudioPrompt({
                         >
                           Add Audio Prompt
                         </Dialog.Title>
-                        <div className="prose prose-sm prose-neutral mt-2 text-center">
-                          Upload an audio file or paste in a public URL to audio
-                          that will prompt you for this spot.
+                        <div className="prose prose-sm prose-neutral mt-2 text-left">
+                          Upload an audio file (max 512KB) or paste in a public
+                          URL to audio that will prompt you for this spot.
                         </div>
                         <Controller
                           render={({ field }) => (
@@ -210,7 +210,7 @@ export function AddAudioPrompt({
                           {
                             "pointer-events-none bg-neutral-700/50 text-neutral-900":
                               isUploading || !formState.isValid,
-                            "bg-emerald-800/20 text-emerald-700  hover:bg-emerald-800/30":
+                            "bg-green-800/20 text-green-700  hover:bg-green-800/30":
                               !isUploading && formState.isValid,
                           },
                         )}
@@ -368,9 +368,10 @@ export function AddImagePrompt({
                         >
                           Add Image Prompt
                         </Dialog.Title>
-                        <div className="prose prose-sm prose-neutral mt-2 text-center">
-                          Upload an image (e.g. of your sheet music) or enter a
-                          public URL to use as a prompt for this spot.
+                        <div className="prose prose-sm prose-neutral mt-2 text-left">
+                          Upload an image or screenshot (max 512KB) or enter a
+                          public URL for an image to use as a prompt for this
+                          spot.
                         </div>
                         <Controller
                           render={({ field }) => (
@@ -417,7 +418,7 @@ export function AddImagePrompt({
                           {
                             "pointer-events-none bg-neutral-700/50 text-neutral-900":
                               isUploading,
-                            "bg-emerald-800/20 text-emerald-700  hover:bg-emerald-800/30":
+                            "bg-green-800/20 text-green-700  hover:bg-green-800/30":
                               !isUploading,
                           },
                         )}
@@ -519,7 +520,7 @@ export function AddTextPrompt({
                         >
                           Add Text Prompt
                         </Dialog.Title>
-                        <div className="prose prose-sm prose-neutral mt-2 text-center">
+                        <div className="prose prose-sm prose-neutral mt-2 text-left">
                           Enter some text to remind yourself about this spot.
                         </div>
                         <Controller
@@ -561,7 +562,7 @@ export function AddTextPrompt({
                           {
                             "pointer-events-none bg-neutral-700/50 text-neutral-900":
                               !formState.isValid,
-                            "bg-emerald-800/20 text-emerald-700  hover:bg-emerald-800/30":
+                            "bg-green-800/20 text-green-700  hover:bg-green-800/30":
                               formState.isValid,
                           },
                         )}
@@ -661,10 +662,19 @@ export function AddNotesPrompt({
                           as="h3"
                           className="text-2xl font-semibold leading-6 text-neutral-900"
                         >
-                          Add Text Prompt
+                          Add Notes Prompt
                         </Dialog.Title>
-                        <div className="prose prose-sm prose-neutral mt-2 text-center">
-                          Enter some text to remind yourself about this spot.
+                        <div className="prose prose-sm prose-neutral mt-2 text-left">
+                          The text box below will treated as{" "}
+                          <a
+                            href="https://abcnotation.com/"
+                            className="underline"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            ABC notation
+                          </a>{" "}
+                          and rendered below.{" "}
                         </div>
                         <Controller
                           render={({ field }) => (
@@ -719,7 +729,7 @@ export function AddNotesPrompt({
                           {
                             "pointer-events-none bg-neutral-700/50 text-neutral-900":
                               !formState.isValid,
-                            "bg-emerald-800/20 text-emerald-700  hover:bg-emerald-800/30":
+                            "bg-green-800/20 text-green-700  hover:bg-green-800/30":
                               formState.isValid,
                           },
                         )}

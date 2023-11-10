@@ -12,7 +12,7 @@ import {
 } from "~/lib/validators/library";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { pieces, spots } from "~/server/db/schema";
+import { pieces, spots, users } from "~/server/db/schema";
 import { eq, and, desc } from "drizzle-orm";
 // import { utapi } from "~/server/uploadthing";
 
@@ -33,12 +33,30 @@ async function deleteUploadthingFile(url?: string | null) {
 }
 */
 
-// TODO: implement quota
 export const libraryRouter = createTRPCRouter({
   createPiece: protectedProcedure
     .input(pieceFormData)
     .output(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
+      const pieceCountResult = await ctx.db
+        .select({ count: sql<number>`count(*)` })
+        .from(pieces)
+        .where(eq(pieces.userId, ctx.session.user.id));
+      const user = await ctx.db.query.users.findFirst({
+        where: eq(users.id, ctx.session.user.id),
+      });
+      if (!user) {
+        throw new TRPCError({
+          message: "Something went wrong",
+          code: "INTERNAL_SERVER_ERROR",
+        });
+      }
+      if (pieceCountResult?.[0]?.count ?? 0 >= user.quota) {
+        throw new TRPCError({
+          message: "You have reached your quota, please delete some pieces",
+          code: "BAD_REQUEST",
+        });
+      }
       const result = await ctx.db.transaction(async (tx) => {
         const [piece] = await tx
           .insert(pieces)
@@ -149,7 +167,6 @@ export const libraryRouter = createTRPCRouter({
         oldSpotIds.add(id);
       }
 
-      // TODO: could be refactored for less nesting
       await ctx.db.transaction(async (tx) => {
         await tx
           .update(pieces)
@@ -159,6 +176,8 @@ export const libraryRouter = createTRPCRouter({
             composer: update.composer,
             recordingLink: update.recordingLink,
             practiceNotes: update.practiceNotes,
+            measures: update.measures,
+            beatsPerMeasure: update.beatsPerMeasure,
           })
           .where(eq(pieces.id, id));
         for (const spot of update.spots) {
@@ -198,7 +217,22 @@ export const libraryRouter = createTRPCRouter({
         }
       }); // end of transaction
     }),
-
+  practicePiece: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input: { id } }) => {
+      const result = await ctx.db
+        .update(pieces)
+        .set({
+          lastPracticed: new Date(),
+        })
+        .where(and(eq(pieces.id, id), eq(pieces.userId, ctx.session.user.id)));
+      if (result.rowsAffected === 0) {
+        throw new TRPCError({
+          message: "Could not update piece",
+          code: "INTERNAL_SERVER_ERROR",
+        });
+      }
+    }),
   getPieceById: protectedProcedure
     .input(z.object({ id: z.string() }))
     .output(pieceWithSpots.nullable())
@@ -312,23 +346,14 @@ export const libraryRouter = createTRPCRouter({
     }),
 
   getPiecePages: protectedProcedure
-    .input(
-      z
-        .object({
-          perPage: z.number().default(12),
-        })
-        .optional(),
-    )
-    .output(
-      z.object({
-        totalPages: z.number(),
-      }),
-    )
+    .input(z.object({ perPage: z.number().default(12) }).optional())
+    .output(z.object({ totalPages: z.number() }))
     .query(async ({ ctx, input }) => {
       const limit = input?.perPage ?? 12;
       const result = await ctx.db
         .select({ count: sql<number>`count(*)` })
-        .from(pieces);
+        .from(pieces)
+        .where(eq(pieces.userId, ctx.session.user.id));
       if (!result?.[0]) {
         throw new TRPCError({
           message: "Something went wrong",
@@ -336,6 +361,23 @@ export const libraryRouter = createTRPCRouter({
         });
       }
       return { totalPages: Math.ceil(result[0].count / limit) };
+    }),
+
+  deletePieceById: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const result = await ctx.db
+        .delete(pieces)
+        .where(
+          and(eq(pieces.id, input.id), eq(pieces.userId, ctx.session.user.id)),
+        )
+        .returning();
+      if (!result?.[0]) {
+        throw new TRPCError({
+          message: "Could not delete piece",
+          code: "INTERNAL_SERVER_ERROR",
+        });
+      }
     }),
 
   getSpotById: protectedProcedure
@@ -431,5 +473,31 @@ export const libraryRouter = createTRPCRouter({
         });
       }
       return foundSpots;
+    }),
+
+  deleteSpotById: protectedProcedure
+    .input(z.object({ pieceId: z.string(), spotId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const piece = await ctx.db.query.pieces.findFirst({
+        where: and(
+          eq(pieces.id, input.pieceId),
+          eq(pieces.userId, ctx.session.user.id),
+        ),
+      });
+      if (!piece) {
+        return null;
+      }
+      const result = await ctx.db
+        .delete(spots)
+        .where(
+          and(eq(spots.id, input.spotId), eq(spots.pieceId, input.pieceId)),
+        )
+        .returning();
+      if (!result?.[0]) {
+        throw new TRPCError({
+          message: "Could not delete spot",
+          code: "INTERNAL_SERVER_ERROR",
+        });
+      }
     }),
 });

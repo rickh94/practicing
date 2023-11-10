@@ -9,6 +9,20 @@ import SpotCreationForm from "./form";
 import { Suspense } from "react";
 import { SmallSpotCard } from "~/app/library/pieces/SmallSpotCard";
 import { PieceSpotsSkeleton } from "~/app/_components/skeletons";
+import type { ResolvingMetadata, Metadata } from "next";
+
+export async function generateMetadata(
+  { params }: { params: { id: string } },
+  _parent: ResolvingMetadata,
+): Promise<Metadata> {
+  const piece = await api.library.checkForPiece.query({
+    id: params.id,
+  });
+
+  return {
+    title: `Add Spot - ${piece?.title} | Practicing`,
+  };
+}
 
 export default async function Page({
   params: { id },

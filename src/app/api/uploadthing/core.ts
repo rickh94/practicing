@@ -3,8 +3,9 @@ import { getServerAuthSession } from "~/server/auth";
 
 const f = createUploadthing();
 
+// Quota should be 40 spots per piece, 10 pieces per user, won't run out of uploadthing free tier until 40 users
 export const pFileRouter = {
-  audioUploader: f({ audio: { maxFileSize: "2MB" } })
+  audioUploader: f({ audio: { maxFileSize: "512KB" } })
     .middleware(async () => {
       const session = await getServerAuthSession();
       if (!session?.user?.id) {
@@ -18,7 +19,7 @@ export const pFileRouter = {
       //
       // console.log("file url", file.url);
     }),
-  imageUploader: f({ image: { maxFileSize: "2MB" } })
+  imageUploader: f({ image: { maxFileSize: "512KB" } })
     .middleware(async () => {
       const session = await getServerAuthSession();
       if (!session?.user?.id) {

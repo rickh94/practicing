@@ -25,9 +25,19 @@ type StartingPointMode = "setup" | "practice" | "summary";
 // TODO: add option for sentence or grid layout
 // TODO: add option for time signature changes
 //
-export default function StartingPoint() {
-  const [measures, setMeasures] = useState<number>(100);
-  const [beats, setBeats] = useState<number>(4);
+export default function StartingPoint({
+  pieceMeasures = 100,
+  pieceBeats = 4,
+  preconfigured = false,
+  onCompleted,
+}: {
+  pieceMeasures?: number;
+  pieceBeats?: number;
+  preconfigured?: boolean;
+  onCompleted?: () => void;
+}) {
+  const [measures, setMeasures] = useState<number>(pieceMeasures);
+  const [beats, setBeats] = useState<number>(pieceBeats);
   const [mode, setMode] = useState<StartingPointMode>("setup");
   const [maxLength, setMaxLength] = useState<number>(5);
   const [summary, setSummary] = useState<Section[]>([]);
@@ -50,8 +60,9 @@ export default function StartingPoint() {
     function (finalSummary: Section[]) {
       setMode("summary");
       setSummary(finalSummary);
+      onCompleted?.();
     },
-    [setSummary, setMode],
+    [setSummary, setMode, onCompleted],
   );
 
   return (
@@ -61,6 +72,7 @@ export default function StartingPoint() {
           {
             setup: (
               <StartingPointSetupForm
+                preconfigured={preconfigured}
                 beats={beats}
                 measures={measures}
                 maxLength={maxLength}
@@ -95,10 +107,11 @@ export default function StartingPoint() {
 }
 
 // TODO: rewrite description
-function StartingPointSetupForm({
+export function StartingPointSetupForm({
   beats,
   measures,
   maxLength,
+  preconfigured,
   setMaxLength,
   setBeats,
   setMeasures,
@@ -107,6 +120,7 @@ function StartingPointSetupForm({
   beats: number;
   measures: number;
   maxLength: number;
+  preconfigured: boolean;
   setMaxLength: Dispatch<SetStateAction<number>>;
   setBeats: Dispatch<SetStateAction<number>>;
   setMeasures: Dispatch<SetStateAction<number>>;
@@ -153,6 +167,7 @@ function StartingPointSetupForm({
               type="number"
               min="2"
               value={measures}
+              disabled={preconfigured}
               onChange={(e) => setMeasures(parseInt(e.target.value))}
               onFocus={autoSelect}
             />
@@ -179,6 +194,7 @@ function StartingPointSetupForm({
               type="number"
               min="1"
               value={beats}
+              disabled={preconfigured}
               onChange={(e) => setBeats(parseInt(e.target.value))}
               onFocus={autoSelect}
             />
@@ -231,7 +247,7 @@ function StartingPointSetupForm({
 }
 
 // TODO: maybe write a test for this function
-function makeRandomSection(
+export function makeRandomSection(
   measures: number,
   beats: number,
   maxLength: number,
@@ -258,7 +274,7 @@ function makeRandomSection(
   };
 }
 
-function StartingPointPractice({
+export function StartingPointPractice({
   beats,
   measures,
   maxLength,
@@ -338,7 +354,7 @@ function StartingPointPractice({
   );
 }
 
-function SectionDisplay({ section }: { section: Section }) {
+export function SectionDisplay({ section }: { section: Section }) {
   return (
     <div className="flex justify-center">
       <div className="rounded-xl border border-neutral-500 bg-white/90 px-4 pb-5 pt-4 text-center text-lg shadow-lg sm:px-8 sm:text-xl">
@@ -369,7 +385,7 @@ function SectionDisplay({ section }: { section: Section }) {
   );
 }
 
-function Summary({
+export function Summary({
   summary,
   setup,
   practice,

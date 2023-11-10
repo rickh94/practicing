@@ -5,6 +5,7 @@ import { api } from "~/trpc/react";
 import { workSans } from "../_components/page-layout";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { XMarkIcon, TrashIcon } from "@heroicons/react/20/solid";
 
 export default function DeletePasskeys() {
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -65,7 +66,7 @@ export default function DeletePasskeys() {
                       >
                         Delete Passkeys
                       </Dialog.Title>
-                      <div className="prose prose-sm prose-neutral mt-2 text-center">
+                      <div className="prose prose-sm prose-neutral mt-2 text-left">
                         This will delete all registered passkeys from all
                         devices. This action cannot be undone. You will still be
                         able to log in using your email address.
@@ -75,16 +76,18 @@ export default function DeletePasskeys() {
                   <div className="mt-5 flex gap-4 px-2 sm:mt-6">
                     <button
                       type="button"
-                      className="focusable block w-full rounded-xl bg-amber-800/20 px-4 py-2 text-lg font-semibold text-amber-700 hover:bg-amber-800/30"
+                      className="focusable flex w-full items-center justify-center gap-1 rounded-xl bg-amber-800/20 px-4 py-2 text-lg font-semibold text-amber-700 hover:bg-amber-800/30"
                       onClick={() => setConfirmOpen(false)}
                     >
+                      <XMarkIcon className="-ml-1 h-6 w-6" />
                       No, Cancel
                     </button>
                     <button
                       type="button"
-                      className="focusable block w-full rounded-xl bg-rose-800/20 px-4 py-2 text-lg font-semibold text-rose-700 hover:bg-rose-800/30"
+                      className="focusable flex w-full items-center justify-center gap-1 rounded-xl bg-red-800/20 px-4 py-2 text-lg font-semibold text-red-700 hover:bg-red-800/30"
                       onClick={() => mutate()}
                     >
+                      <TrashIcon className="-ml-1 h-6 w-6" />
                       Yes, Delete
                     </button>
                   </div>

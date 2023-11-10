@@ -6,7 +6,21 @@ import {
 } from "~/app/_components/containers";
 import { api } from "~/trpc/server";
 import SpotUpdateForm from "./form";
+import type { ResolvingMetadata, Metadata } from "next";
 
+export async function generateMetadata(
+  { params }: { params: { id: string; spotId: string } },
+  _parent: ResolvingMetadata,
+): Promise<Metadata> {
+  const spot = await api.library.getSpotById.query({
+    pieceId: params.id,
+    spotId: params.spotId,
+  });
+
+  return {
+    title: `Edit ${spot?.name} | ${spot?.piece.title}  | Practicing`,
+  };
+}
 export default async function Page({
   params: { id, spotId },
 }: {

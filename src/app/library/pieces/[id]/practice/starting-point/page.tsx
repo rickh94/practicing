@@ -1,29 +1,25 @@
 import { notFound } from "next/navigation";
 import Breadcrumbs from "~/app/_components/breadcrumb";
 import { BreadcrumbContainer } from "~/app/_components/containers";
+import Practice from "./practice";
 import { api } from "~/trpc/server";
-import UpdatePieceForm from "./form";
 import type { ResolvingMetadata, Metadata } from "next";
 
 export async function generateMetadata(
   { params }: { params: { id: string } },
   _parent: ResolvingMetadata,
 ): Promise<Metadata> {
-  const piece = await api.library.getPieceForUpdate.query({
+  const piece = await api.library.getPieceById.query({
     id: params.id,
   });
 
   return {
-    title: `Edit ${piece?.title} | Practicing`,
+    title: `Practice ${piece?.title} | Practicing`,
   };
 }
 
-export default async function SinglePiece({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const piece = await api.library.getPieceForUpdate.query({
+export default async function Page({ params }: { params: { id: string } }) {
+  const piece = await api.library.getPieceById.query({
     id: params.id,
   });
   if (!piece) {
@@ -47,17 +43,15 @@ export default async function SinglePiece({
                 href: `/library/pieces/${piece.id}`,
               },
               {
-                label: "Update",
-                href: `/library/pieces/${piece.id}/edit`,
+                label: "Practice Starting Point",
+                href: `/library/pieces/${piece.id}/practice/starting-point`,
                 active: true,
               },
             ]}
           />
         </div>
       </BreadcrumbContainer>
-      <div className="w-full sm:mx-auto sm:max-w-6xl">
-        <UpdatePieceForm piece={piece} />
-      </div>
+      <Practice piece={piece} />
     </>
   );
 }

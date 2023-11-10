@@ -5,6 +5,8 @@ import { type PieceFormData } from "~/lib/validators/library";
 import { FolderPlusIcon } from "@heroicons/react/20/solid";
 import { SpotsArray } from "~/app/_components/forms/spots-array";
 
+// TODO: reformat and add measures and beats per measure
+
 export default function PieceFormFields({
   control,
   formState,
@@ -18,21 +20,19 @@ export default function PieceFormFields({
 }) {
   return (
     <>
-      <div className="divide-y divide-neutral-700  border-y border-neutral-700">
-        <Controller
-          name="title"
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <div className="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <div className="flex h-full w-full items-center">
+      <div className="flex w-full flex-col">
+        <div className="grid-cols-1 px-4 py-2 sm:grid sm:grid-cols-2 sm:gap-4 sm:px-0 ">
+          <Controller
+            name="title"
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <div className="flex flex-col gap-1">
                 <label
                   className="text-sm font-medium leading-6 text-neutral-900"
                   htmlFor={field.name}
                 >
-                  Title
+                  Title (required)
                 </label>
-              </div>
-              <div className="text-sm leading-6 text-neutral-700 sm:col-span-2 sm:mt-0">
                 <input
                   type="text"
                   id={field.name}
@@ -41,26 +41,22 @@ export default function PieceFormFields({
                   className="focusable w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
                 />
                 {error && (
-                  <p className="mt-2 text-sm text-red-600">{error.message}</p>
+                  <p className="text-sm text-red-600">{error.message}</p>
                 )}
               </div>
-            </div>
-          )}
-        />
-        <Controller
-          name="composer"
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <div className="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <div className="flex h-full w-full items-center">
+            )}
+          />
+          <Controller
+            name="composer"
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <div className="flex flex-col gap-1">
                 <label
                   className="text-sm font-medium leading-6 text-neutral-900"
                   htmlFor={field.name}
                 >
                   Composer
                 </label>
-              </div>
-              <div className="text-sm leading-6 text-neutral-700 sm:col-span-2 sm:mt-0">
                 <input
                   type="text"
                   id={field.name}
@@ -69,57 +65,85 @@ export default function PieceFormFields({
                   className="focusable w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
                 />
                 {error && (
-                  <p className="mt-2 text-sm text-red-600">{error.message}</p>
+                  <p className="text-sm text-red-600">{error.message}</p>
                 )}
               </div>
-            </div>
-          )}
-        />
-        <Controller
-          name="description"
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <div className="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <div className="flex h-full w-full items-center">
+            )}
+          />
+        </div>
+        <div className="grid-cols-1 px-4 py-2 sm:grid sm:grid-cols-2 sm:gap-4 sm:px-0 md:grid-cols-4 ">
+          <Controller
+            name="measures"
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <div className="flex flex-col gap-1">
                 <label
                   className="text-sm font-medium leading-6 text-neutral-900"
                   htmlFor={field.name}
                 >
-                  Description
+                  Number of Measures
                 </label>
-              </div>
-              <div className="text-sm leading-6 text-neutral-700 sm:col-span-2 sm:mt-0">
-                <textarea
+                <input
+                  type="number"
                   id={field.name}
-                  placeholder="Description of your piece"
+                  placeholder="Measures"
                   {...field}
-                  className="focusable h-24 w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
+                  value={field.value ?? undefined}
+                  onChange={(e) =>
+                    field.onChange(parseInt(e.target.value) || undefined)
+                  }
+                  className="focusable w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
                 />
                 {error && (
-                  <p className="mt-2 text-sm text-red-600">{error.message}</p>
+                  <p className="text-sm text-red-600">{error.message}</p>
                 )}
               </div>
-            </div>
-          )}
-        />
-        <Controller
-          name="recordingLink"
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <div className="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <div className="flex h-full w-full items-center">
+            )}
+          />
+          <Controller
+            name="beatsPerMeasure"
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <div className="flex flex-col gap-1">
                 <label
                   className="text-sm font-medium leading-6 text-neutral-900"
                   htmlFor={field.name}
                 >
-                  Link to Recording
+                  Beats per Measure
                 </label>
+                <input
+                  type="number"
+                  id={field.name}
+                  placeholder="Beats"
+                  {...field}
+                  value={field.value ?? undefined}
+                  onChange={(e) =>
+                    field.onChange(parseInt(e.target.value) || undefined)
+                  }
+                  className="focusable w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
+                />
+                {error && (
+                  <p className="text-sm text-red-600">{error.message}</p>
+                )}
               </div>
-              <div className="text-sm leading-6 text-neutral-700 sm:col-span-2 sm:mt-0">
+            )}
+          />
+
+          <Controller
+            name="recordingLink"
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <div className="col-span-2 flex w-full flex-col">
+                <label
+                  className="text-sm font-medium leading-6 text-neutral-900"
+                  htmlFor={field.name}
+                >
+                  Recording Link
+                </label>
                 <input
                   type="text"
                   id={field.name}
-                  placeholder="Recording Link"
+                  placeholder="Reference Recording"
                   {...field}
                   className="focusable w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
                 />
@@ -127,26 +151,25 @@ export default function PieceFormFields({
                   <p className="mt-2 text-sm text-red-600">{error.message}</p>
                 )}
               </div>
-            </div>
-          )}
-        />
-        <Controller
-          name="practiceNotes"
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <div className="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <div className="flex h-full w-full items-center">
+            )}
+          />
+        </div>
+
+        <div className="grid-cols-1 px-4 py-2 sm:grid sm:gap-4 sm:px-0 md:grid-cols-2">
+          <Controller
+            name="description"
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <div className="flex flex-col">
                 <label
                   className="text-sm font-medium leading-6 text-neutral-900"
                   htmlFor={field.name}
                 >
-                  Practice Notes
+                  Description
                 </label>
-              </div>
-              <div className="text-sm leading-6 text-neutral-700 sm:col-span-2 sm:mt-0">
                 <textarea
                   id={field.name}
-                  placeholder="Notes for Practicing"
+                  placeholder="Describe of your piece"
                   {...field}
                   className="focusable h-24 w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
                 />
@@ -154,9 +177,32 @@ export default function PieceFormFields({
                   <p className="mt-2 text-sm text-red-600">{error.message}</p>
                 )}
               </div>
-            </div>
-          )}
-        />
+            )}
+          />
+          <Controller
+            name="practiceNotes"
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <div className="flex flex-col">
+                <label
+                  className="text-sm font-medium leading-6 text-neutral-900"
+                  htmlFor={field.name}
+                >
+                  Practice Notes
+                </label>
+                <textarea
+                  id={field.name}
+                  placeholder="Things to remember"
+                  {...field}
+                  className="focusable h-24 w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
+                />
+                {error && (
+                  <p className="mt-2 text-sm text-red-600">{error.message}</p>
+                )}
+              </div>
+            )}
+          />
+        </div>
       </div>
       <SpotsArray control={control} />
       <div className="flex flex-row-reverse justify-start gap-4 py-4">

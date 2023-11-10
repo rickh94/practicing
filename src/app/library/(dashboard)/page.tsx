@@ -6,6 +6,11 @@ import LibraryPieceList from "./piece-list";
 import Link from "next/link";
 import { DocumentPlusIcon, ViewColumnsIcon } from "@heroicons/react/20/solid";
 import Breadcrumbs from "~/app/_components/breadcrumb";
+import { type Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Library | Practicing",
+};
 
 // TODO: recently practiced, practice plan for the day, spots, pieces
 // TODO: fix weird middle size layout bug

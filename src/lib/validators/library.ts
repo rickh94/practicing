@@ -59,6 +59,8 @@ export const pieceWithSpots = z.object({
   description: z.string(),
   composer: z.string(),
   recordingLink: z.union([z.string().url(), z.enum([""]), z.null()]),
+  measures: z.number().nullish(),
+  beatsPerMeasure: z.number().nullish(),
   practiceNotes: z.string().nullish(),
   spots: z.array(basicSpot),
 });
@@ -70,11 +72,16 @@ export const pieceForList = pieceWithSpots.omit({
 });
 
 export const pieceFormData = z.object({
-  title: z.string().min(1).max(255),
+  title: z
+    .string()
+    .min(1, "Title must be at least one letter")
+    .max(255, "Title is too long."),
   description: z.string(),
   composer: z.string(),
   recordingLink: z.union([z.string().url(), z.enum([""])]),
   practiceNotes: z.string(),
+  measures: z.number().optional().nullable(),
+  beatsPerMeasure: z.number().optional().nullable(),
   spots: z.array(spotWithPromptsFormData),
 });
 

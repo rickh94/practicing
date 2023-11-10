@@ -2,9 +2,13 @@ import Link from "next/link";
 import { PageColumnLayout } from "~/app/_components/page-layout";
 import { BackToHome } from "~/app/_components/links";
 import Chart from "../_components/about/chart";
+import { type Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "About | Practicing",
+};
 
 // TODO: update to reflect new practicing tools
-
 export default function About() {
   return (
     <>

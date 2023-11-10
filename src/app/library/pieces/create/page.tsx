@@ -1,5 +1,10 @@
 import Breadcrumbs from "~/app/_components/breadcrumb";
 import CreatePieceForm from "./form";
+import { type Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Create Piece | Practicing",
+};
 
 export default function CreatePiece() {
   return (
@@ -19,6 +24,10 @@ export default function CreatePiece() {
         />
       </div>
       <div className="w-full sm:mx-auto sm:max-w-6xl">
+        <p className="text-lg">
+          Create a new piece to practice below. You can always edit it later.
+          Add spots below (up to 40).
+        </p>
         <CreatePieceForm />
       </div>
     </>

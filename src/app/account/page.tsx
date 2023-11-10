@@ -6,6 +6,11 @@ import UserInfo from "./userInfo";
 import UserInfoDisplay from "./userInfoDisplay";
 import { PasskeySkeleton } from "../_components/skeletons";
 import { TwoColumnPageContainer } from "../_components/containers";
+import { type Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Account | Practicing",
+};
 
 export default async function Page() {
   const session = await getServerAuthSession();

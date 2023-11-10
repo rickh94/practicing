@@ -1,7 +1,7 @@
 import {
   ArrowTopRightOnSquareIcon,
   PencilIcon,
-  TrashIcon,
+  PlayIcon,
 } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -13,8 +13,23 @@ import {
 import type { BasicPiece, BasicSpot } from "~/lib/validators/library";
 import { api } from "~/trpc/server";
 import { SmallSpotCard } from "../SmallSpotCard";
+import ConfirmDeletePiece from "~/app/_components/pieces/confirm-delete-piece";
+import type { ResolvingMetadata, Metadata } from "next";
 
-// TODO: implement edit and delete for pieces
+export async function generateMetadata(
+  { params }: { params: { id: string } },
+  _parent: ResolvingMetadata,
+): Promise<Metadata> {
+  const piece = await api.library.getPieceById.query({
+    id: params.id,
+  });
+
+  return {
+    title: `${piece?.title} | Practicing`,
+  };
+}
+
+// TODO: add random starting point practice for piece with page, add stage to piece?
 
 export default async function SinglePiece({
   params,
@@ -50,19 +65,20 @@ export default async function SinglePiece({
         </div>
         <div className="flex justify-end gap-2">
           <Link
+            href={`/library/pieces/${piece.id}/practice/starting-point`}
+            className="focusable flex items-center justify-center gap-1 rounded-xl bg-green-700/10 px-4 py-2 font-semibold text-green-800  transition duration-200 hover:bg-green-700/20"
+          >
+            <PlayIcon className="h-5 w-5" />
+            Practice
+          </Link>
+          <Link
             href={`/library/pieces/${piece.id}/edit`}
             className="focusable flex items-center justify-center gap-1 rounded-xl bg-amber-700/10 px-4 py-2 font-semibold text-amber-800  transition duration-200 hover:bg-amber-700/20"
           >
-            <PencilIcon className="h-6 w-6" />
+            <PencilIcon className="h-5 w-5" />
             Edit
           </Link>
-          <button
-            type="button"
-            className="focusable flex items-center justify-center gap-1 rounded-xl bg-red-700/10 px-4 py-2 font-semibold text-red-800  transition duration-200 hover:bg-red-700/20"
-          >
-            <TrashIcon className="h-6 w-6" />
-            Delete
-          </button>
+          <ConfirmDeletePiece pieceId={piece.id} title={piece.title} />
         </div>
       </BreadcrumbContainer>
       <TwoColumnPageContainer>
@@ -98,6 +114,26 @@ function PieceInfoDisplay({ piece }: { piece: BasicPiece }) {
             </dt>
             <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-2 sm:mt-0">
               {piece.composer}
+            </dd>
+          </div>
+        )}
+        {piece.measures && (
+          <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt className="text-sm font-medium leading-6 text-neutral-900">
+              Measures
+            </dt>
+            <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-2 sm:mt-0">
+              {piece.measures}
+            </dd>
+          </div>
+        )}
+        {piece.beatsPerMeasure && (
+          <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt className="text-sm font-medium leading-6 text-neutral-900">
+              Beats per Measure
+            </dt>
+            <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-2 sm:mt-0">
+              {piece.beatsPerMeasure}
             </dd>
           </div>
         )}

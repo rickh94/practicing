@@ -8,6 +8,12 @@ import { DocumentPlusIcon } from "@heroicons/react/20/solid";
 import Breadcrumbs from "~/app/_components/breadcrumb";
 import { BreadcrumbContainer } from "~/app/_components/containers";
 
+import { type Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Your Pieces | Practicing",
+};
+
 export default async function AllPieces({
   searchParams,
 }: {

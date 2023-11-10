@@ -28,6 +28,10 @@ export const users = sqliteTable("user", {
     mode: "timestamp",
   }).$defaultFn(() => new Date()),
   image: text("image", { length: 255 }),
+  quota: integer("quota").default(10).notNull(),
+  isUnlimited: integer("isUnlimited", { mode: "boolean" })
+    .default(false)
+    .notNull(),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -132,6 +136,8 @@ export const pieces = sqliteTable(
     userId: text("userId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
+    measures: integer("measures"),
+    beatsPerMeasure: integer("beatsPerMeasure"),
     recordingLink: text("recordingLink", { length: 255 }),
     practiceNotes: text("practiceNotes"),
     lastPracticed: integer("lastPracticed", { mode: "timestamp" }),
