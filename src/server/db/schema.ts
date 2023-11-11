@@ -141,6 +141,8 @@ export const pieces = sqliteTable(
     recordingLink: text("recordingLink", { length: 255 }),
     practiceNotes: text("practiceNotes"),
     lastPracticed: integer("lastPracticed", { mode: "timestamp" }),
+    goalTempo: integer("goalTempo"),
+    currentTempo: integer("currentTempo"),
   },
   (piece) => ({
     userIdIdx: index("piece_userId_idx").on(piece.userId),
@@ -175,6 +177,7 @@ export const spots = sqliteTable(
     textPrompt: text("textPrompt"),
     notesPrompt: text("notesPrompt"),
     imagePromptUrl: text("imagePromptUrl"),
+    currentTempo: integer("currentTempo"),
   },
   (spot) => ({
     pieceIdIdx: index("spot_pieceId_idx").on(spot.pieceId),

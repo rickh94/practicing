@@ -1,9 +1,10 @@
 import Breadcrumbs from "~/app/_components/breadcrumb";
 import CreatePieceForm from "./form";
 import { type Metadata } from "next";
+import { siteTitle } from "~/lib/util";
 
 export const metadata: Metadata = {
-  title: "Create Piece | Practicing",
+  title: `Create Piece | ${siteTitle}`,
 };
 
 export default function CreatePiece() {

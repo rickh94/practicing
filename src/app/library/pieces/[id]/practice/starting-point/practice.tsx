@@ -8,7 +8,7 @@ import StartingPoint from "~/app/_components/practice/starting-point";
 import { type PieceWithSpots } from "~/lib/validators/library";
 import { api } from "~/trpc/react";
 
-// TODO: visual style for preconfigured starting point in component
+// TODO: save practice session on completed
 
 export default function Practice({ piece }: { piece: PieceWithSpots }) {
   const { mutate } = api.library.practicePiece.useMutation({
@@ -40,6 +40,7 @@ export default function Practice({ piece }: { piece: PieceWithSpots }) {
           pieceBeats={piece.beatsPerMeasure}
           preconfigured={true}
           onCompleted={onCompleted}
+          pieceHref={`/library/pieces/${piece.id}`}
         />
       ) : (
         <div className="sm:mx-auto sm:max-w-3xl">

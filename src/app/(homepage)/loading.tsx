@@ -24,7 +24,7 @@ export default function Home() {
           </g>
         </svg>
         <h1 className="text-3xl font-extrabold tracking-tight text-neutral-800 sm:text-[3rem] md:text-[4rem]">
-          You Can Practice Better
+          Practice Better
         </h1>
         <p className="text-xl text-neutral-700">
           Your practicing habits might be holding you back, get started

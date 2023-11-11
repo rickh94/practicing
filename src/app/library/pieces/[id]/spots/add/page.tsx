@@ -10,6 +10,7 @@ import { Suspense } from "react";
 import { SmallSpotCard } from "~/app/library/pieces/SmallSpotCard";
 import { PieceSpotsSkeleton } from "~/app/_components/skeletons";
 import type { ResolvingMetadata, Metadata } from "next";
+import { siteTitle } from "~/lib/util";
 
 export async function generateMetadata(
   { params }: { params: { id: string } },
@@ -20,7 +21,7 @@ export async function generateMetadata(
   });
 
   return {
-    title: `Add Spot - ${piece?.title} | Practicing`,
+    title: `Add Spot - ${piece?.title} | ${siteTitle}`,
   };
 }
 

@@ -1,4 +1,5 @@
 import { CheckIcon, XMarkIcon } from "@heroicons/react/20/solid";
+import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { useState, useCallback } from "react";
 import { ScaleCrossFadeContent } from "~/app/_components/transitions";
@@ -71,13 +72,10 @@ function RepeatPrepare({ startPracticing }: { startPracticing: () => void }) {
           Repeat practicing is an important part of learning, but you need to do
           it carefully!
         </p>
-        <h2 className="py-1 text-left text-xl font-bold">Prepare</h2>
-        <div className="grid w-full grid-cols-1 gap-2 md:grid-cols-2">
-          <div className="prose prose-neutral rounded-xl bg-neutral-700/5 p-4 md:grid-cols-2">
-            <h3 className="text-left text-xl">
-              Answer these questions before you begin
-            </h3>
-            <ul className="text-lg">
+        <div className="grid w-full grid-cols-1 gap-2 py-4 md:grid-cols-2">
+          <div className="prose prose-neutral flex h-full flex-col rounded-xl bg-neutral-700/5 p-4">
+            <h3 className="text-left text-2xl">Answer these questions first</h3>
+            <ul className="flex flex-grow flex-col justify-around text-xl">
               <li>
                 Where <em className="italic">exactly</em> does your section
                 start and stop?
@@ -88,7 +86,7 @@ function RepeatPrepare({ startPracticing }: { startPracticing: () => void }) {
             </ul>
           </div>
           <div className="prose prose-neutral rounded-xl bg-neutral-700/5 p-4 md:grid-cols-2">
-            <h3 className="text-left text-xl">How it works</h3>
+            <h3 className="text-left text-2xl">How it works</h3>
             <ul className="text-lg">
               <li>The goal is to practice five times without a mistake.</li>
               <li>Practice as slowly as you need to be successful</li>
@@ -218,6 +216,20 @@ function RepeatPractice({
   );
 }
 
+const variants = {
+  initial: {
+    scale: 1.1,
+  },
+  animate: {
+    scale: 1,
+    transition: { bounce: 0, duration: 0.1 },
+  },
+  exit: {
+    scale: 1.1,
+    transition: { duration: 0.1, bounce: 0 },
+  },
+};
+
 function PracticeListItem({
   num,
   completed,
@@ -226,23 +238,32 @@ function PracticeListItem({
   completed: boolean;
 }) {
   return (
-    <li
-      className={cn(
-        "flex h-10 w-10 items-center justify-center rounded-xl border-2 transition-all duration-100 sm:h-12 sm:w-12",
-        completed
-          ? "border-green-700  bg-green-500/50 text-green-700"
-          : "border-neutral-700/10 bg-neutral-700/10 text-neutral-700/20 ",
-      )}
-    >
+    <AnimatePresence initial={false} mode="wait">
       {completed ? (
-        <>
+        <motion.li
+          className="flex h-10 w-10 items-center justify-center rounded-xl border-2 border-green-700 bg-green-500/50 text-green-700 transition-all duration-100  sm:h-12 sm:w-12"
+          key={`${num}-completed`}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          variants={variants}
+        >
           <CheckIcon className="h-6 w-6 sm:h-8 sm:w-8" />{" "}
           <span className="sr-only">Checked</span>
-        </>
+        </motion.li>
       ) : (
-        <div className="m-0 p-0 text-2xl font-bold ">{num}</div>
+        <motion.li
+          className="flex h-10 w-10 items-center justify-center rounded-xl border-2 border-neutral-700/10 bg-neutral-700/10 text-neutral-700/20 transition-all duration-100 sm:h-12 sm:w-12 "
+          key={`${num}-incomplete`}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          variants={variants}
+        >
+          <div className="m-0 p-0 text-2xl font-bold ">{num}</div>
+        </motion.li>
       )}
-    </li>
+    </AnimatePresence>
   );
 }
 

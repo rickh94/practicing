@@ -9,10 +9,13 @@ import Breadcrumbs from "~/app/_components/breadcrumb";
 import { BreadcrumbContainer } from "~/app/_components/containers";
 
 import { type Metadata } from "next";
+import { siteTitle } from "~/lib/util";
 
 export const metadata: Metadata = {
-  title: "Your Pieces | Practicing",
+  title: `Your Pieces | ${siteTitle}`,
 };
+
+// TODO: add ability to track tempo of pieces and spots
 
 export default async function AllPieces({
   searchParams,

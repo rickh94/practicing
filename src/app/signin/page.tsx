@@ -5,9 +5,10 @@ import { redirect } from "next/navigation";
 import { BackToHome } from "../_components/links";
 
 import { type Metadata } from "next";
+import { siteTitle } from "~/lib/util";
 
 export const metadata: Metadata = {
-  title: "Sign In | Practicing",
+  title: `Sign In | ${siteTitle}`,
 };
 
 export default async function SignInPage() {

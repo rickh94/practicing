@@ -41,3 +41,5 @@ export function generatePagination(currentPage: number, totalPages: number) {
 export function uniqueID() {
   return `${Math.floor(Math.random() * Math.random() * Date.now())}`;
 }
+
+export const siteTitle = "Practice Better";

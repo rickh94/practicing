@@ -83,6 +83,8 @@ export const pieceFormData = z.object({
   measures: z.number().optional().nullable(),
   beatsPerMeasure: z.number().optional().nullable(),
   spots: z.array(spotWithPromptsFormData),
+  goalTempo: z.number().optional().nullable(),
+  currentTempo: z.number().optional().nullable(),
 });
 
 export const basicPiece = pieceWithSpots.omit({ spots: true });

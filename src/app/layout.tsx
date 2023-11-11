@@ -10,7 +10,7 @@ import { pFileRouter } from "~/app/api/uploadthing/core";
 import { TRPCReactProvider } from "~/trpc/react";
 
 export const metadata = {
-  title: "Music Practicing",
+  title: "Practice Better",
   description:
     "Organize your music practicing to be more effective and prevent bad habits.",
   icons: [

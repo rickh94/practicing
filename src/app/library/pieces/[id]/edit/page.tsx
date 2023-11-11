@@ -4,6 +4,7 @@ import { BreadcrumbContainer } from "~/app/_components/containers";
 import { api } from "~/trpc/server";
 import UpdatePieceForm from "./form";
 import type { ResolvingMetadata, Metadata } from "next";
+import { siteTitle } from "~/lib/util";
 
 export async function generateMetadata(
   { params }: { params: { id: string } },
@@ -14,7 +15,7 @@ export async function generateMetadata(
   });
 
   return {
-    title: `Edit ${piece?.title} | Practicing`,
+    title: `Edit ${piece?.title} | ${siteTitle}`,
   };
 }
 

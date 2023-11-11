@@ -7,6 +7,7 @@ import {
 } from "react";
 import { cn, uniqueID } from "~/lib/util";
 import { ScaleCrossFadeContent } from "~/app/_components/transitions";
+import Link from "next/link";
 
 type Section = {
   startingPoint: {
@@ -29,11 +30,13 @@ export default function StartingPoint({
   pieceMeasures = 100,
   pieceBeats = 4,
   preconfigured = false,
+  pieceHref,
   onCompleted,
 }: {
   pieceMeasures?: number;
   pieceBeats?: number;
   preconfigured?: boolean;
+  pieceHref?: string;
   onCompleted?: () => void;
 }) {
   const [measures, setMeasures] = useState<number>(pieceMeasures);
@@ -96,6 +99,7 @@ export default function StartingPoint({
                 summary={summary}
                 setup={setModeSetup}
                 practice={setModePractice}
+                pieceHref={pieceHref}
               />
             ),
           }[mode]
@@ -150,12 +154,14 @@ export function StartingPointSetupForm({
         </div>
       </div>
       <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="flex flex-col">
+        <div
+          className={cn("flex flex-col p-2", preconfigured && "bg-black/50")}
+        >
           <label
             className="text-lg font-semibold text-neutral-800"
             htmlFor="measures"
           >
-            Measures
+            Measures {preconfigured ? "(set in piece)" : ""}
           </label>
           <p className="pb-2 text-sm text-neutral-700">
             How many measures are in your piece?
@@ -174,12 +180,14 @@ export function StartingPointSetupForm({
             <div className="font-medium">Measures</div>
           </div>
         </div>
-        <div className="flex flex-col">
+        <div
+          className={cn("flex flex-col p-2", preconfigured && "bg-black/50")}
+        >
           <label
             className="text-lg font-semibold text-neutral-800"
             htmlFor="beats"
           >
-            Beats per measure
+            Beats per measure {preconfigured ? "(set in piece)" : ""}
           </label>
           <p className="text-sm text-neutral-700">
             How many beats are in each measure?
@@ -389,10 +397,12 @@ export function Summary({
   summary,
   setup,
   practice,
+  pieceHref,
 }: {
   summary: Section[];
   setup: () => void;
   practice: () => void;
+  pieceHref?: string;
 }) {
   const measuresPracticed = useMemo(
     function () {
@@ -458,6 +468,14 @@ export function Summary({
           </div>
         </div>
         <div className="flex w-full flex-col justify-center gap-4 pb-8 pt-4 sm:flex-row sm:gap-6">
+          {pieceHref && (
+            <Link
+              href={pieceHref}
+              className="focusable rounded-xl bg-sky-700/10 px-4 py-2 font-semibold text-sky-800 transition duration-200 hover:bg-sky-700/20"
+            >
+              Back to Piece
+            </Link>
+          )}
           <button
             className="focusable rounded-xl bg-amber-700/10 px-4 py-2 font-semibold text-amber-800 transition duration-200 hover:bg-amber-700/20"
             type="button"

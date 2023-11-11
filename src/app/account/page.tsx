@@ -7,9 +7,10 @@ import UserInfoDisplay from "./userInfoDisplay";
 import { PasskeySkeleton } from "../_components/skeletons";
 import { TwoColumnPageContainer } from "../_components/containers";
 import { type Metadata } from "next";
+import { siteTitle } from "~/lib/util";
 
 export const metadata: Metadata = {
-  title: "Account | Practicing",
+  title: `Account | ${siteTitle}`,
 };
 
 export default async function Page() {

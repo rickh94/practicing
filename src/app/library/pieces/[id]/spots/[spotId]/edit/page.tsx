@@ -7,6 +7,7 @@ import {
 import { api } from "~/trpc/server";
 import SpotUpdateForm from "./form";
 import type { ResolvingMetadata, Metadata } from "next";
+import { siteTitle } from "~/lib/util";
 
 export async function generateMetadata(
   { params }: { params: { id: string; spotId: string } },
@@ -18,7 +19,7 @@ export async function generateMetadata(
   });
 
   return {
-    title: `Edit ${spot?.name} | ${spot?.piece.title}  | Practicing`,
+    title: `Edit ${spot?.name} | ${siteTitle}`,
   };
 }
 export default async function Page({

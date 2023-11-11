@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { Controller, type Control, type FormState } from "react-hook-form";
 import { type PieceFormData } from "~/lib/validators/library";
-import { FolderPlusIcon } from "@heroicons/react/20/solid";
+import { FolderPlusIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { SpotsArray } from "~/app/_components/forms/spots-array";
 
 // TODO: reformat and add measures and beats per measure
@@ -21,12 +21,12 @@ export default function PieceFormFields({
   return (
     <>
       <div className="flex w-full flex-col">
-        <div className="grid-cols-1 px-4 py-2 sm:grid sm:grid-cols-2 sm:gap-4 sm:px-0 ">
+        <div className="grid-cols-1 px-4 py-2 sm:grid sm:gap-4 sm:px-0 md:grid-cols-5 ">
           <Controller
             name="title"
             control={control}
             render={({ field, fieldState: { error } }) => (
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-1 sm:col-span-2">
                 <label
                   className="text-sm font-medium leading-6 text-neutral-900"
                   htmlFor={field.name}
@@ -50,7 +50,7 @@ export default function PieceFormFields({
             name="composer"
             control={control}
             render={({ field, fieldState: { error } }) => (
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-1 sm:col-span-2">
                 <label
                   className="text-sm font-medium leading-6 text-neutral-900"
                   htmlFor={field.name}
@@ -70,8 +70,37 @@ export default function PieceFormFields({
               </div>
             )}
           />
+
+          <Controller
+            name="goalTempo"
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <div className="flex flex-col gap-1">
+                <label
+                  className="text-sm font-medium leading-6 text-neutral-900"
+                  htmlFor={field.name}
+                >
+                  Goal Tempo
+                </label>
+                <input
+                  type="number"
+                  id={field.name}
+                  placeholder="BPM"
+                  {...field}
+                  value={field.value ?? undefined}
+                  onChange={(e) =>
+                    field.onChange(parseInt(e.target.value) || undefined)
+                  }
+                  className="focusable w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
+                />
+                {error && (
+                  <p className="text-sm text-red-600">{error.message}</p>
+                )}
+              </div>
+            )}
+          />
         </div>
-        <div className="grid-cols-1 px-4 py-2 sm:grid sm:grid-cols-2 sm:gap-4 sm:px-0 md:grid-cols-4 ">
+        <div className="grid-cols-1 px-4 py-2 sm:grid sm:grid-cols-2 sm:gap-4 sm:px-0 md:grid-cols-6">
           <Controller
             name="measures"
             control={control}
@@ -81,7 +110,7 @@ export default function PieceFormFields({
                   className="text-sm font-medium leading-6 text-neutral-900"
                   htmlFor={field.name}
                 >
-                  Number of Measures
+                  Measures
                 </label>
                 <input
                   type="number"
@@ -109,7 +138,7 @@ export default function PieceFormFields({
                   className="text-sm font-medium leading-6 text-neutral-900"
                   htmlFor={field.name}
                 >
-                  Beats per Measure
+                  Beats
                 </label>
                 <input
                   type="number"
@@ -128,12 +157,11 @@ export default function PieceFormFields({
               </div>
             )}
           />
-
           <Controller
             name="recordingLink"
             control={control}
             render={({ field, fieldState: { error } }) => (
-              <div className="col-span-2 flex w-full flex-col">
+              <div className="col-span-4 flex w-full flex-col gap-1">
                 <label
                   className="text-sm font-medium leading-6 text-neutral-900"
                   htmlFor={field.name}
@@ -154,13 +182,12 @@ export default function PieceFormFields({
             )}
           />
         </div>
-
         <div className="grid-cols-1 px-4 py-2 sm:grid sm:gap-4 sm:px-0 md:grid-cols-2">
           <Controller
             name="description"
             control={control}
             render={({ field, fieldState: { error } }) => (
-              <div className="flex flex-col">
+              <div className="flex flex-col gap-1">
                 <label
                   className="text-sm font-medium leading-6 text-neutral-900"
                   htmlFor={field.name}
@@ -183,7 +210,7 @@ export default function PieceFormFields({
             name="practiceNotes"
             control={control}
             render={({ field, fieldState: { error } }) => (
-              <div className="flex flex-col">
+              <div className="flex flex-col gap-1">
                 <label
                   className="text-sm font-medium leading-6 text-neutral-900"
                   htmlFor={field.name}
@@ -215,14 +242,15 @@ export default function PieceFormFields({
               : "bg-neutral-700/50 text-neutral-800"
           }`}
         >
-          <FolderPlusIcon className="inline h-6 w-6" />
+          <FolderPlusIcon className="-ml-1 inline h-6 w-6" />
           {isUpdating ? "Saving..." : "Save"}
         </button>
         <Link
-          className="focusable rounded-xl bg-amber-700/10 px-5 py-3 text-lg font-semibold text-amber-800  transition duration-200 hover:bg-amber-700/20"
+          className="focusable flex items-center rounded-xl bg-amber-700/10 px-5 py-3 text-lg  font-semibold text-amber-800 transition duration-200 hover:bg-amber-700/20"
           href={backTo}
         >
-          ← Cancel
+          <XMarkIcon className="-ml-1 inline h-6 w-6" />
+          Cancel
         </Link>
       </div>
     </>

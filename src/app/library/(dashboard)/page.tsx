@@ -7,9 +7,10 @@ import Link from "next/link";
 import { DocumentPlusIcon, ViewColumnsIcon } from "@heroicons/react/20/solid";
 import Breadcrumbs from "~/app/_components/breadcrumb";
 import { type Metadata } from "next";
+import { siteTitle } from "~/lib/util";
 
 export const metadata: Metadata = {
-  title: "Library | Practicing",
+  title: `Library | ${siteTitle}`,
 };
 
 // TODO: recently practiced, practice plan for the day, spots, pieces

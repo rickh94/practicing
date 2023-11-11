@@ -16,6 +16,7 @@ import {
 import ConfirmDeleteSpot from "~/app/_components/pieces/confirm-delete-spot";
 
 import type { ResolvingMetadata, Metadata } from "next";
+import { siteTitle } from "~/lib/util";
 
 export async function generateMetadata(
   { params }: { params: { id: string; spotId: string } },
@@ -27,7 +28,7 @@ export async function generateMetadata(
   });
 
   return {
-    title: `${spot?.name} | ${spot?.piece.title} | Practicing`,
+    title: `${spot?.name} | ${siteTitle}`,
   };
 }
 

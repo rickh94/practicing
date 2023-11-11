@@ -1,4 +1,4 @@
-import { BookOpenIcon } from "@heroicons/react/20/solid";
+import { BookOpenIcon, HomeIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import { UserIcon, UserMinusIcon } from "@heroicons/react/20/solid";
 
@@ -14,13 +14,17 @@ export function BackLink({ to, text }: { to?: string; text?: string }) {
 }
 
 export function BackToHome() {
-  return <BackLink to="/" text="Back Home" />;
+  return (
+    <Link className={linkClasses} href="/">
+      <HomeIcon className="-ml-1 h-6 w-6" /> Back Home
+    </Link>
+  );
 }
 
 export function LibraryLink() {
   return (
     <Link className={linkClasses} href="/library">
-      <BookOpenIcon className="inline h-6 w-6" />
+      <BookOpenIcon className="-ml-1 inline h-6 w-6" />
       Library
     </Link>
   );
@@ -28,7 +32,7 @@ export function LibraryLink() {
 export function AccountLink() {
   return (
     <Link href="/account" className={linkClasses}>
-      <UserIcon className="inline h-6 w-6" />
+      <UserIcon className="-ml-1 inline h-6 w-6" />
       <span>Account</span>
     </Link>
   );
@@ -45,7 +49,7 @@ export function LoginLink() {
 export function LogoutLink() {
   return (
     <Link className={linkClasses} href="/api/auth/signout">
-      <UserMinusIcon className="inline h-6 w-6" />
+      <UserMinusIcon className="-ml-1 inline h-6 w-6" />
       Logout
     </Link>
   );

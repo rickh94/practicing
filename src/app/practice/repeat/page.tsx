@@ -7,10 +7,8 @@ import { BackToHome } from "~/app/_components/links";
 import Help from "~/app/_components/practice/repeat-help";
 import { TitleLinkMenu } from "~/app/_components/practice/title-link-menu";
 import Repeat from "~/app/_components/practice/repeat";
-import { Metadata } from "next";
 
-// TODO: change help
-//
+// TODO: play with layout containers so content doesn't get stuck off to the left
 export default function Page() {
   // TODO: fix back button so it scrolls off
   const [helpOpen, setHelpOpen] = useState(false);

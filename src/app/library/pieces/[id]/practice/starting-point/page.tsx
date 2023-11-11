@@ -4,7 +4,9 @@ import { BreadcrumbContainer } from "~/app/_components/containers";
 import Practice from "./practice";
 import { api } from "~/trpc/server";
 import type { ResolvingMetadata, Metadata } from "next";
+import { siteTitle } from "~/lib/util";
 
+// TODO: refactor metadata title into site title util
 export async function generateMetadata(
   { params }: { params: { id: string } },
   _parent: ResolvingMetadata,
@@ -14,7 +16,7 @@ export async function generateMetadata(
   });
 
   return {
-    title: `Practice ${piece?.title} | Practicing`,
+    title: `Practice ${piece?.title} | ${siteTitle}`,
   };
 }
 

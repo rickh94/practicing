@@ -15,6 +15,7 @@ import { api } from "~/trpc/server";
 import { SmallSpotCard } from "../SmallSpotCard";
 import ConfirmDeletePiece from "~/app/_components/pieces/confirm-delete-piece";
 import type { ResolvingMetadata, Metadata } from "next";
+import { siteTitle } from "~/lib/util";
 
 export async function generateMetadata(
   { params }: { params: { id: string } },
@@ -25,11 +26,12 @@ export async function generateMetadata(
   });
 
   return {
-    title: `${piece?.title} | Practicing`,
+    title: `${piece?.title} | ${siteTitle}`,
   };
 }
 
-// TODO: add random starting point practice for piece with page, add stage to piece?
+// TODO: add display of tempo and goal tempo
+// TODO: make it prettier
 
 export default async function SinglePiece({
   params,
