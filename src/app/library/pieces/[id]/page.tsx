@@ -70,14 +70,14 @@ export default async function SinglePiece({
             href={`/library/pieces/${piece.id}/practice/starting-point`}
             className="focusable flex items-center justify-center gap-1 rounded-xl bg-green-700/10 px-4 py-2 font-semibold text-green-800  transition duration-200 hover:bg-green-700/20"
           >
-            <PlayIcon className="h-5 w-5" />
+            <PlayIcon className="-ml-1 h-5 w-5" />
             Practice
           </Link>
           <Link
             href={`/library/pieces/${piece.id}/edit`}
-            className="focusable flex items-center justify-center gap-1 rounded-xl bg-amber-700/10 px-4 py-2 font-semibold text-amber-800  transition duration-200 hover:bg-amber-700/20"
+            className="focusable flex items-center justify-center gap-1 rounded-xl bg-amber-700/10 px-4 py-2 font-semibold  text-amber-800 transition duration-200 hover:bg-amber-700/20"
           >
-            <PencilIcon className="h-5 w-5" />
+            <PencilIcon className="-ml-1 h-5 w-5" />
             Edit
           </Link>
           <ConfirmDeletePiece pieceId={piece.id} title={piece.title} />

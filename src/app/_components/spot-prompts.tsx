@@ -9,7 +9,6 @@ import {
   SpeakerWaveIcon,
 } from "@heroicons/react/20/solid";
 import { cn } from "~/lib/util";
-// import NotesDisplay from "~/app/_components/AbcNotesDisplay";
 import Image from "next/image";
 import { Suspense, lazy } from "react";
 

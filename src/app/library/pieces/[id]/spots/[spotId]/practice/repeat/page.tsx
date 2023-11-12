@@ -7,32 +7,36 @@ import type { ResolvingMetadata, Metadata } from "next";
 import { siteTitle } from "~/lib/util";
 
 export async function generateMetadata(
-  { params }: { params: { id: string } },
+  { params }: { params: { id: string; spotId: string } },
   _parent: ResolvingMetadata,
 ): Promise<Metadata> {
-  const piece = await api.library.getPieceById.query({
-    id: params.id,
+  const spot = await api.library.getSpotById.query({
+    pieceId: params.id,
+    spotId: params.spotId,
   });
 
   return {
-    title: `Practice ${piece?.title} | ${siteTitle}`,
+    title: `Practice ${spot?.name} | ${siteTitle}`,
   };
 }
 
-export default async function Page({ params }: { params: { id: string } }) {
-  const piece = await api.library.getPieceById.query({
-    id: params.id,
+export default async function Page({
+  params,
+}: {
+  params: { id: string; spotId: string };
+}) {
+  const spot = await api.library.getSpotById.query({
+    pieceId: params.id,
+    spotId: params.spotId,
   });
-
-  if (!piece) {
+  if (!spot) {
     return notFound();
   }
-
   return (
     <>
       <div className="flex items-center justify-center">
         <h1 className="text-3xl font-extrabold tracking-tight text-neutral-800 sm:text-5xl">
-          {piece.title}
+          {spot.name} | {spot.piece.title}
         </h1>
       </div>
       <BreadcrumbContainer>
@@ -42,19 +46,22 @@ export default async function Page({ params }: { params: { id: string } }) {
               { label: "Library", href: "/library" },
               { label: "Pieces", href: "/library/pieces" },
               {
-                label: piece.title,
-                href: `/library/pieces/${piece.id}`,
+                label: spot.piece.title,
+                href: `/library/pieces/${spot.piece.id}`,
               },
               {
-                label: "Practice Starting Point",
-                href: `/library/pieces/${piece.id}/practice/starting-point`,
-                active: true,
+                label: spot.name,
+                href: `/library/pieces/${spot.piece.id}/spots/${spot.id}`,
+              },
+              {
+                label: "Repeat Practice",
+                href: `/library/pieces/${spot.piece.id}/spots/${spot.id}/practice/repeat`,
               },
             ]}
           />
         </div>
       </BreadcrumbContainer>
-      <Practice piece={piece} />
+      <Practice spot={spot} />
     </>
   );
 }

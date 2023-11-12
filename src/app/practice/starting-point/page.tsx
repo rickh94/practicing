@@ -8,8 +8,6 @@ import Help from "~/app/_components/practice/starting-point-help";
 import { TitleLinkMenu } from "~/app/_components/practice/title-link-menu";
 import StartingPoint from "~/app/_components/practice/starting-point";
 
-// TODO: change help
-
 export default function Page() {
   // TODO: fix back button so it scrolls off
   const [helpOpen, setHelpOpen] = useState(false);

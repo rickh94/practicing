@@ -26,7 +26,7 @@ import {
   notesForm,
 } from "~/lib/validators/library";
 
-const NotesDisplay = lazy(() => import("~/app/_components/AbcNotesDisplay"));
+const NotesDisplay = lazy(() => import("../AbcNotesDisplay"));
 
 // TODO: way to delete prompts
 
@@ -423,7 +423,11 @@ export function AddImagePrompt({
                           },
                         )}
                       >
-                        <CheckIcon className="h-6 w-6" />
+                        {isUploading ? (
+                          <ArrowPathIcon className="h-6 w-6" />
+                        ) : (
+                          <CheckIcon className="h-6 w-6" />
+                        )}
                         {isUploading ? "Please Wait..." : "Done"}
                       </button>
                     </div>

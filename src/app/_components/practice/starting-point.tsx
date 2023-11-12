@@ -3,7 +3,6 @@ import {
   type SetStateAction,
   useState,
   useCallback,
-  useMemo,
 } from "react";
 import { cn, uniqueID } from "~/lib/util";
 import { ScaleCrossFadeContent } from "~/app/_components/transitions";
@@ -23,6 +22,41 @@ type Section = {
 
 type StartingPointMode = "setup" | "practice" | "summary";
 
+function calculateMeasuresPracticed(summary: Section[]) {
+  const measureSet = new Set<number>();
+  for (const { startingPoint, endingPoint } of summary) {
+    for (let i = startingPoint.measure; i <= endingPoint.measure; i++) {
+      measureSet.add(i);
+    }
+  }
+  const measureList = Array.from(measureSet.values()).sort((a, b) => a - b);
+  const ranges: [number, number][] = [];
+
+  // walk the list, while the numbers are sequential, keep increasing the end number,
+  // once we hit a gap, add a range, reset to start at the current number and continue.
+  let start: number | null = null;
+  let end: number | null = null;
+  for (const num of measureList) {
+    if (!start || !end) {
+      start = num;
+      end = num;
+    } else if (num === end + 1) {
+      end = num;
+    } else {
+      if (!end) {
+        end = start;
+      }
+      ranges.push([start, end]);
+      start = num;
+      end = num;
+    }
+  }
+  if (start && end) {
+    ranges.push([start, end]);
+  }
+  return ranges;
+}
+
 // TODO: add option for sentence or grid layout
 // TODO: add option for time signature changes
 //
@@ -37,16 +71,20 @@ export default function StartingPoint({
   pieceBeats?: number;
   preconfigured?: boolean;
   pieceHref?: string;
-  onCompleted?: () => void;
+  onCompleted?: (measures: [number, number][]) => void;
 }) {
   const [measures, setMeasures] = useState<number>(pieceMeasures);
   const [beats, setBeats] = useState<number>(pieceBeats);
   const [mode, setMode] = useState<StartingPointMode>("setup");
   const [maxLength, setMaxLength] = useState<number>(5);
   const [summary, setSummary] = useState<Section[]>([]);
+  const [measuresPracticed, setMeasuresPracticed] = useState<
+    [number, number][]
+  >([]);
 
   const setModePractice = useCallback(
     function () {
+      setSummary([]);
       setMode("practice");
     },
     [setMode],
@@ -54,6 +92,7 @@ export default function StartingPoint({
 
   const setModeSetup = useCallback(
     function () {
+      setSummary([]);
       setMode("setup");
     },
     [setMode],
@@ -63,9 +102,11 @@ export default function StartingPoint({
     function (finalSummary: Section[]) {
       setMode("summary");
       setSummary(finalSummary);
-      onCompleted?.();
+      const mpracticed = calculateMeasuresPracticed(finalSummary);
+      onCompleted?.(mpracticed);
+      setMeasuresPracticed(mpracticed);
     },
-    [setSummary, setMode, onCompleted],
+    [setSummary, setMode, onCompleted, setMeasuresPracticed],
   );
 
   return (
@@ -97,6 +138,7 @@ export default function StartingPoint({
             summary: (
               <Summary
                 summary={summary}
+                measuresPracticed={measuresPracticed}
                 setup={setModeSetup}
                 practice={setModePractice}
                 pieceHref={pieceHref}
@@ -161,7 +203,10 @@ export function StartingPointSetupForm({
             className="text-lg font-semibold text-neutral-800"
             htmlFor="measures"
           >
-            Measures {preconfigured ? "(set in piece)" : ""}
+            Measures{" "}
+            {preconfigured && (
+              <span className="text-neutral-200/90">(set in piece)</span>
+            )}
           </label>
           <p className="pb-2 text-sm text-neutral-700">
             How many measures are in your piece?
@@ -187,7 +232,10 @@ export function StartingPointSetupForm({
             className="text-lg font-semibold text-neutral-800"
             htmlFor="beats"
           >
-            Beats per measure {preconfigured ? "(set in piece)" : ""}
+            Beats per measure
+            {preconfigured && (
+              <span className="text-neutral-200/90">(set in piece)</span>
+            )}
           </label>
           <p className="text-sm text-neutral-700">
             How many beats are in each measure?
@@ -395,53 +443,17 @@ export function SectionDisplay({ section }: { section: Section }) {
 
 export function Summary({
   summary,
+  measuresPracticed,
   setup,
   practice,
   pieceHref,
 }: {
   summary: Section[];
+  measuresPracticed: [number, number][];
   setup: () => void;
   practice: () => void;
   pieceHref?: string;
 }) {
-  const measuresPracticed = useMemo(
-    function () {
-      const measureSet = new Set<number>();
-      for (const { startingPoint, endingPoint } of summary) {
-        for (let i = startingPoint.measure; i <= endingPoint.measure; i++) {
-          measureSet.add(i);
-        }
-      }
-      const measureList = Array.from(measureSet.values()).sort((a, b) => a - b);
-      console.log(measureList);
-      const ranges: [number, number][] = [];
-
-      // walk the list, while the numbers are sequential, keep increasing the end number,
-      // once we hit a gap, add a range, reset to start at the current number and continue.
-      let start: number | null = null;
-      let end: number | null = null;
-      for (const num of measureList) {
-        if (!start || !end) {
-          start = num;
-          end = num;
-        } else if (num === end + 1) {
-          end = num;
-        } else {
-          if (!end) {
-            end = start;
-          }
-          ranges.push([start, end]);
-          start = num;
-          end = num;
-        }
-      }
-      if (start && end) {
-        ranges.push([start, end]);
-      }
-      return ranges;
-    },
-    [summary],
-  );
   return (
     <>
       <div className="flex w-full flex-col items-center justify-center gap-2 pt-12">
@@ -471,7 +483,7 @@ export function Summary({
           {pieceHref && (
             <Link
               href={pieceHref}
-              className="focusable rounded-xl bg-sky-700/10 px-4 py-2 font-semibold text-sky-800 transition duration-200 hover:bg-sky-700/20"
+              className="focusable block rounded-xl bg-sky-700/10 px-4 py-2 font-semibold text-sky-800 transition duration-200 hover:bg-sky-700/20"
             >
               Back to Piece
             </Link>

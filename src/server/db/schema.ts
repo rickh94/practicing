@@ -153,6 +153,7 @@ export const pieces = sqliteTable(
 export const piecesRelations = relations(pieces, ({ one, many }) => ({
   user: one(users, { fields: [pieces.userId], references: [users.id] }),
   spots: many(spots),
+  sessions: many(piecePracticeSessions),
 }));
 
 export const spots = sqliteTable(
@@ -187,6 +188,87 @@ export const spots = sqliteTable(
   }),
 );
 
-export const spotsRelations = relations(spots, ({ one }) => ({
+export const spotsRelations = relations(spots, ({ one, many }) => ({
   piece: one(pieces, { fields: [spots.pieceId], references: [pieces.id] }),
+  practiceSessionsRelation: many(spotsToPieceSessions),
 }));
+
+export const practiceSessions = sqliteTable("practiceSession", {
+  id: text("id", { length: 255 })
+    .notNull()
+    .primaryKey()
+    .$default(() => createId()),
+  date: integer("date", { mode: "timestamp" }).notNull(),
+  durationMinutes: integer("durationMinutes").notNull(),
+});
+
+export const practiceSessionsRelations = relations(
+  practiceSessions,
+  ({ many }) => ({
+    pieceSessions: many(piecePracticeSessions),
+  }),
+);
+
+export const piecePracticeSessions = sqliteTable(
+  "piecePracticeSession",
+  {
+    id: text("id", { length: 255 })
+      .notNull()
+      .primaryKey()
+      .$default(() => createId()),
+    practiceSessionId: text("practiceSessionId")
+      .notNull()
+      .references(() => practiceSessions.id, { onDelete: "cascade" }),
+    pieceId: text("pieceId")
+      .notNull()
+      .references(() => pieces.id, { onDelete: "cascade" }),
+    measures: text("measures").default("").notNull(),
+  },
+  (t) => ({
+    pieceIdIdx: index("ps_pieceId_idx").on(t.pieceId),
+  }),
+);
+
+export const piecePracticeSessionsRelations = relations(
+  piecePracticeSessions,
+  ({ one, many }) => ({
+    piece: one(pieces, {
+      fields: [piecePracticeSessions.pieceId],
+      references: [pieces.id],
+    }),
+    practiceSession: one(practiceSessions, {
+      fields: [piecePracticeSessions.practiceSessionId],
+      references: [practiceSessions.id],
+    }),
+    spotRelation: many(spotsToPieceSessions),
+  }),
+);
+
+export const spotsToPieceSessions = sqliteTable(
+  "spotsToPieceSessions",
+  {
+    pieceSessionId: text("pieceSessionId")
+      .notNull()
+      .references(() => piecePracticeSessions.id, { onDelete: "cascade" }),
+    spotId: text("spotId")
+      .notNull()
+      .references(() => spots.id, { onDelete: "cascade" }),
+  },
+  (t) => ({
+    spotIdIdx: index("spotId_idx").on(t.spotId),
+  }),
+);
+
+export const spotsToPieceSessionsRelations = relations(
+  spotsToPieceSessions,
+  ({ one }) => ({
+    pieceSession: one(piecePracticeSessions, {
+      fields: [spotsToPieceSessions.pieceSessionId],
+      references: [piecePracticeSessions.id],
+    }),
+    spot: one(spots, {
+      fields: [spotsToPieceSessions.spotId],
+      references: [spots.id],
+    }),
+  }),
+);

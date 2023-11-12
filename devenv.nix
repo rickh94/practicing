@@ -17,12 +17,12 @@
 
 
   certificates = [
-    "practicing.localhost"
+    "practicebetter.localhost"
   ];
 
   services.caddy = {
     enable = true;
-    virtualHosts."practicing.localhost".extraConfig = ''
+    virtualHosts."practicebetter.localhost".extraConfig = ''
       reverse_proxy :5100
     '';
   };

@@ -76,7 +76,7 @@ export const env = createEnv({
     SITE_URL: `https://${
       process.env.SITE_URL ??
       process.env.NEXT_PUBLIC_VERCEL_URL ??
-      "practicing.localhost"
+      "practicebetter.localhost"
     }`,
   },
   /**

@@ -12,7 +12,14 @@ import {
 } from "~/lib/validators/library";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { pieces, spots, users } from "~/server/db/schema";
+import {
+  piecePracticeSessions,
+  pieces,
+  practiceSessions,
+  spots,
+  spotsToPieceSessions,
+  users,
+} from "~/server/db/schema";
 import { eq, and, desc } from "drizzle-orm";
 // import { utapi } from "~/server/uploadthing";
 
@@ -233,6 +240,60 @@ export const libraryRouter = createTRPCRouter({
         });
       }
     }),
+
+  practicePieceStartingPoint: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        measures: z.string(),
+        durationMinutes: z.number(),
+      }),
+    )
+    .mutation(async ({ ctx, input: { id, measures, durationMinutes } }) => {
+      await ctx.db.transaction(async (tx) => {
+        const pieceUpdateResult = await tx
+          .update(pieces)
+          .set({
+            lastPracticed: new Date(),
+          })
+          .where(
+            and(eq(pieces.id, id), eq(pieces.userId, ctx.session.user.id)),
+          );
+        if (pieceUpdateResult.rowsAffected === 0) {
+          throw new TRPCError({
+            message: "Could not update piece",
+            code: "INTERNAL_SERVER_ERROR",
+          });
+        }
+        const [createdPracticeSession] = await tx
+          .insert(practiceSessions)
+          .values({
+            date: new Date(),
+            durationMinutes,
+          })
+          .returning({ id: practiceSessions.id });
+        if (!createdPracticeSession?.id) {
+          throw new TRPCError({
+            message: "Could not create practice session",
+            code: "INTERNAL_SERVER_ERROR",
+          });
+        }
+        const pieceSessionResult = await tx
+          .insert(piecePracticeSessions)
+          .values({
+            pieceId: id,
+            practiceSessionId: createdPracticeSession.id,
+            measures,
+          });
+        if (pieceSessionResult.rowsAffected === 0) {
+          throw new TRPCError({
+            message: "Could not create piece practice session",
+            code: "INTERNAL_SERVER_ERROR",
+          });
+        }
+      });
+    }),
+
   getPieceById: protectedProcedure
     .input(z.object({ id: z.string() }))
     .output(pieceWithSpots.nullable())
@@ -448,6 +509,90 @@ export const libraryRouter = createTRPCRouter({
           );
       });
     }),
+
+  repeatPracticeSpot: protectedProcedure
+    .input(
+      z.object({
+        pieceId: z.string(),
+        spotId: z.string(),
+        durationMinutes: z.number(),
+        successful: z.boolean(),
+      }),
+    )
+    .mutation(
+      async ({
+        ctx,
+        input: { pieceId, durationMinutes, spotId, successful },
+      }) => {
+        await ctx.db.transaction(async (tx) => {
+          const pieceUpdateResult = await tx
+            .update(pieces)
+            .set({
+              lastPracticed: new Date(),
+            })
+            .where(
+              and(
+                eq(pieces.id, pieceId),
+                eq(pieces.userId, ctx.session.user.id),
+              ),
+            );
+          if (pieceUpdateResult.rowsAffected === 0) {
+            throw new TRPCError({
+              message: "Could not update piece",
+              code: "INTERNAL_SERVER_ERROR",
+            });
+          }
+
+          const [createdPracticeSession] = await tx
+            .insert(practiceSessions)
+            .values({
+              date: new Date(),
+              durationMinutes,
+            })
+            .returning({ id: practiceSessions.id });
+          if (!createdPracticeSession?.id) {
+            throw new TRPCError({
+              message: "Could not create practice session",
+              code: "INTERNAL_SERVER_ERROR",
+            });
+          }
+
+          const [createdPieceSession] = await tx
+            .insert(piecePracticeSessions)
+            .values({
+              pieceId,
+              practiceSessionId: createdPracticeSession.id,
+              measures: "",
+            })
+            .returning({ id: piecePracticeSessions.id });
+          if (!createdPieceSession?.id) {
+            throw new TRPCError({
+              message: "Could not create piece practice session",
+              code: "INTERNAL_SERVER_ERROR",
+            });
+          }
+
+          await tx.insert(spotsToPieceSessions).values({
+            pieceSessionId: createdPieceSession.id,
+            spotId: spotId,
+          });
+          if (successful) {
+            await tx
+              .update(spots)
+              .set({
+                stage: "interleave",
+              })
+              .where(
+                and(
+                  eq(spots.id, spotId),
+                  eq(spots.pieceId, pieceId),
+                  eq(spots.stage, "repeat"),
+                ),
+              );
+          }
+        });
+      },
+    ),
 
   getSpotsForPiece: protectedProcedure
     .input(z.object({ pieceId: z.string() }))

@@ -14,7 +14,7 @@ export const textForm = z.object({
 
 export const basicSpot = z.object({
   id: z.string(),
-  name: z.string(),
+  name: z.string().min(1, "Too Short"),
   order: z.coerce.number().nullish().optional(),
   stage: z.enum([
     "repeat",

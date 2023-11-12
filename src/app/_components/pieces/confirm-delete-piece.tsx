@@ -51,7 +51,7 @@ export default function ConfirmDeletePiece({
           setOpen(true);
         }}
       >
-        <TrashIcon className="h-5 w-5" />
+        <TrashIcon className="-ml-1 h-5 w-5" />
         Delete
       </button>
       <Transition.Root show={open} as={Fragment}>

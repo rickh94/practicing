@@ -1,4 +1,4 @@
-import { PencilIcon } from "@heroicons/react/20/solid";
+import { PencilIcon, PlayIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Breadcrumbs from "~/app/_components/breadcrumb";
@@ -8,7 +8,7 @@ import {
   ImagePromptReveal,
   NotesPromptReveal,
   TextPromptReveal,
-} from "./prompts";
+} from "~/app/_components/spot-prompts";
 import {
   BreadcrumbContainer,
   NarrowPageContainer,
@@ -80,10 +80,17 @@ export default async function Page({
         </div>
         <div className="flex justify-end gap-2">
           <Link
+            href={`/library/pieces/${spot.piece.id}/spots/${spot.id}/practice/repeat`}
+            className="focusable flex items-center justify-center gap-1 rounded-xl bg-green-700/10 px-4 py-2 font-semibold text-green-800  transition duration-200 hover:bg-green-700/20"
+          >
+            <PlayIcon className="h-5 w-5" />
+            Practice
+          </Link>
+          <Link
             href={`/library/pieces/${spot.piece.id}/spots/${spot.id}/edit`}
             className="focusable flex items-center justify-center gap-1 rounded-xl bg-amber-700/10 px-4 py-2 font-semibold text-amber-800  transition duration-200 hover:bg-amber-700/20"
           >
-            <PencilIcon className="h-6 w-6" />
+            <PencilIcon className="h-5 w-5" />
             Edit
           </Link>
           <ConfirmDeleteSpot

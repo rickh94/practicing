@@ -344,20 +344,20 @@ export function SpotFormSkeleton() {
         <div className="leading-6">
           <div className="h-4 w-32 rounded bg-neutral-600/20 text-sm font-medium leading-6" />
         </div>
-        <div className="h-10 w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20" />
+        <div className="h-10 w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200" />
       </div>
       <div className="flex gap-2">
         <div className="flex w-1/2 flex-col gap-1">
           <div className="leading-6">
             <div className="h-4 w-32 rounded bg-neutral-600/20 text-sm font-medium leading-6" />
           </div>
-          <div className="h-10 w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20" />
+          <div className="h-10 w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200" />
         </div>
         <div className="flex w-1/2 flex-col gap-1">
           <div className="leading-6">
             <div className="h-4 w-32 rounded bg-neutral-600/20 text-sm font-medium leading-6" />
           </div>
-          <div className="h-10 w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20" />
+          <div className="h-10 w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200" />
         </div>
       </div>
       <div className="flex flex-col gap-2">
@@ -376,6 +376,104 @@ export function SpotFormSkeleton() {
       <div className="flex flex-row-reverse justify-start gap-4">
         <div className="h-12 w-32 rounded-xl bg-amber-700/10 px-4 py-2 font-semibold" />
         <div className="h-12 w-32 rounded-xl bg-emerald-700/10 px-4 py-2 font-semibold" />
+      </div>
+    </div>
+  );
+}
+
+export function TitleLinkSkeleton() {
+  return (
+    <div className="flex h-14 w-48 items-center gap-2 rounded-xl bg-neutral-700/10 px-6 py-4 font-semibold text-neutral-700" />
+  );
+}
+
+export function TabSkeleton() {
+  return (
+    <div className="container relative mx-auto flex flex-col px-2">
+      <div className="flex w-full items-center justify-center rounded-xl bg-neutral-700/10 p-1 sm:mx-auto sm:max-w-lg">
+        <div className="w-1/2 rounded-xl bg-neutral-700/20 py-2 transition-all duration-200" />
+        <div className="w-1/2 rounded-xl py-2 transition-all duration-200" />
+      </div>
+    </div>
+  );
+}
+
+export function StartingPointSkeleton() {
+  return (
+    <div className="relative left-0 top-0 w-full sm:mx-auto sm:max-w-5xl">
+      <div className="flex w-full flex-col">
+        <div>
+          <h1 className="py-1 text-left text-2xl font-bold">
+            Random Starting Point
+          </h1>
+          <p className="text-left text-base">
+            Enter the number of measures and beats per measure of your piece,
+            then you can practice starting and stopping at random spots
+          </p>
+        </div>
+        <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="flex flex-col p-2">
+            <label
+              className="text-lg font-semibold text-neutral-800"
+              htmlFor="measures"
+            >
+              Measures{" "}
+            </label>
+            <p className="pb-2 text-sm text-neutral-700">
+              How many measures are in your piece?
+            </p>
+            <div className="flex items-center gap-2 pt-1">
+              <div
+                id="measures"
+                className="h-12 w-24 rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800"
+              />
+              <div className="font-medium">Measures</div>
+            </div>
+          </div>
+          <div className="flex flex-col p-2">
+            <label
+              className="text-lg font-semibold text-neutral-800"
+              htmlFor="beats"
+            >
+              Beats per measure
+            </label>
+            <p className="text-sm text-neutral-700">
+              How many beats are in each measure?
+            </p>
+            <p className="pb-2 text-sm italic text-neutral-700">
+              (the top number from the time signature)
+            </p>
+            <div className="flex items-center gap-2 pt-1">
+              <div
+                id="beats"
+                className="h-12 w-24 rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800"
+              />
+              <div className="font-medium">Beats</div>
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <label
+              className="text-lg font-semibold text-neutral-800"
+              htmlFor="maxLength"
+            >
+              Maximum Length
+            </label>
+            <p className="text-sm text-neutral-700">
+              The sections will be of random number of measures less than this
+              number.{" "}
+            </p>
+            <div className="flex items-center gap-2 pt-1">
+              <div
+                id="maxLength"
+                className="h-12 w-24 rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800"
+              />
+              <div className="font-medium">Measures</div>
+            </div>
+          </div>
+          <div className="col-span-full my-16 flex w-full items-center justify-center">
+            <div className="rounded-xl px-6 py-3 text-2xl font-bold text-neutral-900 transition duration-200 sm:px-8 sm:py-4 sm:text-4xl"></div>
+          </div>
+        </div>{" "}
       </div>
     </div>
   );

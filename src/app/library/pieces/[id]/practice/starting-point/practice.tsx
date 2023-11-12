@@ -7,13 +7,15 @@ import toast from "react-hot-toast";
 import StartingPoint from "~/app/_components/practice/starting-point";
 import { type PieceWithSpots } from "~/lib/validators/library";
 import { api } from "~/trpc/react";
-
-// TODO: save practice session on completed
+import { useRouter } from "next/navigation";
 
 export default function Practice({ piece }: { piece: PieceWithSpots }) {
-  const { mutate } = api.library.practicePiece.useMutation({
+  const startTime = new Date().getTime();
+  const router = useRouter();
+  const { mutate } = api.library.practicePieceStartingPoint.useMutation({
     onSuccess: () => {
       toast.success("Good job practicing!");
+      router.refresh();
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
@@ -26,10 +28,14 @@ export default function Practice({ piece }: { piece: PieceWithSpots }) {
   });
 
   const onCompleted = useCallback(
-    function () {
-      mutate({ id: piece.id });
+    function (measuresPracticed: [number, number][]) {
+      const durationMinutes = Math.ceil((Date.now() - startTime) / 1000 / 60);
+      const measures = measuresPracticed
+        .map(([start, end]) => (start === end ? `${start}` : `${start}-${end}`))
+        .join(", ");
+      mutate({ id: piece.id, durationMinutes, measures });
     },
-    [mutate, piece.id],
+    [mutate, piece.id, startTime],
   );
 
   return (

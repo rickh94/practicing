@@ -47,9 +47,9 @@ export default function Home() {
             className="focusable flex max-w-xs flex-col gap-4 rounded-xl bg-neutral-700/10 p-4 text-neutral-700 transition-all duration-200 hover:bg-neutral-700/20"
             href="/practice"
           >
-            <h3 className="text-2xl font-bold text-neutral-800">
+            <h2 className="text-2xl font-bold text-neutral-800">
               Start Practicing →
-            </h3>
+            </h2>
             <div className="text-lg">
               Leave behind your old habits and get started practicing better
               right now!
@@ -59,9 +59,9 @@ export default function Home() {
             className="focusable transtion-all flex max-w-xs flex-col gap-4 rounded-xl bg-neutral-700/10 p-4 text-neutral-700 duration-200 hover:bg-neutral-700/20"
             href="/about"
           >
-            <h3 className="text-2xl font-bold text-neutral-800">
+            <h2 className="text-2xl font-bold text-neutral-800">
               Learn More →
-            </h3>
+            </h2>
             <div className="text-lg">
               Learn about the different ways you can improve your music
               practicing habits today.

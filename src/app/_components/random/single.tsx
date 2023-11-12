@@ -21,7 +21,7 @@ export default function SingleTab({
   const [summary, setSummary] = useState<PracticeSummaryItem[]>([]);
 
   return (
-    <div className="absolute left-0 top-0 w-full sm:mx-auto sm:max-w-5xl">
+    <div className="absolute left-0 top-0 w-full sm:mx-auto sm:max-w-3xl">
       <ScaleCrossFadeContent
         component={
           {

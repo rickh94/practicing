@@ -8,11 +8,23 @@ import { extractRouterConfig } from "uploadthing/server";
 import { workSans } from "~/app/_components/page-layout";
 import { pFileRouter } from "~/app/api/uploadthing/core";
 import { TRPCReactProvider } from "~/trpc/react";
+import { env } from "~/env.mjs";
+import { siteTitle as title } from "~/lib/util";
+
+const description =
+  "Organize your music practicing to be more effective and prevent bad habits.";
 
 export const metadata = {
-  title: "Practice Better",
-  description:
-    "Organize your music practicing to be more effective and prevent bad habits.",
+  title,
+  metadataBase: new URL(env.SITE_URL),
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: env.SITE_URL,
+    title,
+    description,
+  },
+  description,
   icons: [
     { rel: "icon", url: "/favicon.ico" },
     { rel: "apple-touch-icon", url: "/apple-touch-icon.png", sizes: "180x180" },

@@ -4,10 +4,26 @@ import Link from "next/link";
 import { useState, useCallback } from "react";
 import { ScaleCrossFadeContent } from "~/app/_components/transitions";
 import { cn } from "~/lib/util";
+import { RepeatPrepareText } from "./repeat-prepare-text";
+import { type BasicSpot } from "~/lib/validators/library";
+import {
+  AudioPromptReveal,
+  TextPromptReveal,
+  NotesPromptReveal,
+  ImagePromptReveal,
+} from "~/app/_components/spot-prompts";
 
 type RepeatMode = "prepare" | "practice" | "break_success" | "break_fail";
 
-export default function Repeat() {
+export default function Repeat({
+  onCompleted,
+  pieceHref,
+  spot,
+}: {
+  onCompleted?: (successful: boolean) => void;
+  pieceHref?: string;
+  spot?: BasicSpot;
+}) {
   const [mode, setMode] = useState<RepeatMode>("prepare");
   const [startTime, setStartTime] = useState<number>(0);
 
@@ -28,16 +44,18 @@ export default function Repeat() {
 
   const setModeBreakSuccess = useCallback(
     function () {
+      onCompleted?.(true);
       setMode("break_success");
     },
-    [setMode],
+    [setMode, onCompleted],
   );
 
   const setModeBreakFail = useCallback(
     function () {
+      onCompleted?.(true);
       setMode("break_fail");
     },
-    [setMode],
+    [setMode, onCompleted],
   );
 
   return (
@@ -51,9 +69,15 @@ export default function Repeat() {
                 startTime={startTime}
                 onSuccess={setModeBreakSuccess}
                 onFail={setModeBreakFail}
+                spot={spot}
               />
             ),
-            break_success: <RepeatBreakSuccess restart={setModePrepare} />,
+            break_success: (
+              <RepeatBreakSuccess
+                restart={setModePrepare}
+                pieceHref={pieceHref}
+              />
+            ),
             break_fail: <RepeatBreakFail restart={setModePrepare} />,
           }[mode]
         }
@@ -66,44 +90,7 @@ export default function Repeat() {
 function RepeatPrepare({ startPracticing }: { startPracticing: () => void }) {
   return (
     <div className="flex w-full flex-col">
-      <div>
-        <h1 className="py-1 text-left text-2xl font-bold">Repeat Practicing</h1>
-        <p className="text-left text-base">
-          Repeat practicing is an important part of learning, but you need to do
-          it carefully!
-        </p>
-        <div className="grid w-full grid-cols-1 gap-2 py-4 md:grid-cols-2">
-          <div className="prose prose-neutral flex h-full flex-col rounded-xl bg-neutral-700/5 p-4">
-            <h3 className="text-left text-2xl">Answer these questions first</h3>
-            <ul className="flex flex-grow flex-col justify-around text-xl">
-              <li>
-                Where <em className="italic">exactly</em> does your section
-                start and stop?
-              </li>
-              <li>What makes it difficult?</li>
-              <li>What will you think about prefore you play?</li>
-              <li>What will you think about while you are playing?</li>
-            </ul>
-          </div>
-          <div className="prose prose-neutral rounded-xl bg-neutral-700/5 p-4 md:grid-cols-2">
-            <h3 className="text-left text-2xl">How it works</h3>
-            <ul className="text-lg">
-              <li>The goal is to practice five times without a mistake.</li>
-              <li>Practice as slowly as you need to be successful</li>
-              <li>Take time between each repetition to reset.</li>
-              <li>
-                Avoid making things worse by taking a break if things aren’t
-                going well.
-              </li>
-              <li>
-                There’s a small timeout to keep you from going way too fast.
-              </li>
-              <li>When you’re ready, click the button below to get started.</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
+      <RepeatPrepareText />
       <div className="col-span-full my-16 flex w-full items-center justify-center">
         <button
           type="button"
@@ -121,10 +108,12 @@ function RepeatPractice({
   onSuccess,
   onFail,
   startTime,
+  spot,
 }: {
   onSuccess: () => void;
   onFail: () => void;
   startTime: number;
+  spot?: BasicSpot;
 }) {
   const [numCompleted, setCompleted] = useState(0);
   const [waitedLongEnough, setWaitedLongEnough] = useState(true);
@@ -161,58 +150,68 @@ function RepeatPractice({
   );
 
   return (
-    <div className="flex w-full flex-col sm:mx-auto sm:max-w-3xl">
-      <div className="flex w-full flex-col items-center sm:mx-auto sm:max-w-xl">
-        <h2 className="text-center text-2xl font-semibold">Completions</h2>
-        <ul className="my-4 grid grid-cols-5 gap-4">
-          <PracticeListItem num={1} completed={numCompleted >= 1} />
-          <PracticeListItem num={2} completed={numCompleted >= 2} />
-          <PracticeListItem num={3} completed={numCompleted >= 3} />
-          <PracticeListItem num={4} completed={numCompleted >= 4} />
-          <PracticeListItem num={5} completed={numCompleted >= 5} />
-        </ul>
-      </div>
-      <div className="flex w-full flex-col items-center pt-4 sm:mx-auto sm:max-w-xl">
-        <p className="py-4 text-base">
-          <strong className="font-semibold">Practice your spot</strong> Remember
-          to go slow and pause between repetitions. Press the appropriate button
-          below after each repetition.
-        </p>
-        <h2 className="text-center text-3xl font-semibold">How did it go?</h2>
-        <div className="mx-auto my-8 flex w-full max-w-lg flex-wrap items-center justify-center gap-4 sm:mx-0 sm:w-auto sm:flex-row sm:gap-6">
-          <div>
+    <>
+      <div className="flex w-full flex-col sm:mx-auto sm:max-w-3xl">
+        <div className="flex w-full flex-col items-center sm:mx-auto sm:max-w-xl">
+          <h2 className="text-center text-2xl font-semibold">Completions</h2>
+          <ul className="my-4 grid grid-cols-5 gap-4">
+            <PracticeListItem num={1} completed={numCompleted >= 1} />
+            <PracticeListItem num={2} completed={numCompleted >= 2} />
+            <PracticeListItem num={3} completed={numCompleted >= 3} />
+            <PracticeListItem num={4} completed={numCompleted >= 4} />
+            <PracticeListItem num={5} completed={numCompleted >= 5} />
+          </ul>
+        </div>
+        <div className="flex w-full flex-col items-center pt-4 sm:mx-auto sm:max-w-xl">
+          <p className="py-4 text-base">
+            <strong className="font-semibold">Practice your spot</strong>{" "}
+            Remember to go slow and pause between repetitions. Press the
+            appropriate button below after each repetition.
+          </p>
+          <h2 className="text-center text-3xl font-semibold">How did it go?</h2>
+          <div className="mx-auto my-8 flex w-full max-w-lg flex-wrap items-center justify-center gap-4 sm:mx-0 sm:w-auto sm:flex-row sm:gap-6">
+            <div>
+              <button
+                disabled={!waitedLongEnough}
+                className={cn(
+                  "focusable flex items-center justify-center gap-2 rounded-xl border-2 px-6 py-4 text-2xl font-semibold transition duration-200 ",
+                  waitedLongEnough
+                    ? "border-red-700 bg-red-500/20 text-red-700 hover:bg-red-500/50"
+                    : "pointer-events-none border-neutral-700 bg-red-800/30 text-neutral-700",
+                )}
+                type="button"
+                onClick={fail}
+              >
+                <XMarkIcon className="-ml-1 h-6 w-6 sm:h-8 sm:w-8" />{" "}
+                <span>Mistake</span>
+              </button>
+            </div>
             <button
               disabled={!waitedLongEnough}
               className={cn(
                 "focusable flex items-center justify-center gap-2 rounded-xl border-2 px-6 py-4 text-2xl font-semibold transition duration-200 ",
                 waitedLongEnough
-                  ? "border-red-700 bg-red-500/20 text-red-700 hover:bg-red-500/50"
-                  : "pointer-events-none border-neutral-700 bg-red-800/30 text-neutral-700",
+                  ? "border-green-700 bg-green-500/20 text-green-700 hover:bg-green-500/50"
+                  : "pointer-events-none border-neutral-700 bg-green-800/30 text-neutral-700",
               )}
               type="button"
-              onClick={fail}
+              onClick={succeed}
             >
-              <XMarkIcon className="-ml-1 h-6 w-6 sm:h-8 sm:w-8" />{" "}
-              <span>Mistake</span>
+              <CheckIcon className="-ml-1 h-6 w-6 sm:h-8 sm:w-8" />{" "}
+              <span>Correct</span>
             </button>
           </div>
-          <button
-            disabled={!waitedLongEnough}
-            className={cn(
-              "focusable flex items-center justify-center gap-2 rounded-xl border-2 px-6 py-4 text-2xl font-semibold transition duration-200 ",
-              waitedLongEnough
-                ? "border-green-700 bg-green-500/20 text-green-700 hover:bg-green-500/50"
-                : "pointer-events-none border-neutral-700 bg-green-800/30 text-neutral-700",
-            )}
-            type="button"
-            onClick={succeed}
-          >
-            <CheckIcon className="-ml-1 h-6 w-6 sm:h-8 sm:w-8" />{" "}
-            <span>Correct</span>
-          </button>
         </div>
       </div>
-    </div>
+      {spot && (
+        <div className="flex flex-col gap-2 sm:mx-auto sm:max-w-xl">
+          <AudioPromptReveal audioPromptUrl={spot.audioPromptUrl} />
+          <TextPromptReveal textPrompt={spot.textPrompt} />
+          <NotesPromptReveal notesPrompt={spot.notesPrompt} />
+          <ImagePromptReveal imagePromptUrl={spot.imagePromptUrl} />
+        </div>
+      )}
+    </>
   );
 }
 
@@ -267,7 +266,13 @@ function PracticeListItem({
   );
 }
 
-function RepeatBreakSuccess({ restart }: { restart: () => void }) {
+function RepeatBreakSuccess({
+  restart,
+  pieceHref,
+}: {
+  restart: () => void;
+  pieceHref?: string;
+}) {
   return (
     <div className="flex w-full flex-col items-center sm:mx-auto sm:max-w-3xl">
       <h1 className="py-1 text-center text-2xl font-bold">You did it!</h1>
@@ -292,10 +297,17 @@ function RepeatBreakSuccess({ restart }: { restart: () => void }) {
         </ul>
       </div>
       <div className="my-8 flex w-full flex-col justify-center gap-4 sm:flex-row sm:gap-6">
+        {pieceHref && (
+          <Link
+            href={pieceHref}
+            className="focusable rounded-xl bg-sky-700/10 px-4 py-2 font-semibold text-sky-800 transition duration-200 hover:bg-sky-700/20"
+          >
+            Back to Piece
+          </Link>
+        )}
         <Link
           href="/practice/random-spots"
-          className="focusable rounded-xl bg-amber-700/10 px-4 py-2 font-semibold text-amber-800 transition duration-200 hover:bg-amber-700/20"
-          type="button"
+          className="focusable block rounded-xl bg-amber-700/10 px-4 py-2 text-center font-semibold text-amber-800 transition duration-200 hover:bg-amber-700/20"
         >
           Try Random Practicing
         </Link>
