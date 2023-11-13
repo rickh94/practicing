@@ -74,7 +74,7 @@ export function TitleLinkMenu() {
                 key={link.href}
                 as="li"
                 className={cn(
-                  "w-full text-lg font-medium text-neutral-800 first:rounded-t-lg last:rounded-b-lg",
+                  "w-full text-lg text-neutral-800 first:rounded-t-lg last:rounded-b-lg",
                   {
                     "bg-neutral-700/10 font-bold": link.href === pathname,
                     "font-semibold hover:bg-neutral-800/10":

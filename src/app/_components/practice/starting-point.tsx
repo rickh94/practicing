@@ -7,6 +7,7 @@ import {
 import { cn, uniqueID } from "~/lib/util";
 import { ScaleCrossFadeContent } from "~/app/_components/transitions";
 import Link from "next/link";
+import { XMarkIcon } from "@heroicons/react/20/solid";
 
 type Section = {
   startingPoint: {
@@ -57,9 +58,8 @@ function calculateMeasuresPracticed(summary: Section[]) {
   return ranges;
 }
 
-// TODO: add option for sentence or grid layout
 // TODO: add option for time signature changes
-//
+// TODO: add option to focus on smaller section
 export default function StartingPoint({
   pieceMeasures = 100,
   pieceBeats = 4,
@@ -81,6 +81,9 @@ export default function StartingPoint({
   const [measuresPracticed, setMeasuresPracticed] = useState<
     [number, number][]
   >([]);
+
+  const [lowerBound, setLowerBound] = useState<number | null>(null);
+  const [upperBound, setUpperBound] = useState<number | null>(null);
 
   const setModePractice = useCallback(
     function () {
@@ -124,6 +127,10 @@ export default function StartingPoint({
                 setBeats={setBeats}
                 setMeasures={setMeasures}
                 submit={setModePractice}
+                lowerBound={lowerBound}
+                upperBound={upperBound}
+                setLowerBound={setLowerBound}
+                setUpperBound={setUpperBound}
               />
             ),
             practice: (
@@ -133,6 +140,8 @@ export default function StartingPoint({
                 maxLength={maxLength}
                 setup={setModeSetup}
                 finish={finishPracticing}
+                lowerBound={lowerBound}
+                upperBound={upperBound}
               />
             ),
             summary: (
@@ -152,23 +161,32 @@ export default function StartingPoint({
   );
 }
 
+// TODO: switch to grid layout for better alignment
 // TODO: rewrite description
 export function StartingPointSetupForm({
   beats,
   measures,
   maxLength,
+  lowerBound,
+  upperBound,
   preconfigured,
   setMaxLength,
   setBeats,
   setMeasures,
+  setLowerBound,
+  setUpperBound,
   submit,
 }: {
   beats: number;
   measures: number;
   maxLength: number;
+  lowerBound: number | null;
+  upperBound: number | null;
   preconfigured: boolean;
   setMaxLength: Dispatch<SetStateAction<number>>;
   setBeats: Dispatch<SetStateAction<number>>;
+  setLowerBound: Dispatch<SetStateAction<number | null>>;
+  setUpperBound: Dispatch<SetStateAction<number | null>>;
   setMeasures: Dispatch<SetStateAction<number>>;
   submit: () => void;
 }) {
@@ -266,7 +284,7 @@ export function StartingPointSetupForm({
           </label>
           <p className="text-sm text-neutral-700">
             The sections will be of random number of measures less than this
-            number.{" "}
+            number.
           </p>
           <div className="flex items-center gap-2 pt-1">
             <input
@@ -279,6 +297,66 @@ export function StartingPointSetupForm({
               onChange={(e) => setMaxLength(parseInt(e.target.value))}
             />
             <div className="font-medium">Measures</div>
+          </div>
+        </div>
+        <div className="flex flex-col">
+          <div className="text-lg font-semibold text-neutral-800">
+            Limit to Measures (optional)
+          </div>
+          <p className="text-sm text-neutral-700">
+            You can limit practicing to a smaller section within the piece.
+          </p>
+          <div className="flex items-center gap-2 pt-1">
+            <div className="flex flex-col gap-1">
+              <label
+                className="text-sm font-medium text-neutral-800"
+                htmlFor="lowerBound"
+              >
+                Start
+              </label>
+              <input
+                id="lowerBound"
+                className="focusable w-24 rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-400 transition duration-200 focus:bg-neutral-700/20"
+                type="number"
+                min="1"
+                placeholder="mm"
+                value={lowerBound ?? ""}
+                onFocus={autoSelect}
+                onChange={(e) => setLowerBound(parseInt(e.target.value))}
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label
+                className="text-sm font-medium text-neutral-800"
+                htmlFor="upperBound"
+              >
+                End
+              </label>
+              <input
+                id="upperBound"
+                className="focusable w-24 rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-400 transition duration-200 focus:bg-neutral-700/20"
+                type="number"
+                min="1"
+                max={measures}
+                placeholder="mm"
+                value={upperBound ?? ""}
+                onFocus={autoSelect}
+                onChange={(e) => setUpperBound(parseInt(e.target.value))}
+              />
+            </div>
+            <div className="flex h-full flex-col justify-end">
+              <button
+                onClick={() => {
+                  setLowerBound(null);
+                  setUpperBound(null);
+                }}
+                type="button"
+                className="focusable m-0 flex items-center rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-700 hover:bg-neutral-700/20"
+              >
+                <XMarkIcon className="-ml-1 h-5 w-5" />
+                Clear
+              </button>
+            </div>
           </div>
         </div>
         <div className="col-span-full my-16 flex w-full items-center justify-center">
@@ -307,9 +385,17 @@ export function makeRandomSection(
   measures: number,
   beats: number,
   maxLength: number,
+  lowerBound: number | null,
+  upperBound: number | null,
 ): Section {
   // subtract one so we never start in the last measure
-  const randomStartingMeasure = Math.floor(Math.random() * (measures - 1)) + 1;
+  let randomStartingMeasure = Math.floor(Math.random() * (measures - 1)) + 1;
+  while (
+    (lowerBound !== null && randomStartingMeasure < lowerBound) ||
+    (upperBound !== null && randomStartingMeasure > upperBound)
+  ) {
+    randomStartingMeasure = Math.floor(Math.random() * (measures - 1)) + 1;
+  }
   // make sure we don't go past the end
   const maxOffset = Math.min(maxLength, measures - randomStartingMeasure);
   // add back in the measure we subtracted earlier.
@@ -334,26 +420,32 @@ export function StartingPointPractice({
   beats,
   measures,
   maxLength,
+  lowerBound,
+  upperBound,
   setup,
   finish,
 }: {
   beats: number;
   measures: number;
   maxLength: number;
+  lowerBound: number | null;
+  upperBound: number | null;
   setup: () => void;
   finish: (summary: Section[]) => void;
 }) {
   const [practiceSummary, setPracticeSummary] = useState<Section[]>([]);
   const [section, setSection] = useState<Section>(
-    makeRandomSection(measures, beats, maxLength),
+    makeRandomSection(measures, beats, maxLength, lowerBound, upperBound),
   );
 
   const nextStartingPoint = useCallback(
     function () {
       setPracticeSummary((curr) => [...curr, section]);
-      setSection(makeRandomSection(measures, beats, maxLength));
+      setSection(
+        makeRandomSection(measures, beats, maxLength, lowerBound, upperBound),
+      );
     },
-    [beats, measures, section, maxLength],
+    [beats, measures, section, maxLength, lowerBound, upperBound],
   );
 
   const handleDone = useCallback(
@@ -456,7 +548,31 @@ export function Summary({
 }) {
   return (
     <>
-      <div className="flex w-full flex-col items-center justify-center gap-2 pt-12">
+      <div className="flex w-full flex-col justify-center gap-4 pb-8 pt-12 sm:flex-row  sm:gap-6">
+        {pieceHref && (
+          <Link
+            href={pieceHref}
+            className="focusable block rounded-xl bg-sky-700/10 px-4 py-2 font-semibold text-sky-800 transition duration-200 hover:bg-sky-700/20"
+          >
+            Back to Piece
+          </Link>
+        )}
+        <button
+          className="focusable rounded-xl bg-amber-700/10 px-4 py-2 font-semibold text-amber-800 transition duration-200 hover:bg-amber-700/20"
+          type="button"
+          onClick={setup}
+        >
+          Back to Setup
+        </button>
+        <button
+          className="focusable rounded-xl bg-emerald-700/10 px-4 py-2 font-semibold text-emerald-800 transition duration-200 hover:bg-emerald-700/20"
+          type="button"
+          onClick={practice}
+        >
+          Practice More
+        </button>
+      </div>
+      <div className="flex w-full flex-col items-center justify-center gap-2">
         <div className="flex w-full  justify-center py-4">
           <div className="rounded-xl border border-neutral-500 bg-white/80 px-6 py-4 text-center shadow">
             <div className="flex w-full justify-center">
@@ -478,30 +594,6 @@ export function Summary({
               ))}
             </div>
           </div>
-        </div>
-        <div className="flex w-full flex-col justify-center gap-4 pb-8 pt-4 sm:flex-row sm:gap-6">
-          {pieceHref && (
-            <Link
-              href={pieceHref}
-              className="focusable block rounded-xl bg-sky-700/10 px-4 py-2 font-semibold text-sky-800 transition duration-200 hover:bg-sky-700/20"
-            >
-              Back to Piece
-            </Link>
-          )}
-          <button
-            className="focusable rounded-xl bg-amber-700/10 px-4 py-2 font-semibold text-amber-800 transition duration-200 hover:bg-amber-700/20"
-            type="button"
-            onClick={setup}
-          >
-            Back to Setup
-          </button>
-          <button
-            className="focusable rounded-xl bg-emerald-700/10 px-4 py-2 font-semibold text-emerald-800 transition duration-200 hover:bg-emerald-700/20"
-            type="button"
-            onClick={practice}
-          >
-            Practice More
-          </button>
         </div>
         <h2 className="inline pr-2 text-xl font-semibold text-black">
           Section Summary

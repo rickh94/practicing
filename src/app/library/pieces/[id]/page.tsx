@@ -1,7 +1,6 @@
 import {
   ArrowTopRightOnSquareIcon,
   PencilIcon,
-  PlayIcon,
 } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -16,6 +15,7 @@ import { SmallSpotCard } from "../SmallSpotCard";
 import ConfirmDeletePiece from "~/app/_components/pieces/confirm-delete-piece";
 import type { ResolvingMetadata, Metadata } from "next";
 import { siteTitle } from "~/lib/util";
+import { PracticeMenu } from "./practice-menu";
 
 export async function generateMetadata(
   { params }: { params: { id: string } },
@@ -66,6 +66,7 @@ export default async function SinglePiece({
           />
         </div>
         <div className="flex justify-end gap-2">
+          {/*
           <Link
             href={`/library/pieces/${piece.id}/practice/starting-point`}
             className="focusable flex items-center justify-center gap-1 rounded-xl bg-green-700/10 px-4 py-2 font-semibold text-green-800  transition duration-200 hover:bg-green-700/20"
@@ -73,6 +74,8 @@ export default async function SinglePiece({
             <PlayIcon className="-ml-1 h-5 w-5" />
             Practice
           </Link>
+              */}
+          <PracticeMenu piece={piece} />
           <Link
             href={`/library/pieces/${piece.id}/edit`}
             className="focusable flex items-center justify-center gap-1 rounded-xl bg-amber-700/10 px-4 py-2 font-semibold  text-amber-800 transition duration-200 hover:bg-amber-700/20"
