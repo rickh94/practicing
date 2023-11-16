@@ -4,14 +4,10 @@ import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import toast from "react-hot-toast";
 import Repeat from "~/app/_components/practice/repeat";
-import { type SpotWithPromptsAndPieceTitle } from "~/lib/validators/library";
+import { type SpotWithPieceInfo } from "~/lib/validators/library";
 import { api } from "~/trpc/react";
 
-export default function Practice({
-  spot,
-}: {
-  spot: SpotWithPromptsAndPieceTitle;
-}) {
+export default function Practice({ spot }: { spot: SpotWithPieceInfo }) {
   const startTime = new Date().getTime();
   const router = useRouter();
   const { mutate } = api.library.repeatPracticeSpot.useMutation({

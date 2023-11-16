@@ -7,6 +7,7 @@ import { TrashIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { api } from "~/trpc/react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { AngryButton, WarningButton } from "@ui/buttons";
 
 export default function ConfirmDeletePiece({
   pieceId,
@@ -44,16 +45,14 @@ export default function ConfirmDeletePiece({
 
   return (
     <>
-      <button
-        type="button"
-        className="focusable flex items-center justify-center gap-1 rounded-xl bg-red-700/10 px-4 py-2 font-semibold text-red-800  transition duration-200 hover:bg-red-700/20"
+      <AngryButton
         onClick={() => {
           setOpen(true);
         }}
       >
         <TrashIcon className="-ml-1 h-5 w-5" />
         Delete
-      </button>
+      </AngryButton>
       <Transition.Root show={open} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={setOpen}>
           <Transition.Child
@@ -121,22 +120,14 @@ export default function ConfirmDeletePiece({
                     </div>
                   </div>
                   <div className="mt-5 flex gap-4 px-2 sm:mt-6">
-                    <button
-                      type="button"
-                      className="focusable flex w-full items-center justify-center gap-1 rounded-xl bg-amber-800/20 px-4 py-2 text-lg font-semibold text-amber-700 hover:bg-amber-800/30"
-                      onClick={() => setOpen(false)}
-                    >
+                    <WarningButton onClick={() => setOpen(false)} grow>
                       <XMarkIcon className="-ml-1 h-6 w-6" />
                       No, Cancel
-                    </button>
-                    <button
-                      type="button"
-                      className="focusable flex w-full items-center justify-center gap-1 rounded-xl bg-red-800/20 px-4 py-2 text-lg font-semibold text-red-700 hover:bg-red-800/30"
-                      onClick={handleDelete}
-                    >
+                    </WarningButton>
+                    <AngryButton onClick={handleDelete} grow>
                       <TrashIcon className="-ml-1 h-6 w-6" />
                       Yes, Delete
-                    </button>
+                    </AngryButton>
                   </div>
                 </Dialog.Panel>
               </Transition.Child>

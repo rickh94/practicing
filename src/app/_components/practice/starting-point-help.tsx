@@ -1,6 +1,7 @@
 import { Fragment } from "react";
 import { workSans } from "~/app/_components/page-layout";
 import { Dialog, Transition } from "@headlessui/react";
+import { BasicButton } from "@ui/buttons";
 
 export default function Help({
   open,
@@ -74,13 +75,12 @@ export default function Help({
                   </div>
                 </div>
                 <div className="mt-5 px-2 sm:mt-6">
-                  <button
-                    type="button"
-                    className="focusable block w-full rounded-xl bg-neutral-800/20 px-6 py-2 text-xl font-semibold text-neutral-700 hover:bg-neutral-800/30"
+                  <BasicButton
                     onClick={() => setOpen(false)}
+                    className="w-full text-xl"
                   >
                     Done Reading
-                  </button>
+                  </BasicButton>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

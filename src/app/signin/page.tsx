@@ -1,8 +1,8 @@
 import { getServerAuthSession } from "~/server/auth";
-import { PageHeroLayout } from "../_components/page-layout";
-import SignInComponent from "../_components/signin";
+import { PageHeroLayout } from "~/app/_components/page-layout";
+import SignInComponent from "~/app/_components/signin";
 import { redirect } from "next/navigation";
-import { BackToHome } from "../_components/links";
+import { BackToHome } from "@ui/links";
 
 import { type Metadata } from "next";
 import { siteTitle } from "~/lib/util";

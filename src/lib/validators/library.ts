@@ -28,25 +28,16 @@ export const basicSpot = z.object({
   imagePromptUrl: z.union([z.string().url(), z.null(), z.enum([""])]),
   notesPrompt: z.string().nullable(),
   textPrompt: z.string().nullable(),
+  currentTempo: z.union([z.coerce.number().min(1), z.null()]),
 });
 
 // React hook form gets mad if you pass it something nullable, so I omit the order field and re-add it as optional
 
-export const spotWithPromptsFormData = basicSpot
-  .omit({ id: true, order: true })
-  .extend({
-    id: z.string().optional(),
-    order: z.coerce
-      .number()
-      .optional()
-      .transform((val) => val ?? undefined),
-    audioPromptUrl: urlOrEmpty,
-    imagePromptUrl: urlOrEmpty,
-    notesPrompt: z.string(),
-    textPrompt: z.string(),
-  });
+export const spotFormData = basicSpot
+  .omit({ id: true })
+  .extend({ id: z.string().optional() });
 
-export const spotWithPromptsAndPieceTitle = basicSpot.extend({
+export const spotWithPieceInfo = basicSpot.extend({
   piece: z.object({
     title: z.string(),
     id: z.string(),
@@ -55,13 +46,17 @@ export const spotWithPromptsAndPieceTitle = basicSpot.extend({
 
 export const pieceWithSpots = z.object({
   id: z.string(),
-  title: z.string().min(1).max(255),
+  title: z
+    .string()
+    .min(1, "Title must be at least one letter")
+    .max(255, "Title is too long."),
   description: z.string(),
   composer: z.string(),
   recordingLink: z.union([z.string().url(), z.enum([""]), z.null()]),
-  measures: z.number().nullish(),
-  beatsPerMeasure: z.number().nullish(),
+  measures: z.coerce.number().nullish(),
+  beatsPerMeasure: z.coerce.number().nullish(),
   practiceNotes: z.string().nullish(),
+  goalTempo: z.coerce.number().nullish(),
   spots: z.array(basicSpot),
 });
 
@@ -71,21 +66,12 @@ export const pieceForList = pieceWithSpots.omit({
   practiceNotes: true,
 });
 
-export const pieceFormData = z.object({
-  title: z
-    .string()
-    .min(1, "Title must be at least one letter")
-    .max(255, "Title is too long."),
-  description: z.string(),
-  composer: z.string(),
-  recordingLink: z.union([z.string().url(), z.enum([""])]),
-  practiceNotes: z.string(),
-  measures: z.number().optional().nullable(),
-  beatsPerMeasure: z.number().optional().nullable(),
-  spots: z.array(spotWithPromptsFormData),
-  goalTempo: z.number().optional().nullable(),
-  currentTempo: z.number().optional().nullable(),
-});
+export const pieceFormData = pieceWithSpots
+  .omit({ id: true, spots: true })
+  .extend({
+    id: z.string().optional(),
+    spots: z.array(spotFormData),
+  });
 
 export const basicPiece = pieceWithSpots.omit({ spots: true });
 
@@ -100,10 +86,8 @@ export type UpdatePieceData = z.infer<typeof updatePieceWithSpots>;
 export type PieceFormData = z.infer<typeof pieceFormData>;
 
 export type BasicSpot = z.infer<typeof basicSpot>;
-export type SpotWithPromptsFormData = z.infer<typeof spotWithPromptsFormData>;
-export type SpotWithPromptsAndPieceTitle = z.infer<
-  typeof spotWithPromptsAndPieceTitle
->;
+export type SpotFormData = z.infer<typeof spotFormData>;
+export type SpotWithPieceInfo = z.infer<typeof spotWithPieceInfo>;
 export type UrlOrEmptyForm = z.infer<typeof urlOrEmptyForm>;
 export type NotesForm = z.infer<typeof notesForm>;
 export type TextForm = z.infer<typeof textForm>;

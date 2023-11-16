@@ -61,7 +61,7 @@ export default async function Dashboard() {
               className="focusable flex flex-grow items-center justify-center gap-2 rounded-xl bg-emerald-700/10 px-6 py-3 text-center font-medium text-emerald-700 hover:bg-emerald-700/20"
               href="/library/pieces/create"
             >
-              <DocumentPlusIcon className="inline h-6 w-6" />
+              <DocumentPlusIcon className="-ml-1 h-6 w-6" />
               New Piece
             </Link>
           </div>

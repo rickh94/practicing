@@ -3,6 +3,7 @@ import { signIn } from "next-auth/react";
 import { type ChangeEvent, type KeyboardEventHandler, useState } from "react";
 import directApi from "~/trpc/direct";
 import { startAuthentication } from "@simplewebauthn/browser";
+import { BasicButton } from "@ui/buttons";
 
 export default function SignInComponent() {
   const [email, setEmail] = useState("");
@@ -74,18 +75,9 @@ export default function SignInComponent() {
           onKeyDown={handleKeyDown}
           className="focusable rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
         />
-        <button
-          disabled={!isValid}
-          onClick={handleSignIn}
-          type="button"
-          className={`focusable rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 transition duration-200 ${
-            isValid
-              ? "bg-neutral-700/10 shadow hover:bg-neutral-700/20"
-              : "bg-neutral-700/50"
-          }`}
-        >
+        <BasicButton disabled={!isValid} onClick={handleSignIn}>
           Sign in
-        </button>
+        </BasicButton>
       </form>
     </>
   );

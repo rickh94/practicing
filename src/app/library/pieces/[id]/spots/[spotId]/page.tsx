@@ -127,6 +127,14 @@ export default async function Page({
                   {spot.measures}
                 </dd>
               </div>
+              <div className="px-4 py-2 sm:flex sm:justify-between sm:px-0">
+                <dt className="font-medium leading-6 text-neutral-900">
+                  Current Tempo
+                </dt>
+                <dd className="mt-1 leading-6 text-neutral-700 sm:mt-0">
+                  {spot.currentTempo}
+                </dd>
+              </div>
             </dl>
           </div>
           <div className="flex flex-col gap-2 sm:col-span-2">

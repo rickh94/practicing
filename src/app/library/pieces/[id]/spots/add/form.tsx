@@ -5,18 +5,15 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import SpotFormFields from "~/app/_components/forms/spot-form";
-import {
-  type SpotWithPromptsFormData,
-  spotWithPromptsFormData,
-} from "~/lib/validators/library";
+import { type SpotFormData, spotFormData } from "~/lib/validators/library";
 import { api } from "~/trpc/react";
 
 export default function SpotCreationForm({ pieceId }: { pieceId: string }) {
-  const { control, handleSubmit, formState, setValue, reset } =
-    useForm<SpotWithPromptsFormData>({
+  const { handleSubmit, formState, setValue, reset, register, watch } =
+    useForm<SpotFormData>({
       mode: "onBlur",
       reValidateMode: "onBlur",
-      resolver: zodResolver(spotWithPromptsFormData),
+      resolver: zodResolver(spotFormData),
       defaultValues: {
         name: "",
         order: 1,
@@ -50,18 +47,19 @@ export default function SpotCreationForm({ pieceId }: { pieceId: string }) {
       },
     });
 
-  function onSubmit(data: SpotWithPromptsFormData) {
+  function onSubmit(data: SpotFormData) {
     mutate({ pieceId, spot: data });
   }
 
   return (
     <form noValidate onSubmit={handleSubmit(onSubmit)}>
       <SpotFormFields
-        control={control}
         formState={formState}
         setValue={setValue}
         isUpdating={isCreating}
         backTo={`/library/pieces/${pieceId}`}
+        register={register}
+        watch={watch}
       />
     </form>
   );

@@ -8,20 +8,23 @@ import { api } from "~/trpc/react";
 import PieceFormFields from "~/app/_components/forms/piece-form";
 
 export default function CreatePieceForm() {
-  const { control, handleSubmit, formState } = useForm<PieceFormData>({
-    mode: "onBlur",
-    reValidateMode: "onBlur",
-    resolver: zodResolver(pieceFormData),
-    defaultValues: {
-      title: "",
-      description: "",
-      composer: "",
-      recordingLink: "",
-      practiceNotes: "",
-      spots: [],
+  const { register, control, handleSubmit, formState } = useForm<PieceFormData>(
+    {
+      mode: "onBlur",
+      reValidateMode: "onBlur",
+      resolver: zodResolver(pieceFormData),
+      defaultValues: {
+        title: "",
+        description: "",
+        composer: "",
+        recordingLink: "",
+        practiceNotes: "",
+        spots: [],
+      },
     },
-  });
+  );
 
+  // TODO: show quota error
   const router = useRouter();
   const { mutate, isLoading: isUpdating } = api.library.createPiece.useMutation(
     {
@@ -51,6 +54,7 @@ export default function CreatePieceForm() {
   return (
     <form noValidate onSubmit={handleSubmit(onSubmit)}>
       <PieceFormFields
+        register={register}
         control={control}
         formState={formState}
         isUpdating={isUpdating}

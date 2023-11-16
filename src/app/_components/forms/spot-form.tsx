@@ -1,11 +1,10 @@
-import Link from "next/link";
 import {
-  Controller,
-  type Control,
   type FormState,
   type UseFormSetValue,
+  type UseFormRegister,
+  type UseFormWatch,
 } from "react-hook-form";
-import type { SpotWithPromptsFormData } from "~/lib/validators/library";
+import type { SpotFormData } from "~/lib/validators/library";
 import { FolderPlusIcon } from "@heroicons/react/20/solid";
 import {
   AddAudioPrompt,
@@ -14,17 +13,21 @@ import {
   AddTextPrompt,
 } from "~/app/_components/forms/add-prompts";
 import { useCallback } from "react";
+import { HappyButton } from "@ui/buttons";
+import { WarningLink } from "@ui/links";
 
 export default function SpotFormFields({
-  control,
   formState,
   isUpdating,
   setValue,
+  watch,
+  register,
   backTo,
 }: {
-  control: Control<SpotWithPromptsFormData>;
-  formState: FormState<SpotWithPromptsFormData>;
-  setValue: UseFormSetValue<SpotWithPromptsFormData>;
+  formState: FormState<SpotFormData>;
+  setValue: UseFormSetValue<SpotFormData>;
+  watch: UseFormWatch<SpotFormData>;
+  register: UseFormRegister<SpotFormData>;
   isUpdating: boolean;
   backTo: string;
 }) {
@@ -54,78 +57,82 @@ export default function SpotFormFields({
   );
   return (
     <>
-      <Controller
-        render={({ field, fieldState }) => (
-          <div className="flex flex-col">
-            <label
-              className="text-sm font-medium leading-6 text-neutral-900"
-              htmlFor={field.name}
-            >
-              Spot Name
-            </label>
-            <input
-              {...field}
-              id={field.name}
-              className="focusable w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
-            />
-            {fieldState.error && (
-              <p className="text-xs text-red-400">{fieldState.error.message}</p>
-            )}
-          </div>
+      <div className="flex flex-col">
+        <label
+          className="text-sm font-medium leading-6 text-neutral-900"
+          htmlFor="name"
+        >
+          Spot Name
+        </label>
+        <input
+          {...register("name")}
+          id="name"
+          className="focusable w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
+        />
+        {formState.errors.name && (
+          <p className="text-xs text-red-400">
+            {formState.errors.name.message}
+          </p>
         )}
-        name="name"
-        control={control}
-      />
+      </div>
       <div className="flex gap-2">
-        <Controller
-          render={({ field, fieldState }) => (
-            <div className="flex w-1/2 flex-col">
-              <label
-                className="text-sm font-medium leading-6 text-neutral-900"
-                htmlFor={field.name}
-              >
-                Spot Order
-              </label>
-              <input
-                {...field}
-                type="number"
-                id={field.name}
-                className="focusable w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
-              />
-              {fieldState.error && (
-                <p className="text-xs text-red-400">
-                  {fieldState.error.message}
-                </p>
-              )}
-            </div>
+        <div className="flex w-1/2 flex-col">
+          <label
+            className="text-sm font-medium leading-6 text-neutral-900"
+            htmlFor="order"
+          >
+            Spot Order
+          </label>
+          <input
+            type="number"
+            id="order"
+            {...register("order")}
+            className="focusable w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
+          />
+          {formState.errors.order && (
+            <p className="text-xs text-red-400">
+              {formState.errors.order.message}
+            </p>
           )}
-          name="order"
-          control={control}
-        />
-        <Controller
-          render={({ field, fieldState }) => (
-            <div className="flex w-1/2 flex-col">
-              <label
-                className="text-sm font-medium leading-6 text-neutral-900"
-                htmlFor={field.name}
-              >
-                Spot Measures
-              </label>
-              <input
-                {...field}
-                id={field.name}
-                className="focusable w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
-              />
-              {fieldState.error && (
-                <p className="text-xs text-red-400">
-                  {fieldState.error.message}
-                </p>
-              )}
-            </div>
+        </div>
+        <div className="flex w-1/2 flex-col">
+          <label
+            className="text-sm font-medium leading-6 text-neutral-900"
+            htmlFor="measures"
+          >
+            Spot Measures
+          </label>
+          <input
+            id="measures"
+            {...register("measures")}
+            className="focusable w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
+          />
+          {formState.errors.measures && (
+            <p className="text-xs text-red-400">
+              {formState.errors.measures.message}
+            </p>
           )}
-          name="measures"
-          control={control}
-        />
+        </div>
+        <div className="flex w-1/2 flex-col">
+          <label
+            className="text-sm font-medium leading-6 text-neutral-900"
+            htmlFor="current-tempo"
+          >
+            Current Tempo
+          </label>
+          <input
+            {...register("currentTempo")}
+            type="number"
+            placeholder="BPM"
+            id="current-tempo"
+            className="focusable w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
+          />
+          {formState.errors.currentTempo && (
+            <p className="text-xs text-red-400">
+              {formState.errors.currentTempo.message}
+            </p>
+          )}
+        </div>
       </div>
       <div className="flex flex-col gap-2">
         <div>
@@ -136,62 +143,31 @@ export default function SpotFormFields({
             Add small prompts to help you play this spot correctly
           </p>
         </div>
-        <div className="grid grid-cols-2 grid-rows-2 gap-2">
-          <Controller
-            name="audioPromptUrl"
-            control={control}
-            render={({ field }) => (
-              <AddAudioPrompt
-                save={setAudioPromptUrl}
-                audioPromptUrl={field.value}
-              />
-            )}
+        <div className="grid grid-cols-2 grid-rows-2 gap-2 md:grid-cols-4 md:grid-rows-1 lg:grid-cols-2 lg:grid-rows-1">
+          <AddAudioPrompt
+            save={setAudioPromptUrl}
+            audioPromptUrl={watch("audioPromptUrl")}
           />
-          <Controller
-            name="imagePromptUrl"
-            control={control}
-            render={({ field }) => (
-              <AddImagePrompt
-                save={setImagePromptUrl}
-                imagePromptUrl={field.value}
-              />
-            )}
+          <AddImagePrompt
+            save={setImagePromptUrl}
+            imagePromptUrl={watch("imagePromptUrl")}
           />
-          <Controller
-            name="textPrompt"
-            control={control}
-            render={({ field }) => (
-              <AddTextPrompt save={setTextPrompt} textPrompt={field.value} />
-            )}
+          <AddTextPrompt
+            save={setTextPrompt}
+            textPrompt={watch("textPrompt")}
           />
-          <Controller
-            name="notesPrompt"
-            control={control}
-            render={({ field }) => (
-              <AddNotesPrompt save={setNotesPrompt} notesPrompt={field.value} />
-            )}
+          <AddNotesPrompt
+            save={setNotesPrompt}
+            notesPrompt={watch("notesPrompt")}
           />
         </div>
       </div>
       <div className="flex flex-row-reverse justify-start gap-4 pt-4">
-        <button
-          disabled={!formState.isValid}
-          type="submit"
-          className={`focusable flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-lg font-semibold  transition duration-200 ${
-            formState.isValid
-              ? "bg-emerald-700/10 text-emerald-800 hover:bg-emerald-700/20"
-              : "bg-neutral-700/50 text-neutral-800"
-          }`}
-        >
-          <FolderPlusIcon className="inline h-6 w-6" />
+        <HappyButton disabled={!formState.isValid} type="submit">
+          <FolderPlusIcon className="-ml-1 h-6 w-6" />
           {isUpdating ? "Saving..." : "Save"}
-        </button>
-        <Link
-          className="focusable rounded-xl bg-amber-700/10 px-5 py-3 text-lg font-semibold text-amber-800  transition duration-200 hover:bg-amber-700/20"
-          href={backTo}
-        >
-          ← Go Back
-        </Link>
+        </HappyButton>
+        <WarningLink href={backTo}>← Go Back</WarningLink>
       </div>
     </>
   );

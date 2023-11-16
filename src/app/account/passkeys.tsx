@@ -14,7 +14,7 @@ export default async function PasskeyManagement() {
   }
 
   return (
-    <div className="h-72 rounded-xl bg-neutral-700/5 p-4 sm:h-64">
+    <div className="rounded-xl bg-neutral-700/5 p-4">
       <div className="px-4 pb-1 sm:px-0">
         <h3 className="text-xl font-semibold leading-7 text-neutral-900">
           Passkey Information

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { PageColumnLayout } from "~/app/_components/page-layout";
-import { BackToHome } from "~/app/_components/links";
+import { BackToHome } from "@ui/links";
 import Chart from "../_components/about/chart";
 import { type Metadata } from "next";
 import { siteTitle } from "~/lib/util";

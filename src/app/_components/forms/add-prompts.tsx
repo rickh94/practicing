@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import {
   SpeakerWaveIcon,
   DocumentTextIcon,
@@ -10,9 +10,8 @@ import {
   ArrowPathIcon,
 } from "@heroicons/react/20/solid";
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, Suspense, lazy, useState } from "react";
+import { Fragment, Suspense, lazy, useCallback, useState } from "react";
 import { workSans } from "~/app/_components/page-layout";
-// import NotesDisplay from "~/app/_components/AbcNotesDisplay";
 import { cn } from "~/lib/util";
 
 import { UploadButton } from "~/app/_components/uploadthing";
@@ -25,6 +24,7 @@ import {
   type NotesForm,
   notesForm,
 } from "~/lib/validators/library";
+import { ColorlessButton, HappyButton, WarningButton } from "@ui/buttons";
 
 const NotesDisplay = lazy(() => import("../AbcNotesDisplay"));
 
@@ -82,7 +82,7 @@ export function AddAudioPrompt({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const { control, handleSubmit, setValue, formState } =
+  const { register, handleSubmit, setValue, formState } =
     useForm<UrlOrEmptyForm>({
       mode: "onBlur",
       reValidateMode: "onBlur",
@@ -92,26 +92,42 @@ export function AddAudioPrompt({
       },
     });
 
-  function onSubmit(data: UrlOrEmptyForm) {
-    save(data.url);
-    setIsOpen(false);
-  }
+  const open = useCallback(
+    function () {
+      setIsOpen(true);
+    },
+    [setIsOpen],
+  );
 
-  function setUrl(url: string) {
-    setValue("url", url);
-  }
+  const close = useCallback(
+    function () {
+      setIsOpen(false);
+    },
+    [setIsOpen],
+  );
+
+  const onSubmit = useCallback(
+    function (data: UrlOrEmptyForm) {
+      save(data.url);
+      setIsOpen(false);
+    },
+    [save, setIsOpen],
+  );
+
+  const setUrl = useCallback(
+    function (url: string) {
+      setValue("url", url);
+    },
+    [setValue],
+  );
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setIsOpen(true)}
+      <ColorlessButton
+        onClick={open}
         className={cn(
-          "focusable flex items-center justify-center gap-1 rounded-xl py-2 font-semibold text-yellow-800  transition duration-200 hover:bg-yellow-700/20",
-          {
-            "bg-yellow-700/10": !audioPromptUrl,
-            "bg-yellow-500/50": audioPromptUrl,
-          },
+          audioPromptUrl ? "bg-yellow-500/50" : "bg-yellow-700/10",
+          "text-yellow-800",
         )}
       >
         {audioPromptUrl ? (
@@ -123,9 +139,9 @@ export function AddAudioPrompt({
           <SpeakerWaveIcon className="h-4 w-4" />
         )}
         Audio
-      </button>
+      </ColorlessButton>
       <Transition.Root show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={setIsOpen}>
+        <Dialog as="div" className="relative z-10" onClose={close}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -165,64 +181,44 @@ export function AddAudioPrompt({
                           Upload an audio file (max 512KB) or paste in a public
                           URL to audio that will prompt you for this spot.
                         </div>
-                        <Controller
-                          render={({ field }) => (
-                            <div className="flex flex-col">
-                              <label
-                                className="text-left text-sm font-medium leading-6 text-neutral-900"
-                                htmlFor={field.name}
-                              >
-                                Url
-                              </label>
-                              <div className="flex items-center gap-0">
-                                <input
-                                  {...field}
-                                  id={field.name}
-                                  className="focusable rounded-r-0 w-full rounded-l-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
-                                />
-                                <AudioUploader
-                                  setUrl={setUrl}
-                                  setIsUploading={setIsUploading}
-                                />
-                              </div>
-                            </div>
-                          )}
-                          name="url"
-                          control={control}
-                        />
+                        <div className="flex flex-col">
+                          <label
+                            className="text-left text-sm font-medium leading-6 text-neutral-900"
+                            htmlFor="url"
+                          >
+                            Url
+                          </label>
+                          <div className="flex items-center gap-0">
+                            <input
+                              id="url"
+                              {...register("url", { required: true })}
+                              className="focusable rounded-r-0 w-full rounded-l-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
+                            />
+                            <AudioUploader
+                              setUrl={setUrl}
+                              setIsUploading={setIsUploading}
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <div className="mt-5 flex gap-4 px-2 sm:mt-6">
-                      <button
-                        type="button"
-                        className="focusable flex w-full items-center justify-center gap-2 rounded-xl bg-amber-800/20 px-4 py-2 text-lg font-semibold text-amber-700 hover:bg-amber-800/30"
-                        onClick={() => setIsOpen(false)}
-                      >
+                    <div className="mt-5 flex gap-4 sm:mt-6">
+                      <WarningButton onClick={close} grow>
                         <XMarkIcon className="h-6 w-6" />
                         Cancel
-                      </button>
-                      <button
-                        type="button"
+                      </WarningButton>
+                      <HappyButton
+                        grow
                         disabled={isUploading || !formState.isValid}
                         onClick={handleSubmit(onSubmit)}
-                        className={cn(
-                          "focusable flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2 text-lg font-semibold",
-                          {
-                            "pointer-events-none bg-neutral-700/50 text-neutral-900":
-                              isUploading || !formState.isValid,
-                            "bg-green-800/20 text-green-700  hover:bg-green-800/30":
-                              !isUploading && formState.isValid,
-                          },
-                        )}
                       >
                         {isUploading ? (
                           <ArrowPathIcon className="h-6 w-6" />
                         ) : (
                           <CheckIcon className="h-6 w-6" />
                         )}
-
                         {isUploading ? "Please Wait..." : "Done"}
-                      </button>
+                      </HappyButton>
                     </div>
                   </form>
                 </Dialog.Panel>
@@ -279,7 +275,6 @@ export function ImageUploader({
   );
 }
 
-// TODO: update prompts to match and preserve id
 export function AddImagePrompt({
   save,
   imagePromptUrl,
@@ -289,7 +284,7 @@ export function AddImagePrompt({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const { control, handleSubmit, setValue, formState } =
+  const { register, handleSubmit, setValue, formState } =
     useForm<UrlOrEmptyForm>({
       mode: "onBlur",
       reValidateMode: "onBlur",
@@ -299,26 +294,42 @@ export function AddImagePrompt({
       },
     });
 
-  function onSubmit(data: UrlOrEmptyForm) {
-    save(data.url);
-    setIsOpen(false);
-  }
+  const onSubmit = useCallback(
+    function (data: UrlOrEmptyForm) {
+      save(data.url);
+      setIsOpen(false);
+    },
+    [save, setIsOpen],
+  );
 
-  function setUrl(url: string) {
-    setValue("url", url);
-  }
+  const setUrl = useCallback(
+    function (url: string) {
+      setValue("url", url);
+    },
+    [setValue],
+  );
+
+  const open = useCallback(
+    function () {
+      setIsOpen(true);
+    },
+    [setIsOpen],
+  );
+
+  const close = useCallback(
+    function () {
+      setIsOpen(false);
+    },
+    [setIsOpen],
+  );
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setIsOpen(true)}
+      <ColorlessButton
+        onClick={open}
         className={cn(
-          "focusable flex items-center justify-center gap-1 rounded-xl py-2 font-semibold text-indigo-800  transition duration-200 hover:bg-indigo-700/20",
-          {
-            "bg-indigo-700/10": !imagePromptUrl,
-            "bg-indigo-500/50": imagePromptUrl,
-          },
+          imagePromptUrl ? "bg-indigo-500/50" : "bg-indigo-700/10",
+          "text-indigo-800",
         )}
       >
         {imagePromptUrl ? (
@@ -330,9 +341,9 @@ export function AddImagePrompt({
           <PhotoIcon className="h-4 w-4" />
         )}
         Image
-      </button>
+      </ColorlessButton>
       <Transition.Root show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={setIsOpen}>
+        <Dialog as="div" className="relative z-10" onClose={close}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -373,55 +384,36 @@ export function AddImagePrompt({
                           public URL for an image to use as a prompt for this
                           spot.
                         </div>
-                        <Controller
-                          render={({ field }) => (
-                            <div className="flex flex-col">
-                              <label
-                                className="text-left text-sm font-medium leading-6 text-neutral-900"
-                                htmlFor={field.name}
-                              >
-                                Url
-                              </label>
-                              <div className="flex items-center gap-0">
-                                <input
-                                  {...field}
-                                  id={field.name}
-                                  className="focusable rounded-r-0 w-full rounded-l-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
-                                />
-                                <ImageUploader
-                                  setUrl={setUrl}
-                                  setIsUploading={setIsUploading}
-                                />
-                              </div>
-                            </div>
-                          )}
-                          name="url"
-                          control={control}
-                        />
+                        <div className="flex flex-col">
+                          <label
+                            className="text-left text-sm font-medium leading-6 text-neutral-900"
+                            htmlFor="url"
+                          >
+                            Url
+                          </label>
+                          <div className="flex items-center gap-0">
+                            <input
+                              {...register("url", { required: true })}
+                              id="url"
+                              className="focusable rounded-r-0 w-full rounded-l-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
+                            />
+                            <ImageUploader
+                              setUrl={setUrl}
+                              setIsUploading={setIsUploading}
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <div className="mt-5 flex gap-4 px-2 sm:mt-6">
-                      <button
-                        type="button"
-                        className="focusable flex w-full items-center justify-center gap-2 rounded-xl bg-amber-800/20 px-4 py-2 text-lg font-semibold text-amber-700 hover:bg-amber-800/30"
-                        onClick={() => setIsOpen(false)}
-                      >
-                        <XMarkIcon className="h-6 w-6" />
+                    <div className="mt-5 flex gap-4 sm:mt-6">
+                      <WarningButton onClick={close} grow>
+                        <XMarkIcon className="-ml-1 h-6 w-6" />
                         Cancel
-                      </button>
-                      <button
-                        type="button"
+                      </WarningButton>
+                      <HappyButton
+                        grow
                         disabled={isUploading || !formState.isValid}
                         onClick={handleSubmit(onSubmit)}
-                        className={cn(
-                          "focusable flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2 text-lg font-semibold",
-                          {
-                            "pointer-events-none bg-neutral-700/50 text-neutral-900":
-                              isUploading,
-                            "bg-green-800/20 text-green-700  hover:bg-green-800/30":
-                              !isUploading,
-                          },
-                        )}
                       >
                         {isUploading ? (
                           <ArrowPathIcon className="h-6 w-6" />
@@ -429,7 +421,7 @@ export function AddImagePrompt({
                           <CheckIcon className="h-6 w-6" />
                         )}
                         {isUploading ? "Please Wait..." : "Done"}
-                      </button>
+                      </HappyButton>
                     </div>
                   </form>
                 </Dialog.Panel>
@@ -450,7 +442,7 @@ export function AddTextPrompt({
   textPrompt?: string | null;
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const { control, handleSubmit, formState } = useForm<TextForm>({
+  const { register, handleSubmit, formState } = useForm<TextForm>({
     mode: "onBlur",
     reValidateMode: "onBlur",
     resolver: zodResolver(textForm),
@@ -459,25 +451,27 @@ export function AddTextPrompt({
     },
   });
 
-  function onSubmit(data: TextForm) {
-    save(data.text);
-    setIsOpen(false);
-  }
+  const onSubmit = useCallback(
+    function (data: TextForm) {
+      save(data.text);
+      setIsOpen(false);
+    },
+    [save, setIsOpen],
+  );
+
+  const open = useCallback(() => setIsOpen(true), [setIsOpen]);
+  const close = useCallback(() => setIsOpen(false), [setIsOpen]);
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setIsOpen(true)}
+      <ColorlessButton
+        onClick={open}
         className={cn(
-          "focusable flex items-center justify-center gap-1 rounded-xl py-2 font-semibold text-lime-800  transition duration-200 hover:bg-lime-700/20",
-          {
-            "bg-lime-700/10": !textPrompt,
-            "bg-lime-500/50": textPrompt,
-          },
+          textPrompt ? "bg-lime-500/50" : "bg-lime-700/10",
+          "text-lime-800",
         )}
       >
-        {textPrompt ? (
+        {!!textPrompt ? (
           <>
             <span className="sr-only">Checked</span>
             <CheckIcon className="h-4 w-4" />
@@ -486,9 +480,9 @@ export function AddTextPrompt({
           <DocumentTextIcon className="h-4 w-4" />
         )}
         Text
-      </button>
+      </ColorlessButton>
       <Transition.Root show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={setIsOpen}>
+        <Dialog as="div" className="relative z-10" onClose={close}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -527,53 +521,34 @@ export function AddTextPrompt({
                         <div className="prose prose-sm prose-neutral mt-2 text-left">
                           Enter some text to remind yourself about this spot.
                         </div>
-                        <Controller
-                          render={({ field }) => (
-                            <div className="flex flex-col">
-                              <label
-                                className="text-left text-sm font-medium leading-6 text-neutral-900"
-                                htmlFor={field.name}
-                              >
-                                Text
-                              </label>
-                              <textarea
-                                {...field}
-                                id={field.name}
-                                className="focusable w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
-                              />
-                            </div>
-                          )}
-                          name="text"
-                          control={control}
-                        />
+                        <div className="flex flex-col">
+                          <label
+                            className="text-left text-sm font-medium leading-6 text-neutral-900"
+                            htmlFor="text"
+                          >
+                            Text
+                          </label>
+                          <textarea
+                            {...register("text", { required: true })}
+                            id="text"
+                            className="focusable w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
+                          />
+                        </div>
                       </div>
                     </div>
-                    <div className="mt-5 flex gap-4 px-2 sm:mt-6">
-                      <button
-                        type="button"
-                        className="focusable flex w-full items-center justify-center gap-2 rounded-xl bg-amber-800/20 px-4 py-2 text-lg font-semibold text-amber-700 hover:bg-amber-800/30"
-                        onClick={() => setIsOpen(false)}
-                      >
+                    <div className="mt-5 flex gap-4 sm:mt-6">
+                      <WarningButton grow onClick={close}>
                         <XMarkIcon className="h-6 w-6" />
                         Cancel
-                      </button>
-                      <button
-                        type="button"
+                      </WarningButton>
+                      <HappyButton
                         disabled={!formState.isValid}
                         onClick={handleSubmit(onSubmit)}
-                        className={cn(
-                          "focusable flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2 text-lg font-semibold",
-                          {
-                            "pointer-events-none bg-neutral-700/50 text-neutral-900":
-                              !formState.isValid,
-                            "bg-green-800/20 text-green-700  hover:bg-green-800/30":
-                              formState.isValid,
-                          },
-                        )}
+                        grow
                       >
                         <CheckIcon className="h-6 w-6" />
                         Done
-                      </button>
+                      </HappyButton>
                     </div>
                   </form>
                 </Dialog.Panel>
@@ -594,7 +569,7 @@ export function AddNotesPrompt({
   notesPrompt?: string | null;
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const { control, handleSubmit, formState } = useForm<NotesForm>({
+  const { register, handleSubmit, formState, watch } = useForm<NotesForm>({
     mode: "onBlur",
     reValidateMode: "onBlur",
     resolver: zodResolver(notesForm),
@@ -603,22 +578,25 @@ export function AddNotesPrompt({
     },
   });
 
-  function onSubmit(data: NotesForm) {
-    save(data.notes);
-    setIsOpen(false);
-  }
+  const onSubmit = useCallback(
+    function (data: NotesForm) {
+      save(data.notes);
+      setIsOpen(false);
+    },
+    [save, setIsOpen],
+  );
+
+  const open = useCallback(() => setIsOpen(true), [setIsOpen]);
+  const close = useCallback(() => setIsOpen(false), [setIsOpen]);
 
   return (
     <>
-      <button
+      <ColorlessButton
         type="button"
-        onClick={() => setIsOpen(true)}
+        onClick={open}
         className={cn(
-          "focusable flex items-center justify-center gap-1 rounded-xl bg-sky-700/10 py-2 font-semibold text-sky-800  transition duration-200 hover:bg-sky-700/20",
-          {
-            "bg-sky-700/10": !notesPrompt,
-            "bg-sky-500/50": notesPrompt,
-          },
+          notesPrompt ? "bg-sky-500/50" : "bg-sky-700/10",
+          "text-sky-500",
         )}
       >
         {notesPrompt ? (
@@ -630,9 +608,9 @@ export function AddNotesPrompt({
           <MusicalNoteIcon className="h-4 w-4" />
         )}
         Notes
-      </button>
+      </ColorlessButton>
       <Transition.Root show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={setIsOpen}>
+        <Dialog as="div" className="relative z-10" onClose={close}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -680,67 +658,43 @@ export function AddNotesPrompt({
                           </a>{" "}
                           and rendered below.{" "}
                         </div>
-                        <Controller
-                          render={({ field }) => (
-                            <>
-                              <div className="flex flex-col">
-                                <label
-                                  className="text-left text-sm font-medium leading-6 text-neutral-900"
-                                  htmlFor={field.name}
-                                >
-                                  ABC Notes
-                                </label>
-                                <textarea
-                                  {...field}
-                                  id={field.name}
-                                  className="focusable w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
-                                  placeholder="Enter Notes using ABC notation"
-                                />
-                              </div>
-                              {/* TODO: add link to abcjs */}
-                              <div className="h-[100px]">
-                                <Suspense
-                                  fallback={<div>Loading notes...</div>}
-                                >
-                                  <NotesDisplay
-                                    notes={field.value}
-                                    responsive="resize"
-                                  />
-                                </Suspense>
-                              </div>
-                            </>
-                          )}
-                          name="notes"
-                          control={control}
-                        />
+                        <div className="flex flex-col">
+                          <label
+                            className="text-left text-sm font-medium leading-6 text-neutral-900"
+                            htmlFor="notes"
+                          >
+                            ABC Notes
+                          </label>
+                          <textarea
+                            {...register("notes")}
+                            id="notes"
+                            className="focusable w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
+                            placeholder="Enter Notes using ABC notation"
+                          />
+                        </div>
+                        <div className="h-[100px]">
+                          <Suspense fallback={<div>Loading notes...</div>}>
+                            <NotesDisplay
+                              notes={watch("notes")}
+                              responsive="resize"
+                            />
+                          </Suspense>
+                        </div>
                       </div>
                     </div>
-                    <div className="mt-5 flex gap-4 px-2 sm:mt-6">
-                      <button
-                        type="button"
-                        className="focusable flex w-full items-center justify-center gap-1 rounded-xl bg-amber-800/20 px-4 py-2 text-lg font-semibold text-amber-700 hover:bg-amber-800/30"
-                        onClick={() => setIsOpen(false)}
-                      >
+                    <div className="mt-5 flex gap-4 sm:mt-6">
+                      <WarningButton grow onClick={close}>
                         <XMarkIcon className="h-6 w-6" />
                         Cancel
-                      </button>
-                      <button
-                        type="button"
+                      </WarningButton>
+                      <HappyButton
+                        grow
                         disabled={!formState.isValid}
                         onClick={handleSubmit(onSubmit)}
-                        className={cn(
-                          "focusable flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2 text-lg font-semibold",
-                          {
-                            "pointer-events-none bg-neutral-700/50 text-neutral-900":
-                              !formState.isValid,
-                            "bg-green-800/20 text-green-700  hover:bg-green-800/30":
-                              formState.isValid,
-                          },
-                        )}
                       >
                         <CheckIcon className="h-6 w-6" />
                         Done
-                      </button>
+                      </HappyButton>
                     </div>
                   </form>
                 </Dialog.Panel>

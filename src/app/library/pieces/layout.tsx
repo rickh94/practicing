@@ -1,5 +1,5 @@
 import { PageColumnLayout } from "~/app/_components/page-layout";
-import { AccountLink, LibraryLink } from "~/app/_components/links";
+import { AccountLink, LibraryLink } from "@ui/links";
 import { getServerAuthSession } from "~/server/auth";
 import { redirect } from "next/navigation";
 

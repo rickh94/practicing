@@ -1,8 +1,9 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { TrashIcon } from "@heroicons/react/20/solid";
+import { PlusCircleIcon, TrashIcon } from "@heroicons/react/20/solid";
 import { type Dispatch, type SetStateAction, useRef } from "react";
 import { type Spot } from "~/lib/random";
 import { uniqueID } from "~/lib/util";
+import { AngryButton, BasicButton } from "@ui/buttons";
 
 export function CreateSpots({
   setSpots,
@@ -49,14 +50,11 @@ export function CreateSpots({
           </div>
           <div>
             {spots.length > 0 && (
-              <button
-                onClick={() => clearSpots()}
-                className="flex h-full w-full items-center gap-1 rounded-xl border border-red-800 bg-red-700/10 px-2 py-1 text-red-800  hover:bg-red-500/10 hover:text-red-600"
-              >
+              <AngryButton onClick={() => clearSpots()}>
                 <div>Delete All</div>
-                <span className="sr-only">Delete Spot</span>
+                <span className="sr-only">Delete All Spots</span>
                 <TrashIcon className="h-4 w-4" />
-              </button>
+              </AngryButton>
             )}
           </div>
         </div>
@@ -64,17 +62,17 @@ export function CreateSpots({
           <p className="text-sm text-neutral-700">Add some spots below</p>
         )}
       </div>
-      <ul className="col-span-full flex w-full flex-wrap gap-2" ref={parent}>
+      <ul className="col-span-full flex w-full flex-wrap gap-3" ref={parent}>
         {spots.map((spot) => (
           <li key={spot.id} className="flex items-center rounded-xl p-0">
-            <div className="whitespace-nowrap rounded-l-xl border-b border-l border-t border-neutral-800 bg-neutral-700/10 py-2 pl-3 pr-2">
+            <div className="whitespace-nowrap rounded-l-xl border-neutral-800 bg-neutral-700/10 py-2 pl-3 pr-2">
               {spot.name}
             </div>
             <button
               onClick={() => deleteSpot(spot.id)}
-              className="rounded-r-xl border-b border-r border-t border-red-800 bg-red-700/10 py-2.5 pl-2 pr-3 text-red-800 hover:bg-red-500/10 hover:text-red-600"
+              className="rounded-r-xl border-red-800 bg-red-700/10 py-2.5 pl-2 pr-3 text-red-800 hover:bg-red-500/10 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-800 focus:ring-offset-1 focus:ring-offset-neutral-100"
             >
-              <span className="sr-only">Delete Spot</span>
+              <span className="sr-only">Delete {spot.name}</span>
               <TrashIcon className="h-5 w-5" />
             </button>
           </li>
@@ -90,7 +88,7 @@ export function CreateSpots({
         <div className="flex gap-2">
           <input
             ref={spotNameRef}
-            className="focusable w-42 rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 transition duration-200 focus:bg-neutral-700/20"
+            className="focusable w-44 rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 transition duration-200 focus:bg-neutral-700/20"
             type="text"
             onKeyUp={(e) => {
               if (e.key === "Enter" || e.key === ",") {
@@ -98,13 +96,10 @@ export function CreateSpots({
               }
             }}
           />
-          <button
-            className="focusable rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 transition duration-200 hover:bg-neutral-700/20"
-            type="button"
-            onClick={onAddSpot}
-          >
+          <BasicButton onClick={onAddSpot}>
+            <PlusCircleIcon className="-ml-1 h-4 w-4" />
             Add Spot
-          </button>
+          </BasicButton>
         </div>
       </div>
       <div className="flex flex-col">
@@ -133,13 +128,10 @@ export function CreateSpots({
               }
             }}
           />
-          <button
-            className="focusable rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 transition duration-200 hover:bg-neutral-700/20"
-            type="button"
-            onClick={generateSomeSpots}
-          >
+          <BasicButton onClick={generateSomeSpots}>
+            <PlusCircleIcon className="-ml-1 h-4 w-4" />
             Add Spots
-          </button>
+          </BasicButton>
         </div>
       </div>
     </div>

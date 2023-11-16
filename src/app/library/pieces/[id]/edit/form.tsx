@@ -12,12 +12,14 @@ import { api } from "~/trpc/react";
 import PieceFormFields from "~/app/_components/forms/piece-form";
 
 export default function UpdatePieceForm({ piece }: { piece: PieceWithSpots }) {
-  const { control, handleSubmit, formState } = useForm<PieceFormData>({
-    mode: "onBlur",
-    reValidateMode: "onChange",
-    resolver: zodResolver(pieceFormData),
-    defaultValues: pieceFormData.parse(piece),
-  });
+  const { control, handleSubmit, formState, register } = useForm<PieceFormData>(
+    {
+      mode: "onBlur",
+      reValidateMode: "onChange",
+      resolver: zodResolver(pieceFormData),
+      defaultValues: pieceFormData.parse(piece),
+    },
+  );
 
   const router = useRouter();
   const { mutate, isLoading: isUpdating } = api.library.updatePiece.useMutation(
@@ -45,6 +47,7 @@ export default function UpdatePieceForm({ piece }: { piece: PieceWithSpots }) {
   return (
     <form noValidate onSubmit={handleSubmit(onSubmit)}>
       <PieceFormFields
+        register={register}
         control={control}
         formState={formState}
         isUpdating={isUpdating}

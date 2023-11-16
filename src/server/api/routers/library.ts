@@ -4,10 +4,10 @@ import { z } from "zod";
 import {
   basicSpot,
   pieceFormData,
-  spotWithPromptsFormData,
+  spotFormData,
   pieceForList,
   pieceWithSpots,
-  spotWithPromptsAndPieceTitle,
+  spotWithPieceInfo,
   updatePieceWithSpots,
 } from "~/lib/validators/library";
 
@@ -58,7 +58,10 @@ export const libraryRouter = createTRPCRouter({
           code: "INTERNAL_SERVER_ERROR",
         });
       }
-      if (pieceCountResult?.[0]?.count ?? 0 >= user.quota) {
+      if (
+        !user.isUnlimited &&
+        (pieceCountResult[0]?.count ?? 0) >= user.quota
+      ) {
         throw new TRPCError({
           message: "You have reached your quota, please delete some pieces",
           code: "BAD_REQUEST",
@@ -107,7 +110,7 @@ export const libraryRouter = createTRPCRouter({
     .input(
       z.object({
         pieceId: z.string(),
-        spot: spotWithPromptsFormData,
+        spot: spotFormData,
       }),
     )
     .output(z.object({ id: z.string() }))
@@ -294,6 +297,73 @@ export const libraryRouter = createTRPCRouter({
       });
     }),
 
+  practicePieceSpots: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        durationMinutes: z.number(),
+        spotIds: z.array(z.string()),
+      }),
+    )
+    .mutation(async ({ ctx, input: { id, spotIds, durationMinutes } }) => {
+      const [practiceSessionId, pieceSessionId] = await ctx.db.transaction(
+        async (tx) => {
+          const pieceUpdateResult = await tx
+            .update(pieces)
+            .set({
+              lastPracticed: new Date(),
+            })
+            .where(
+              and(eq(pieces.id, id), eq(pieces.userId, ctx.session.user.id)),
+            );
+          if (pieceUpdateResult.rowsAffected === 0) {
+            throw new TRPCError({
+              message: "Could not update piece",
+              code: "INTERNAL_SERVER_ERROR",
+            });
+          }
+          const [createdPracticeSession] = await tx
+            .insert(practiceSessions)
+            .values({
+              date: new Date(),
+              durationMinutes,
+            })
+            .returning({ id: practiceSessions.id });
+          if (!createdPracticeSession?.id) {
+            throw new TRPCError({
+              message: "Could not create practice session",
+              code: "INTERNAL_SERVER_ERROR",
+            });
+          }
+          const [pieceSession] = await tx
+            .insert(piecePracticeSessions)
+            .values({
+              pieceId: id,
+              practiceSessionId: createdPracticeSession.id,
+            })
+            .returning({ id: piecePracticeSessions.id });
+          if (!pieceSession?.id) {
+            throw new TRPCError({
+              message: "Could not create piece practice session",
+              code: "INTERNAL_SERVER_ERROR",
+            });
+          }
+          return [createdPracticeSession.id, pieceSession.id];
+        },
+      );
+
+      const spotToPieceSessionPromises = [];
+      for (const spotId of spotIds) {
+        spotToPieceSessionPromises.push(
+          ctx.db.insert(spotsToPieceSessions).values({
+            pieceSessionId: pieceSessionId,
+            spotId,
+          }),
+        );
+      }
+      await Promise.all(spotToPieceSessionPromises);
+      return practiceSessionId;
+    }),
   getPieceById: protectedProcedure
     .input(z.object({ id: z.string() }))
     .output(pieceWithSpots.nullable())
@@ -443,7 +513,7 @@ export const libraryRouter = createTRPCRouter({
 
   getSpotById: protectedProcedure
     .input(z.object({ spotId: z.string(), pieceId: z.string() }))
-    .output(spotWithPromptsAndPieceTitle.nullable())
+    .output(spotWithPieceInfo.nullable())
     .query(async ({ ctx, input }) => {
       const spot = await ctx.db.query.spots.findFirst({
         where: and(
@@ -474,7 +544,7 @@ export const libraryRouter = createTRPCRouter({
       z.object({
         spotId: z.string(),
         pieceId: z.string(),
-        update: spotWithPromptsFormData,
+        update: spotFormData,
       }),
     )
     .mutation(async ({ ctx, input }) => {

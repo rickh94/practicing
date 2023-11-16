@@ -7,17 +7,24 @@ import {
 } from "~/lib/random";
 import Summary from "./summary";
 import { CreateSpots } from "./createSpots";
-import { cn } from "~/lib/util";
-import { ScaleCrossFadeContent } from "~/app/_components/transitions";
+import { ScaleCrossFadeContent } from "@ui/transitions";
+import {
+  BasicButton,
+  GiantBasicButton,
+  GiantHappyButton,
+  WarningButton,
+} from "@ui/buttons";
 
 export default function SingleTab({
   mode,
   setMode,
+  initialSpots,
 }: {
   mode: RandomMode;
   setMode: (mode: RandomMode) => void;
+  initialSpots?: Spot[];
 }) {
-  const [spots, setSpots] = useState<Spot[]>([]);
+  const [spots, setSpots] = useState<Spot[]>(initialSpots ?? []);
   const [summary, setSummary] = useState<PracticeSummaryItem[]>([]);
 
   return (
@@ -83,20 +90,9 @@ function SingleSetupForm({
       <div className="flex w-full flex-col gap-y-4">
         <CreateSpots setSpots={setSpots} spots={spots} />
         <div className="col-span-full my-16 flex w-full items-center justify-center">
-          <button
-            disabled={spots.length === 0}
-            type="button"
-            className={cn(
-              "focusable rounded-xl px-6 py-3 text-2xl font-bold text-neutral-900 transition duration-200 sm:px-8 sm:py-4 sm:text-4xl",
-              {
-                "bg-neutral-700/10 hover:bg-neutral-700/20": spots.length > 0,
-                "pointer-events-none bg-neutral-700/50": spots.length === 0,
-              },
-            )}
-            onClick={submit}
-          >
+          <GiantBasicButton disabled={spots.length === 0} onClick={submit}>
             Start Practicing
-          </button>
+          </GiantBasicButton>
         </div>
       </div>
     </>
@@ -156,13 +152,7 @@ function SinglePractice({
   return (
     <div className="relative w-full">
       <div className="absolute left-0 top-0 py-2 sm:py-4">
-        <button
-          onClick={setup}
-          type="button"
-          className="focusable m-0 rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-700 hover:bg-neutral-700/20"
-        >
-          ← Back to setup
-        </button>
+        <BasicButton onClick={setup}>← Back to setup</BasicButton>
       </div>
       <div className="h-12" />
       <div className="flex w-full flex-col items-center justify-center gap-2 pt-8 sm:pt-24">
@@ -184,22 +174,12 @@ function SinglePractice({
           </Transition>
         </div>
         <div className="pt-12">
-          <button
-            type="button"
-            onClick={nextSpot}
-            className="focusable rounded-xl bg-neutral-700/10 px-8 py-4 text-4xl font-semibold text-neutral-800 hover:bg-neutral-700/20"
-          >
+          <GiantHappyButton type="button" onClick={nextSpot}>
             Next Spot
-          </button>
+          </GiantHappyButton>
         </div>
         <div className="pt-8">
-          <button
-            type="button"
-            onClick={handleDone}
-            className="focusable rounded-xl bg-neutral-700/10 px-6 py-2 text-2xl font-semibold text-neutral-800 hover:bg-neutral-700/20"
-          >
-            Done
-          </button>
+          <WarningButton onClick={handleDone}>Done</WarningButton>
         </div>
       </div>
     </div>

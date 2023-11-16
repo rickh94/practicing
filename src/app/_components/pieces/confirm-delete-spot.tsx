@@ -7,6 +7,7 @@ import { TrashIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { api } from "~/trpc/react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { AngryButton, WarningButton } from "@ui/buttons";
 
 export default function ConfirmDeleteSpot({
   pieceId,
@@ -48,21 +49,19 @@ export default function ConfirmDeleteSpot({
         `Please type “Delete ${spotName} from ${pieceTitle}” to confirm.`,
       );
     }
-    // TODO
   }, [mutate, deleteTextRef, spotName, pieceTitle, pieceId, spotId]);
 
   return (
     <>
-      <button
+      <AngryButton
         type="button"
-        className="focusable flex items-center justify-center gap-1 rounded-xl bg-red-700/10 px-4 py-2 font-semibold text-red-800  transition duration-200 hover:bg-red-700/20"
         onClick={() => {
           setOpen(true);
         }}
       >
         <TrashIcon className="-ml-1 h-5 w-5" />
         Delete
-      </button>
+      </AngryButton>
       <Transition.Root show={open} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={setOpen}>
           <Transition.Child
@@ -97,11 +96,13 @@ export default function ConfirmDeleteSpot({
                         as="h3"
                         className="text-2xl font-semibold leading-6 text-neutral-900"
                       >
-                        Delete Piece
+                        Delete Spot
                       </Dialog.Title>
                       <div className="prose prose-sm prose-neutral mt-2 text-left">
                         <p>
                           Confirm you really want to delete this spot by typing:{" "}
+                        </p>
+                        <p>
                           <strong className="rounded font-mono font-bold text-red-500">
                             Delete {spotName} from {pieceTitle}
                           </strong>
@@ -126,22 +127,14 @@ export default function ConfirmDeleteSpot({
                     </div>
                   </div>
                   <div className="mt-5 flex gap-4 px-2 sm:mt-6">
-                    <button
-                      type="button"
-                      className="focusable flex w-full items-center justify-center gap-1 rounded-xl bg-amber-800/20 px-4 py-2 text-lg font-semibold text-amber-700 hover:bg-amber-800/30"
-                      onClick={() => setOpen(false)}
-                    >
+                    <WarningButton onClick={() => setOpen(false)} grow>
                       <XMarkIcon className="-ml-1 h-6 w-6" />
                       No, Cancel
-                    </button>
-                    <button
-                      type="button"
-                      className="focusable flex w-full items-center justify-center gap-1 rounded-xl bg-red-800/20 px-4 py-2 text-lg font-semibold text-red-700 hover:bg-red-800/30"
-                      onClick={handleDelete}
-                    >
+                    </WarningButton>
+                    <AngryButton type="button" onClick={handleDelete} grow>
                       <TrashIcon className="-ml-1 h-6 w-6" />
                       Yes, Delete
-                    </button>
+                    </AngryButton>
                   </div>
                 </Dialog.Panel>
               </Transition.Child>

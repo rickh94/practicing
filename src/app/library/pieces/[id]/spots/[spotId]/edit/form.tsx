@@ -6,24 +6,20 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import SpotFormFields from "~/app/_components/forms/spot-form";
 import {
-  type SpotWithPromptsFormData,
-  spotWithPromptsFormData,
-  type SpotWithPromptsAndPieceTitle,
+  type SpotFormData,
+  spotFormData,
+  type SpotWithPieceInfo,
 } from "~/lib/validators/library";
 import { api } from "~/trpc/react";
 
 // TODO: add a way to delete prompts
 
-export default function SpotUpdateForm({
-  spot,
-}: {
-  spot: SpotWithPromptsAndPieceTitle;
-}) {
-  const { control, handleSubmit, formState, setValue } =
-    useForm<SpotWithPromptsFormData>({
+export default function SpotUpdateForm({ spot }: { spot: SpotWithPieceInfo }) {
+  const { handleSubmit, formState, setValue, register, watch } =
+    useForm<SpotFormData>({
       mode: "onBlur",
       reValidateMode: "onBlur",
-      resolver: zodResolver(spotWithPromptsFormData),
+      resolver: zodResolver(spotFormData),
       defaultValues: {
         name: spot.name,
         order: spot.order ?? undefined,
@@ -53,7 +49,7 @@ export default function SpotUpdateForm({
       },
     });
 
-  function onSubmit(data: SpotWithPromptsFormData) {
+  function onSubmit(data: SpotFormData) {
     console.log(data);
     mutate({ pieceId: spot.piece.id, spotId: spot.id, update: data });
   }
@@ -61,11 +57,12 @@ export default function SpotUpdateForm({
   return (
     <form noValidate onSubmit={handleSubmit(onSubmit)}>
       <SpotFormFields
-        control={control}
         formState={formState}
         setValue={setValue}
         isUpdating={isUpdating}
         backTo={`/library/pieces/${spot.piece.id}/spots/${spot.id}`}
+        register={register}
+        watch={watch}
       />
     </form>
   );

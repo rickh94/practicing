@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Bars3CenterLeftIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { cn } from "~/lib/util";
-import { CrossFadeContentFast } from "~/app/_components/transitions";
+import { CrossFadeContentFast } from "@ui/transitions";
 
 const links = [
   { href: "/practice/random-spots", label: "Random Spots" },

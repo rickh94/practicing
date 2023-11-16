@@ -18,9 +18,15 @@
     "noUncheckedIndexedAccess": true,
     "baseUrl": ".",
     "paths": {
-      "~/*": ["./src/*"]
+      "~/*": ["./src/*"],
+      "@ui/*": ["./src/app/_components/ui/*"],
+      "@components/*": ["./src/app/_components/*"]
     },
-    "plugins": [{ "name": "next" }]
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "include": [
     ".eslintrc.cjs",

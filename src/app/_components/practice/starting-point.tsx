@@ -5,9 +5,16 @@ import {
   useCallback,
 } from "react";
 import { cn, uniqueID } from "~/lib/util";
-import { ScaleCrossFadeContent } from "~/app/_components/transitions";
-import Link from "next/link";
+import { ScaleCrossFadeContent } from "@ui/transitions";
 import { XMarkIcon } from "@heroicons/react/20/solid";
+import {
+  BasicButton,
+  GiantBasicButton,
+  GiantHappyButton,
+  HappyButton,
+  WarningButton,
+} from "@ui/buttons";
+import { BackToPieceLink } from "@ui/links";
 
 type Section = {
   startingPoint: {
@@ -112,6 +119,7 @@ export default function StartingPoint({
     [setSummary, setMode, onCompleted, setMeasuresPracticed],
   );
 
+  // TODO: consider switch to react-hook-form for setup to reduce annoying prop complexity
   return (
     <div className="relative left-0 top-0 w-full sm:mx-auto sm:max-w-5xl">
       <ScaleCrossFadeContent
@@ -213,46 +221,49 @@ export function StartingPointSetupForm({
           </p>
         </div>
       </div>
-      <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2">
-        <div
-          className={cn("flex flex-col p-2", preconfigured && "bg-black/50")}
-        >
+      <div className="grid-rows-8 grid w-full grid-cols-1 gap-1 sm:grid-cols-2 sm:grid-rows-4">
+        <div className="col-span-1 col-start-1 row-span-1 row-start-1">
           <label
             className="text-lg font-semibold text-neutral-800"
             htmlFor="measures"
           >
             Measures{" "}
             {preconfigured && (
-              <span className="text-neutral-200/90">(set in piece)</span>
+              <span className="rounded-xl bg-black/10 p-1 font-extrabold text-black">
+                (set automatically)
+              </span>
             )}
           </label>
           <p className="pb-2 text-sm text-neutral-700">
             How many measures are in your piece?
           </p>
-          <div className="flex items-center gap-2 pt-1">
-            <input
-              id="measures"
-              className="focusable w-24 rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 transition duration-200 focus:bg-neutral-700/20"
-              type="number"
-              min="2"
-              value={measures}
-              disabled={preconfigured}
-              onChange={(e) => setMeasures(parseInt(e.target.value))}
-              onFocus={autoSelect}
-            />
-            <div className="font-medium">Measures</div>
-          </div>
         </div>
-        <div
-          className={cn("flex flex-col p-2", preconfigured && "bg-black/50")}
-        >
+        <div className="col-span-1 col-start-1 row-span-1 flex items-center gap-2 sm:row-start-2">
+          <input
+            id="measures"
+            className={cn(
+              "focusable w-24 rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 transition duration-200 focus:bg-neutral-700/20",
+              preconfigured && "bg-black/30 text-neutral-500",
+            )}
+            type="number"
+            min="2"
+            value={measures}
+            disabled={preconfigured}
+            onChange={(e) => setMeasures(parseInt(e.target.value))}
+            onFocus={autoSelect}
+          />
+          <div className="font-medium">Measures</div>
+        </div>
+        <div className="col-span-1 row-span-1 sm:col-start-2">
           <label
             className="text-lg font-semibold text-neutral-800"
             htmlFor="beats"
           >
-            Beats per measure
+            Beats per measure{" "}
             {preconfigured && (
-              <span className="text-neutral-200/90">(set in piece)</span>
+              <span className="rounded-xl bg-black/10 p-1 font-extrabold text-black">
+                (set automatically)
+              </span>
             )}
           </label>
           <p className="text-sm text-neutral-700">
@@ -261,21 +272,24 @@ export function StartingPointSetupForm({
           <p className="pb-2 text-sm italic text-neutral-700">
             (the top number from the time signature)
           </p>
-          <div className="flex items-center gap-2 pt-1">
-            <input
-              id="beats"
-              className="focusable w-24 rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 transition duration-200 focus:bg-neutral-700/20"
-              type="number"
-              min="1"
-              value={beats}
-              disabled={preconfigured}
-              onChange={(e) => setBeats(parseInt(e.target.value))}
-              onFocus={autoSelect}
-            />
-            <div className="font-medium">Beats</div>
-          </div>
         </div>
-        <div className="flex flex-col">
+        <div className="col-span-1 row-span-1 flex items-center gap-2 sm:col-start-2 sm:row-start-2">
+          <input
+            id="beats"
+            className={cn(
+              "focusable w-24 rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 transition duration-200 focus:bg-neutral-700/20",
+              preconfigured && "bg-black/30 text-neutral-500",
+            )}
+            type="number"
+            min="1"
+            value={beats}
+            disabled={preconfigured}
+            onChange={(e) => setBeats(parseInt(e.target.value))}
+            onFocus={autoSelect}
+          />
+          <div className="font-medium">Beats</div>
+        </div>
+        <div className="col-span-1 col-start-1 row-span-1 sm:row-start-3">
           <label
             className="text-lg font-semibold text-neutral-800"
             htmlFor="maxLength"
@@ -286,7 +300,9 @@ export function StartingPointSetupForm({
             The sections will be of random number of measures less than this
             number.
           </p>
-          <div className="flex items-center gap-2 pt-1">
+        </div>
+        <div className="col-span-1 col-start-1 row-span-1 flex items-end gap-2 pb-2 sm:row-start-4">
+          <div className="flex items-center gap-2">
             <input
               id="maxLength"
               className="focusable w-24 rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 transition duration-200 focus:bg-neutral-700/20"
@@ -299,81 +315,69 @@ export function StartingPointSetupForm({
             <div className="font-medium">Measures</div>
           </div>
         </div>
-        <div className="flex flex-col">
+        <div className="col-span-1 col-start-1 row-span-1 sm:col-start-2 sm:row-start-3">
           <div className="text-lg font-semibold text-neutral-800">
             Limit to Measures (optional)
           </div>
           <p className="text-sm text-neutral-700">
             You can limit practicing to a smaller section within the piece.
           </p>
-          <div className="flex items-center gap-2 pt-1">
-            <div className="flex flex-col gap-1">
-              <label
-                className="text-sm font-medium text-neutral-800"
-                htmlFor="lowerBound"
-              >
-                Start
-              </label>
-              <input
-                id="lowerBound"
-                className="focusable w-24 rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-400 transition duration-200 focus:bg-neutral-700/20"
-                type="number"
-                min="1"
-                placeholder="mm"
-                value={lowerBound ?? ""}
-                onFocus={autoSelect}
-                onChange={(e) => setLowerBound(parseInt(e.target.value))}
-              />
-            </div>
-            <div className="flex flex-col gap-1">
-              <label
-                className="text-sm font-medium text-neutral-800"
-                htmlFor="upperBound"
-              >
-                End
-              </label>
-              <input
-                id="upperBound"
-                className="focusable w-24 rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-400 transition duration-200 focus:bg-neutral-700/20"
-                type="number"
-                min="1"
-                max={measures}
-                placeholder="mm"
-                value={upperBound ?? ""}
-                onFocus={autoSelect}
-                onChange={(e) => setUpperBound(parseInt(e.target.value))}
-              />
-            </div>
-            <div className="flex h-full flex-col justify-end">
-              <button
-                onClick={() => {
-                  setLowerBound(null);
-                  setUpperBound(null);
-                }}
-                type="button"
-                className="focusable m-0 flex items-center rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-700 hover:bg-neutral-700/20"
-              >
-                <XMarkIcon className="-ml-1 h-5 w-5" />
-                Clear
-              </button>
-            </div>
+        </div>
+        <div className="col-span-1 col-start-1 row-span-1 flex items-center gap-2 sm:col-start-2 sm:row-start-4">
+          <div className="flex flex-col gap-1">
+            <label
+              className="text-sm font-medium text-neutral-800"
+              htmlFor="lowerBound"
+            >
+              Start
+            </label>
+            <input
+              id="lowerBound"
+              className="focusable w-24 rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-400 transition duration-200 focus:bg-neutral-700/20"
+              type="number"
+              min="1"
+              placeholder="mm"
+              value={lowerBound ?? ""}
+              onFocus={autoSelect}
+              onChange={(e) => setLowerBound(parseInt(e.target.value))}
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label
+              className="text-sm font-medium text-neutral-800"
+              htmlFor="upperBound"
+            >
+              End
+            </label>
+            <input
+              id="upperBound"
+              className="focusable w-24 rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-400 transition duration-200 focus:bg-neutral-700/20"
+              type="number"
+              min="1"
+              max={measures}
+              placeholder="mm"
+              value={upperBound ?? ""}
+              onFocus={autoSelect}
+              onChange={(e) => setUpperBound(parseInt(e.target.value))}
+            />
+          </div>
+          <div className="flex h-full flex-col justify-end gap-1 sm:pb-2">
+            <BasicButton
+              onClick={() => {
+                setLowerBound(null);
+                setUpperBound(null);
+              }}
+              type="button"
+            >
+              <XMarkIcon className="-ml-1 h-5 w-5" />
+              Clear
+            </BasicButton>
           </div>
         </div>
         <div className="col-span-full my-16 flex w-full items-center justify-center">
-          <button
-            disabled={!isValid()}
-            type="button"
-            className={cn(
-              "focusable rounded-xl px-6 py-3 text-2xl font-bold text-neutral-900 transition duration-200 sm:px-8 sm:py-4 sm:text-4xl",
-              {
-                "bg-neutral-700/10 hover:bg-neutral-700/20": isValid(),
-                "pointer-events-none bg-neutral-700/50": !isValid(),
-              },
-            )}
-            onClick={submit}
-          >
+          <GiantBasicButton disabled={!isValid()} onClick={submit}>
             Start Practicing
-          </button>
+          </GiantBasicButton>
         </div>
       </div>
     </>
@@ -463,13 +467,9 @@ export function StartingPointPractice({
   return (
     <div className="relative mb-8 grid grid-cols-1">
       <div className="absolute left-0 top-0 sm:p-8">
-        <button
-          onClick={setup}
-          type="button"
-          className="focusable m-0 rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-700 hover:bg-neutral-700/20"
-        >
+        <BasicButton onClick={setup} type="button">
           ← Back to setup
-        </button>
+        </BasicButton>
       </div>
       <div className="h-12" />
       <div className="flex w-full flex-col items-center justify-center gap-2 pt-12 sm:pt-24">
@@ -480,22 +480,12 @@ export function StartingPointPractice({
           />
         </div>
         <div className="pt-8">
-          <button
-            type="button"
-            onClick={nextStartingPoint}
-            className="focusable rounded-xl bg-neutral-700/10 px-8 py-4 text-4xl font-semibold text-neutral-800 hover:bg-neutral-700/20"
-          >
+          <GiantHappyButton onClick={nextStartingPoint}>
             Next Section
-          </button>
+          </GiantHappyButton>
         </div>
         <div className="pt-8">
-          <button
-            type="button"
-            onClick={handleDone}
-            className="focusable rounded-xl bg-neutral-700/10 px-6 py-2 text-2xl font-semibold text-neutral-800 hover:bg-neutral-700/20"
-          >
-            Done
-          </button>
+          <WarningButton onClick={handleDone}>Done</WarningButton>
         </div>
       </div>
     </div>
@@ -549,28 +539,9 @@ export function Summary({
   return (
     <>
       <div className="flex w-full flex-col justify-center gap-4 pb-8 pt-12 sm:flex-row  sm:gap-6">
-        {pieceHref && (
-          <Link
-            href={pieceHref}
-            className="focusable block rounded-xl bg-sky-700/10 px-4 py-2 font-semibold text-sky-800 transition duration-200 hover:bg-sky-700/20"
-          >
-            Back to Piece
-          </Link>
-        )}
-        <button
-          className="focusable rounded-xl bg-amber-700/10 px-4 py-2 font-semibold text-amber-800 transition duration-200 hover:bg-amber-700/20"
-          type="button"
-          onClick={setup}
-        >
-          Back to Setup
-        </button>
-        <button
-          className="focusable rounded-xl bg-emerald-700/10 px-4 py-2 font-semibold text-emerald-800 transition duration-200 hover:bg-emerald-700/20"
-          type="button"
-          onClick={practice}
-        >
-          Practice More
-        </button>
+        {pieceHref && <BackToPieceLink pieceHref={pieceHref} />}
+        <WarningButton onClick={setup}>Back to Setup</WarningButton>
+        <HappyButton onClick={practice}>Practice More</HappyButton>
       </div>
       <div className="flex w-full flex-col items-center justify-center gap-2">
         <div className="flex w-full  justify-center py-4">

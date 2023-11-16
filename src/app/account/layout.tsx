@@ -1,5 +1,5 @@
 import { PageColumnLayout } from "~/app/_components/page-layout";
-import { LibraryLink, LogoutLink } from "~/app/_components/links";
+import { LibraryLink, LogoutLink } from "@ui/links";
 
 // TODO: replace with navigation
 export default function Layout({ children }: { children: React.ReactNode }) {

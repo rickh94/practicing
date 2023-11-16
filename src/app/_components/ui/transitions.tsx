@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
+import { cn } from "~/lib/util";
 
 const scaleCrossFadeVariants = {
   initial: {
@@ -56,14 +57,16 @@ const crossFadeVariants = {
 export function CrossFadeContent({
   component,
   id,
+  className = "",
 }: {
   component: React.ReactNode;
   id: string;
+  className?: string;
 }) {
   return (
     <AnimatePresence initial={false} mode="wait">
       <motion.div
-        className="relative"
+        className={cn("relative", className)}
         key={id}
         initial="initial"
         animate="animate"

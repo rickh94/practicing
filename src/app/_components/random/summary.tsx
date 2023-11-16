@@ -1,4 +1,5 @@
 import { type PracticeSummaryItem } from "~/lib/random";
+import { HappyButton, WarningButton } from "@ui/buttons";
 
 // TODO: implement some kind of sorting, or find a way to retain entered order,
 // possibly switch to a hashmap
@@ -13,7 +14,14 @@ export default function Summary({
 }) {
   return (
     <>
-      <div className="flex w-full flex-col items-center justify-center gap-2 pt-12">
+      <div className="flex w-full flex-col justify-center gap-8 pt-12 sm:flex-row sm:gap-6">
+        <WarningButton onClick={setup}>Back to Setup</WarningButton>
+        <HappyButton onClick={practice}>Practice More</HappyButton>
+      </div>
+      <h2 className="w-full pt-12 text-center text-2xl font-semibold">
+        Practice Summary
+      </h2>
+      <div className="flex w-full flex-col items-center justify-center gap-2 pt-4">
         <table className="min-w-full divide-y divide-neutral-700">
           <thead>
             <tr>
@@ -47,22 +55,6 @@ export default function Summary({
             ))}
           </tbody>
         </table>
-      </div>
-      <div className="my-8 flex w-full flex-col justify-center gap-4 sm:flex-row sm:gap-6">
-        <button
-          className="focusable rounded-xl bg-amber-700/10 px-4 py-2 font-semibold text-amber-800 transition duration-200 hover:bg-amber-700/20"
-          type="button"
-          onClick={setup}
-        >
-          Back to Setup
-        </button>
-        <button
-          className="focusable rounded-xl bg-emerald-700/10 px-4 py-2 font-semibold text-emerald-800 transition duration-200 hover:bg-emerald-700/20"
-          type="button"
-          onClick={practice}
-        >
-          Practice More
-        </button>
       </div>
     </>
   );

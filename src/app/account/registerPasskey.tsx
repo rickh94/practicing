@@ -6,6 +6,8 @@ import { startRegistration } from "@simplewebauthn/browser";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
+import { HappyButton } from "@ui/buttons";
+import { FingerPrintIcon } from "@heroicons/react/20/solid";
 
 export default function RegistrationPasskey({
   webauthnData,
@@ -47,14 +49,10 @@ export default function RegistrationPasskey({
 
   return (
     <>
-      <button
-        type="button"
-        onClick={registerWebauthn}
-        disabled={registrationLoading}
-        className="focusable rounded-xl bg-emerald-700/10 px-4 py-2 font-semibold text-neutral-800 transition duration-200 hover:bg-emerald-700/20"
-      >
+      <HappyButton onClick={registerWebauthn} disabled={registrationLoading}>
+        <FingerPrintIcon className="-ml-1 h-5 w-5" />
         {registrationLoading ? "Registering..." : "Register a Passkey"}
-      </button>
+      </HappyButton>
     </>
   );
 }

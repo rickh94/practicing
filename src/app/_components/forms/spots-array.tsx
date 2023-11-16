@@ -1,8 +1,9 @@
 import {
-  Controller,
   useFieldArray,
   type Control,
   type UseFieldArrayUpdate,
+  type UseFormRegister,
+  type FormState,
 } from "react-hook-form";
 import type { PieceFormData, UpdatePieceData } from "~/lib/validators/library";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
@@ -13,8 +14,17 @@ import {
   AddTextPrompt,
   AddImagePrompt,
 } from "~/app/_components/forms/add-prompts";
+import { AngryButton } from "@ui/buttons";
 
-export function SpotsArray({ control }: { control: Control<PieceFormData> }) {
+export function SpotsArray({
+  control,
+  register,
+  formState,
+}: {
+  formState: FormState<PieceFormData>;
+  register: UseFormRegister<PieceFormData>;
+  control: Control<PieceFormData>;
+}) {
   const { fields, append, remove, update } = useFieldArray<
     PieceFormData | UpdatePieceData
   >({
@@ -48,81 +58,85 @@ export function SpotsArray({ control }: { control: Control<PieceFormData> }) {
         {fields.map((item, index) => (
           <li
             key={item.id}
-            className="flex h-[21rem] flex-col justify-center gap-2 rounded-xl border border-neutral-500 bg-white/80 px-4 text-neutral-700"
+            className="flex flex-col justify-center gap-2 rounded-xl border border-neutral-500 bg-white/80 px-4 pb-4 pt-2 text-neutral-700"
           >
-            <Controller
-              render={({ field, fieldState }) => (
-                <div className="flex flex-col">
-                  <label
-                    className="text-sm font-medium leading-6 text-neutral-900"
-                    htmlFor={field.name}
-                  >
-                    Spot Name
-                  </label>
-                  <input
-                    {...field}
-                    id={field.name}
-                    className="focusable w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
-                  />
-                  {fieldState.error && (
-                    <p className="mt-2 text-sm text-red-600">
-                      {fieldState.error.message}
-                    </p>
-                  )}
-                </div>
+            <div className="flex flex-col">
+              <label
+                className="text-sm font-medium leading-6 text-neutral-900"
+                htmlFor={`spots.${index}.name`}
+              >
+                Spot Name
+              </label>
+              <input
+                id={`spots.${index}.name`}
+                type="text"
+                {...register(`spots.${index}.name`)}
+                className="focusable w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
+              />
+              {formState.errors.spots?.[index]?.name && (
+                <p className="mt-2 text-sm text-red-600">
+                  {formState.errors.spots?.[index]?.name?.message}
+                </p>
               )}
-              name={`spots.${index}.name`}
-              control={control}
-            />
+            </div>
             <div className="flex gap-2">
-              <Controller
-                render={({ field, fieldState }) => (
-                  <div className="flex w-1/2 flex-col">
-                    <label
-                      className="text-sm font-medium leading-6 text-neutral-900"
-                      htmlFor={field.name}
-                    >
-                      Spot Order
-                    </label>
-                    <input
-                      {...field}
-                      id={field.name}
-                      className="focusable w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
-                    />
-                    {fieldState.error && (
-                      <p className="mt-2 text-sm text-red-600">
-                        {fieldState.error.message}
-                      </p>
-                    )}
-                  </div>
+              <div className="flex w-1/2 flex-col">
+                <label
+                  className="text-sm font-medium leading-6 text-neutral-900"
+                  htmlFor={`spots.${index}.order`}
+                >
+                  Spot Order
+                </label>
+                <input
+                  id={`spots.${index}.order`}
+                  type="number"
+                  {...register(`spots.${index}.order`)}
+                  className="focusable w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
+                />
+                {formState.errors.spots?.[index]?.order && (
+                  <p className="mt-2 text-sm text-red-600">
+                    {formState.errors.spots?.[index]?.order?.message}
+                  </p>
                 )}
-                name={`spots.${index}.order`}
-                control={control}
-              />
-              <Controller
-                render={({ field, fieldState }) => (
-                  <div className="flex w-1/2 flex-col">
-                    <label
-                      className="text-sm font-medium leading-6 text-neutral-900"
-                      htmlFor={field.name}
-                    >
-                      Spot Measures
-                    </label>
-                    <input
-                      {...field}
-                      id={field.name}
-                      className="focusable w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
-                    />
-                    {fieldState.error && (
-                      <p className="mt-2 text-sm text-red-600">
-                        {fieldState.error.message}
-                      </p>
-                    )}
-                  </div>
+              </div>
+              <div className="flex w-1/2 flex-col">
+                <label
+                  className="text-sm font-medium leading-6 text-neutral-900"
+                  htmlFor={`spots.${index}.measures`}
+                >
+                  Spot Measures
+                </label>
+                <input
+                  id={`spots.${index}.measures`}
+                  {...register(`spots.${index}.measures`)}
+                  className="focusable w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
+                />
+                {formState.errors.spots?.[index]?.measures && (
+                  <p className="mt-2 text-sm text-red-600">
+                    {formState.errors.spots?.[index]?.measures?.message}
+                  </p>
                 )}
-                name={`spots.${index}.measures`}
-                control={control}
-              />
+              </div>
+              <div className="flex w-1/2 flex-col">
+                <label
+                  className="text-sm font-medium leading-6 text-neutral-900"
+                  htmlFor={`spots.${index}.currentTempo`}
+                >
+                  Current Tempo
+                </label>
+                <input
+                  type="number"
+                  placeholder="BPM"
+                  id={`spots.${index}.currentTempo`}
+                  {...register(`spots.${index}.currentTempo`)}
+                  className="focusable w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
+                />
+                {formState.errors.spots?.[index]?.currentTempo && (
+                  <p className="text-xs text-red-400">
+                    {formState.errors.spots?.[index]?.currentTempo?.message}
+                  </p>
+                )}
+              </div>
             </div>
             <div className="flex flex-col gap-1">
               <h4 className="text-sm font-medium leading-6 text-neutral-900">
@@ -167,14 +181,10 @@ export function SpotsArray({ control }: { control: Control<PieceFormData> }) {
                 />
               </div>
             </div>
-            <button
-              type="button"
-              onClick={() => remove(index)}
-              className="focusable flex items-center justify-center gap-1 rounded-xl bg-red-700/10 px-4 py-2 font-semibold text-red-800  transition duration-200 hover:bg-red-700/20"
-            >
+            <AngryButton onClick={() => remove(index)}>
               <TrashIcon className="h-4 w-4" />
               Delete
-            </button>
+            </AngryButton>
           </li>
         ))}
         <li className="flex h-[21rem] flex-col gap-2 rounded-xl border border-dashed border-neutral-500 bg-white/50 px-4 py-2 text-neutral-700 hover:bg-white/90 hover:text-black">
@@ -191,6 +201,7 @@ export function SpotsArray({ control }: { control: Control<PieceFormData> }) {
                 textPrompt: "",
                 notesPrompt: "",
                 imagePromptUrl: "",
+                currentTempo: null,
               })
             }
           >

@@ -9,18 +9,26 @@ import {
 } from "~/lib/random";
 import { CreateSpots } from "./createSpots";
 import Summary from "./summary";
-import { cn } from "~/lib/util";
-import { ScaleCrossFadeContent } from "~/app/_components/transitions";
+import { ScaleCrossFadeContent } from "@ui/transitions";
+import {
+  BasicButton,
+  GiantBasicButton,
+  HappyButton,
+  WarningButton,
+} from "@ui/buttons";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function SequenceTab({
   mode,
   setMode,
+  initialSpots,
 }: {
   mode: RandomMode;
   setMode: (mode: RandomMode) => void;
+  initialSpots?: Spot[];
 }) {
   const [fullyRandom, setFullyRandom] = useState(false);
-  const [spots, setSpots] = useState<Spot[]>([]);
+  const [spots, setSpots] = useState<Spot[]>(initialSpots ?? []);
   const [randomizedSpots, setRandomizedSpots] = useState<Spot[]>([]);
   const [summary, setSummary] = useState<PracticeSummaryItem[]>([]);
 
@@ -154,20 +162,9 @@ function SequenceSetupForm({
           </div>
         </div>
         <div className="col-span-full my-16 flex w-full items-center justify-center">
-          <button
-            disabled={spots.length === 0}
-            type="button"
-            className={cn(
-              "focusable rounded-xl px-6 py-3 text-2xl font-bold text-neutral-900 transition duration-200 sm:px-8 sm:py-4 sm:text-4xl",
-              {
-                "bg-neutral-700/10 hover:bg-neutral-700/20": spots.length > 0,
-                "pointer-events-none bg-neutral-700/50": spots.length === 0,
-              },
-            )}
-            onClick={submit}
-          >
+          <GiantBasicButton disabled={spots.length === 0} onClick={submit}>
             Start Practicing
-          </button>
+          </GiantBasicButton>
         </div>
       </div>
     </>
@@ -210,13 +207,7 @@ function SequencePractice({
   return (
     <div className="relative mb-8 grid grid-cols-1">
       <div className="absolute left-0 top-0 sm:py-4">
-        <button
-          onClick={setup}
-          type="button"
-          className="focusable m-0 rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-700 hover:bg-neutral-700/20"
-        >
-          ← Back to setup
-        </button>
+        <BasicButton onClick={setup}>← Back to setup</BasicButton>
       </div>
       <div className="h-12" />
       <div className="flex w-full flex-col items-center justify-center gap-2 pt-8 sm:pt-24">
@@ -230,29 +221,33 @@ function SequencePractice({
             ))}
 
             {fullyRandom && (
-              <button
-                type="button"
-                className="focusable rounded-xl bg-neutral-700/10 px-6 py-2 text-2xl font-semibold text-neutral-800 hover:bg-neutral-700/20"
-                onClick={moreSpots}
-              >
-                More Spots...
-              </button>
+              <HappyButton onClick={moreSpots}>More Spots...</HappyButton>
             )}
           </ul>
         </div>
       </div>
       <div className="flex w-full items-center justify-center pt-8">
-        <button
-          type="button"
-          onClick={handleDone}
-          className="focusable rounded-xl bg-neutral-700/10 px-6 py-2 text-2xl font-semibold text-neutral-800 hover:bg-neutral-700/20"
-        >
+        <WarningButton className="px-6 py-3 text-xl" onClick={handleDone}>
           Done
-        </button>
+        </WarningButton>
       </div>
     </div>
   );
 }
+
+const variants = {
+  initial: {
+    scale: 1.1,
+  },
+  animate: {
+    scale: 1,
+    transition: { bounce: 0, duration: 0.1 },
+  },
+  exit: {
+    scale: 1.1,
+    transition: { duration: 0.1, bounce: 0 },
+  },
+};
 
 function SpotItem({ spot }: { spot: Spot }) {
   const [completed, setCompleted] = useState(false);
@@ -266,17 +261,31 @@ function SpotItem({ spot }: { spot: Spot }) {
         <span className={`${completed ? "font-medium" : "font-base"}`}>
           {spot.name}
         </span>
-        {completed ? (
-          <>
-            <span className="sr-only">Completed</span>
-            <CheckCircleSolid className="h-6 w-6 text-green-500" />
-          </>
-        ) : (
-          <>
-            <span className="sr-only">Incomplete</span>
-            <CheckCircleOutline className="h-6 w-6 text-neutral-500" />
-          </>
-        )}
+        <AnimatePresence initial={false} mode="wait">
+          {completed ? (
+            <motion.span
+              key={`${spot.id}-completed`}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              variants={variants}
+            >
+              <span className="sr-only">Completed</span>
+              <CheckCircleSolid className="h-6 w-6 text-green-500" />
+            </motion.span>
+          ) : (
+            <motion.span
+              key={`${spot.id}-incomplete`}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              variants={variants}
+            >
+              <span className="sr-only">Incomplete</span>
+              <CheckCircleOutline className="h-6 w-6 text-neutral-500" />
+            </motion.span>
+          )}
+        </AnimatePresence>
       </button>
     </li>
   );

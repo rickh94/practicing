@@ -29,6 +29,7 @@
 
   languages = {
     javascript.enable = true;
+    typescript.enable = true;
   };
 
   # https://devenv.sh/languages/

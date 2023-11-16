@@ -5,6 +5,9 @@ import SingleTab from "~/app/_components/random/single";
 import SequenceTab from "~/app/_components/random/sequence";
 import { type RandomMode } from "~/lib/random";
 import { workSans } from "../page-layout";
+import { type BasicSpot } from "~/lib/validators/library";
+import { HappyButton, WarningButton } from "@ui/buttons";
+import { CheckIcon, XMarkIcon } from "@heroicons/react/20/solid";
 
 const variants = {
   single: {
@@ -33,8 +36,11 @@ const variants = {
   },
 };
 
-// TODO: switch to react framer motion
-export default function TabChooser() {
+export default function PracticeRandomSpots({
+  initialSpots,
+}: {
+  initialSpots?: BasicSpot[];
+}) {
   const [tab, setTab] = useState<"single" | "sequence">("single");
   const [mode, setMode] = useState<RandomMode>("setup");
   const [confirmChangeTabOpen, setConfirmChangeTabOpen] = useState(false);
@@ -76,9 +82,17 @@ export default function TabChooser() {
         <SlideTransition
           component={
             tab === "single" ? (
-              <SingleTab mode={mode} setMode={setMode} />
+              <SingleTab
+                mode={mode}
+                setMode={setMode}
+                initialSpots={initialSpots}
+              />
             ) : (
-              <SequenceTab mode={mode} setMode={setMode} />
+              <SequenceTab
+                mode={mode}
+                setMode={setMode}
+                initialSpots={initialSpots}
+              />
             )
           }
           id={tab}
@@ -126,7 +140,7 @@ export default function TabChooser() {
                         {tab === "single" ? "Sequence" : "Single Spot"}{" "}
                         Practicing
                       </Dialog.Title>
-                      <div className="prose prose-sm prose-neutral mt-2 text-center">
+                      <div className="prose prose-sm prose-neutral mt-2 text-left">
                         Changing practice modes now will lose your progress and
                         spots and send you back to the setup screen. Are you
                         sure?
@@ -134,24 +148,24 @@ export default function TabChooser() {
                     </div>
                   </div>
                   <div className="mt-5 flex gap-4 px-2 sm:mt-6">
-                    <button
-                      type="button"
-                      className="focusable block w-full rounded-xl bg-amber-800/20 px-4 py-2 text-lg font-semibold text-amber-700 hover:bg-amber-800/30"
+                    <WarningButton
+                      grow
                       onClick={() => setConfirmChangeTabOpen(false)}
                     >
+                      <XMarkIcon className="-ml-1 h-5 w-5" />
                       No, Cancel
-                    </button>
-                    <button
-                      type="button"
-                      className="focusable block w-full rounded-xl bg-rose-800/20 px-4 py-2 text-lg font-semibold text-rose-700 hover:bg-rose-800/30"
+                    </WarningButton>
+                    <HappyButton
+                      grow
                       onClick={() => {
                         setTab(tab === "single" ? "sequence" : "single");
                         setMode("setup");
                         setConfirmChangeTabOpen(false);
                       }}
                     >
+                      <CheckIcon className="-ml-1 h-5 w-5" />
                       Yes, Change
-                    </button>
+                    </HappyButton>
                   </div>
                 </Dialog.Panel>
               </Transition.Child>
