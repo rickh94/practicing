@@ -8,6 +8,7 @@ await import("./src/env.mjs");
 const config = {
   experimental: {
     optimizePackageImports: ["@headlessui/react", "react-hook-form"],
+    serverComponentsExternalPackages: ["libsql"],
   },
   typescript: {
     ignoreBuildErrors: true,
