@@ -11,6 +11,7 @@ import { siteTitle } from "~/lib/util";
 
 export const metadata: Metadata = {
   title: `Library | ${siteTitle}`,
+  openGraph: null,
 };
 
 // TODO: recently practiced, practice plan for the day, spots, pieces

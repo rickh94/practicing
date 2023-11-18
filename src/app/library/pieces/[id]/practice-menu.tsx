@@ -12,7 +12,10 @@ export function PracticeMenu({ piece }: { piece: BasicPiece }) {
       href: `/library/pieces/${piece.id}/practice/random-spots`,
       label: "Random Spots",
     },
-    // { href: "/practice/repeat", label: "Repeat Practice" },
+    {
+      href: `/library/pieces/${piece.id}/practice/repeat`,
+      label: "Repeat Practice",
+    },
     {
       href: `/library/pieces/${piece.id}/practice/starting-point`,
       label: "Random Starting Point",

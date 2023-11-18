@@ -1,5 +1,13 @@
 import { z } from "zod";
 
+export const spotStage = z.enum([
+  "repeat",
+  "random",
+  "interleave",
+  "interleave_days",
+  "completed",
+]);
+
 export const urlOrEmpty = z.union([z.string().url(), z.enum([""])]);
 
 export const urlOrEmptyForm = z.object({ url: urlOrEmpty });
@@ -16,13 +24,7 @@ export const basicSpot = z.object({
   id: z.string(),
   name: z.string().min(1, "Too Short"),
   order: z.coerce.number().nullish().optional(),
-  stage: z.enum([
-    "repeat",
-    "random",
-    "interleave",
-    "interleave_days",
-    "completed",
-  ]),
+  stage: spotStage,
   measures: z.string().default(""),
   audioPromptUrl: z.union([z.string().url(), z.null(), z.enum([""])]),
   imagePromptUrl: z.union([z.string().url(), z.null(), z.enum([""])]),
@@ -34,8 +36,11 @@ export const basicSpot = z.object({
 // React hook form gets mad if you pass it something nullable, so I omit the order field and re-add it as optional
 
 export const spotFormData = basicSpot
-  .omit({ id: true })
-  .extend({ id: z.string().optional() });
+  .omit({ id: true, currentTempo: true })
+  .extend({
+    id: z.string().optional(),
+    currentTempo: z.coerce.number().nullish().optional(),
+  });
 
 export const spotWithPieceInfo = basicSpot.extend({
   piece: z.object({
@@ -91,3 +96,4 @@ export type SpotWithPieceInfo = z.infer<typeof spotWithPieceInfo>;
 export type UrlOrEmptyForm = z.infer<typeof urlOrEmptyForm>;
 export type NotesForm = z.infer<typeof notesForm>;
 export type TextForm = z.infer<typeof textForm>;
+export type SpotStage = z.infer<typeof spotStage>;

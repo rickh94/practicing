@@ -1,4 +1,8 @@
-import { CheckIcon, XMarkIcon } from "@heroicons/react/20/solid";
+import {
+  ArrowDownRightIcon,
+  CheckIcon,
+  XMarkIcon,
+} from "@heroicons/react/20/solid";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState, useCallback } from "react";
 import { ScaleCrossFadeContent } from "@ui/transitions";
@@ -15,8 +19,9 @@ import {
   BigHappyButton,
   GiantBasicButton,
   HappyButton,
+  WarningButton,
 } from "@ui/buttons";
-import { BackToPieceLink, WarningLink } from "@ui/links";
+import { BackToPieceLink, HappyLink, WarningLink } from "@ui/links";
 
 type RepeatMode = "prepare" | "practice" | "break_success" | "break_fail";
 
@@ -198,6 +203,15 @@ function RepeatPractice({
           <ImagePromptReveal imagePromptUrl={spot.imagePromptUrl} />
         </div>
       )}
+
+      <div className="flex w-full flex-col py-24 sm:mx-auto sm:max-w-3xl">
+        <div className="mx-auto flex w-full max-w-lg flex-wrap items-center justify-center">
+          <WarningButton onClick={onFail}>
+            <ArrowDownRightIcon className="-ml-1 h-6 w-6 sm:h-8 sm:w-8" />{" "}
+            <span>Move On</span>
+          </WarningButton>
+        </div>
+      </div>
     </>
   );
 }
@@ -271,7 +285,13 @@ function RepeatBreakSuccess({
         <WarningLink href="/practice/random-spots">
           Try Random Practicing
         </WarningLink>
-        <HappyButton onClick={restart}>Practice Another Spot</HappyButton>
+        {pieceHref ? (
+          <HappyLink href={`${pieceHref}/practice/repeat`}>
+            Practice Another Spot
+          </HappyLink>
+        ) : (
+          <HappyButton onClick={restart}>Practice Another Spot</HappyButton>
+        )}
       </div>
       <div className="prose prose-neutral mt-8">
         <h3 className="text-left text-lg">What to do now?</h3>
@@ -313,7 +333,13 @@ function RepeatBreakFail({
         <WarningLink href="/practice/random-spots">
           Try Random Practicing
         </WarningLink>
-        <HappyButton onClick={restart}>Practice Another Spot</HappyButton>
+        {pieceHref ? (
+          <HappyLink href={`${pieceHref}/practice/repeat`}>
+            Practice Another Spot
+          </HappyLink>
+        ) : (
+          <HappyButton onClick={restart}>Practice Another Spot</HappyButton>
+        )}
       </div>
       <div className="prose prose-neutral mt-8">
         <h3 className="text-left text-lg">What to do now?</h3>

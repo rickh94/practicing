@@ -63,6 +63,7 @@ export default function SpotUpdateForm({ spot }: { spot: SpotWithPieceInfo }) {
         backTo={`/library/pieces/${spot.piece.id}/spots/${spot.id}`}
         register={register}
         watch={watch}
+        showStage
       />
     </form>
   );

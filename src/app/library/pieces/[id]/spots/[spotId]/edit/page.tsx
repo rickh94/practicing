@@ -20,6 +20,7 @@ export async function generateMetadata(
 
   return {
     title: `Edit ${spot?.name} | ${siteTitle}`,
+    openGraph: null,
   };
 }
 export default async function Page({

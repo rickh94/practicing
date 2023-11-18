@@ -4,7 +4,7 @@ import {
   type UseFormRegister,
   type UseFormWatch,
 } from "react-hook-form";
-import type { SpotFormData } from "~/lib/validators/library";
+import { spotStage, type SpotFormData } from "~/lib/validators/library";
 import { FolderPlusIcon } from "@heroicons/react/20/solid";
 import {
   AddAudioPrompt,
@@ -15,6 +15,8 @@ import {
 import { useCallback } from "react";
 import { HappyButton } from "@ui/buttons";
 import { WarningLink } from "@ui/links";
+import { cn, getStageDisplayName } from "~/lib/util";
+import chevronDown from "./chevron-down.svg";
 
 export default function SpotFormFields({
   formState,
@@ -23,6 +25,7 @@ export default function SpotFormFields({
   watch,
   register,
   backTo,
+  showStage = false,
 }: {
   formState: FormState<SpotFormData>;
   setValue: UseFormSetValue<SpotFormData>;
@@ -30,6 +33,7 @@ export default function SpotFormFields({
   register: UseFormRegister<SpotFormData>;
   isUpdating: boolean;
   backTo: string;
+  showStage?: boolean;
 }) {
   const setAudioPromptUrl = useCallback(
     function (url: string) {
@@ -57,22 +61,65 @@ export default function SpotFormFields({
   );
   return (
     <>
-      <div className="flex flex-col">
-        <label
-          className="text-sm font-medium leading-6 text-neutral-900"
-          htmlFor="name"
+      <div className="grid grid-cols-2 gap-2">
+        <div
+          className={cn(
+            "flex flex-col",
+            showStage ? "col-span-1" : "col-span-full",
+          )}
         >
-          Spot Name
-        </label>
-        <input
-          {...register("name")}
-          id="name"
-          className="focusable w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
-        />
-        {formState.errors.name && (
-          <p className="text-xs text-red-400">
-            {formState.errors.name.message}
-          </p>
+          <label
+            className="text-sm font-medium leading-6 text-neutral-900"
+            htmlFor="name"
+          >
+            Spot Name
+          </label>
+          <input
+            {...register("name")}
+            id="name"
+            className="focusable w-full rounded-xl bg-neutral-700/10 px-4 py-2 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
+          />
+          {formState.errors.name && (
+            <p className="text-xs text-red-400">
+              {formState.errors.name.message}
+            </p>
+          )}
+        </div>
+        {showStage && (
+          <div className="col-span-1 flex flex-col">
+            <label
+              className="text-sm font-medium leading-6 text-neutral-900"
+              htmlFor="stage"
+            >
+              Stage
+            </label>
+            <select
+              {...register("stage")}
+              id="stage"
+              className="focusable block h-full w-full rounded-xl border-0 bg-neutral-700/10 py-2 pl-4 pr-12 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
+              style={{
+                appearance: "none",
+                backgroundImage: `url(${(chevronDown as { src: string }).src})`,
+                backgroundRepeat: "no-repeat",
+                backgroundPosition: "right 0.7rem top 50%",
+                backgroundSize: "1rem auto",
+                WebkitAppearance: "none",
+                textIndent: 1,
+                textOverflow: "",
+              }}
+            >
+              {spotStage.options.map((stage) => (
+                <option key={stage} value={stage}>
+                  {getStageDisplayName(stage)}
+                </option>
+              ))}
+            </select>
+            {formState.errors.stage && (
+              <p className="text-xs text-red-400">
+                {formState.errors.stage.message}
+              </p>
+            )}
+          </div>
         )}
       </div>
       <div className="flex gap-2">

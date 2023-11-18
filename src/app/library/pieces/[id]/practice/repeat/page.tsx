@@ -2,15 +2,16 @@ import { notFound } from "next/navigation";
 import Breadcrumbs from "~/app/_components/breadcrumb";
 import {
   BreadcrumbContainer,
-  FiveColumnPageContainer,
+  NarrowPageContainer,
 } from "~/app/_components/containers";
 import { api } from "~/trpc/server";
-import SpotCreationForm from "./form";
 import { Suspense } from "react";
 import { SmallSpotCard } from "~/app/library/pieces/SmallSpotCard";
 import { PieceSpotsSkeleton } from "~/app/_components/skeletons";
 import type { ResolvingMetadata, Metadata } from "next";
 import { siteTitle } from "~/lib/util";
+import { ArrowTopRightOnSquareIcon } from "@heroicons/react/20/solid";
+import Link from "next/link";
 
 export async function generateMetadata(
   { params }: { params: { id: string } },
@@ -21,7 +22,7 @@ export async function generateMetadata(
   });
 
   return {
-    title: `Add Spot - ${piece?.title} | ${siteTitle}`,
+    title: `Repeat Practice - ${piece?.title} | ${siteTitle}`,
     openGraph: null,
   };
 }
@@ -41,7 +42,7 @@ export default async function Page({
     <>
       <div className="flex items-center justify-center">
         <h1 className="text-3xl font-extrabold tracking-tight text-neutral-800 sm:text-5xl">
-          {piece.title}
+          Repeat Practice | {piece.title}
         </h1>
       </div>
       <BreadcrumbContainer>
@@ -54,43 +55,50 @@ export default async function Page({
               href: `/library/pieces/${piece.id}`,
             },
             {
-              label: "Add Spot",
-              href: `/library/pieces/${piece.id}/spots/add`,
+              label: "Repeat Practice",
+              href: `/library/pieces/${piece.id}/practice/repeat`,
               active: true,
             },
           ]}
         />
       </BreadcrumbContainer>
-      <FiveColumnPageContainer>
-        <div className="col-span-2 flex flex-col gap-2 rounded-xl border border-neutral-500 bg-white/80 p-4 text-neutral-900">
-          <div className="flex justify-center">
-            <h2 className="text-2xl font-bold">Add Spot</h2>
-          </div>
-          <SpotCreationForm pieceId={piece.id} />
-        </div>
+      <NarrowPageContainer>
         <Suspense fallback={<PieceSpotsSkeleton extraClasses="col-span-3" />}>
-          <SpotList pieceId={piece.id} />
+          <PracticeSpotList pieceId={piece.id} />
         </Suspense>
-      </FiveColumnPageContainer>
+      </NarrowPageContainer>
     </>
   );
 }
 
-export async function SpotList({ pieceId }: { pieceId: string }) {
+export async function PracticeSpotList({ pieceId }: { pieceId: string }) {
   const spots = await api.library.getSpotsForPiece.query({ pieceId });
   return (
-    <div className="col-span-3 rounded-xl bg-neutral-700/5 p-4">
-      <div className="flex flex-col">
-        <h2 className="py-1 text-center text-2xl font-bold">Spots</h2>
+    <div className="w-full rounded-xl bg-neutral-700/5 p-4">
+      <div className="flex flex-col pb-4">
+        <h2 className="py-1 text-center text-2xl font-bold">
+          Choose a spot to Repeat Practice
+        </h2>
       </div>
-      <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
         {spots
           .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
           .map((spot) => (
             <li key={spot.id}>
-              <SmallSpotCard spot={spot} pieceId={pieceId} />
+              <SmallSpotCard spot={spot} pieceId={pieceId} practice />
             </li>
           ))}
+        <li>
+          <Link
+            href={`/library/pieces/${pieceId}/spots/add`}
+            className="focusable flex h-full items-center justify-between rounded-xl border border-dashed border-neutral-500 bg-white/50 px-4 py-6 text-neutral-700 hover:bg-white/90 hover:text-black"
+          >
+            <div className="flex h-full flex-grow flex-col items-center justify-center">
+              <h3 className="text-lg font-bold">Or Add a New Spot</h3>
+            </div>
+            <ArrowTopRightOnSquareIcon className="h-6 w-6" />
+          </Link>
+        </li>
       </ul>
     </div>
   );

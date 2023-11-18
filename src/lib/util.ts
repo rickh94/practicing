@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { type SpotStage } from "./validators/library";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -43,3 +44,20 @@ export function uniqueID() {
 }
 
 export const siteTitle = "Practice Better";
+
+export function getStageDisplayName(stage: SpotStage) {
+  switch (stage) {
+    case "repeat":
+      return "Repeat Practice";
+    case "random":
+      return "Random Practice";
+    case "interleave":
+      return "Interleaved Practice";
+    case "interleave_days":
+      return "Interleave Between Days";
+    case "completed":
+      return "Completed";
+    default:
+      return "Unknown";
+  }
+}

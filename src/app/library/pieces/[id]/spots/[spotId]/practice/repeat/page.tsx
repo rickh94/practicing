@@ -17,6 +17,7 @@ export async function generateMetadata(
 
   return {
     title: `Practice ${spot?.name} | ${siteTitle}`,
+    openGraph: null,
   };
 }
 

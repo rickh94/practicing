@@ -1,17 +1,24 @@
 import { ArrowTopRightOnSquareIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
+import { Stage } from "@components/pieces/spot-stage";
 import type { BasicSpot } from "~/lib/validators/library";
 
 export function SmallSpotCard({
   spot,
   pieceId,
+  practice = false,
 }: {
   spot: BasicSpot;
   pieceId: string;
+  practice?: boolean;
 }) {
   return (
     <Link
-      href={`/library/pieces/${pieceId}/spots/${spot.id}`}
+      href={
+        practice
+          ? `/library/pieces/${pieceId}/spots/${spot.id}/practice/repeat`
+          : `/library/pieces/${pieceId}/spots/${spot.id}`
+      }
       className="focusable flex justify-between rounded-xl border border-neutral-500 bg-white/80 px-4 py-2 text-neutral-700 hover:bg-white hover:text-black"
     >
       <div className="flex flex-grow flex-col">
@@ -20,7 +27,7 @@ export function SmallSpotCard({
           Measures: <em className="italic">{spot.measures}</em>
         </p>
         <p className="text-sm">
-          Stage: <em className="italic">{spot.stage}</em>
+          Stage: <Stage stageName={spot.stage} />
         </p>
       </div>
       <ArrowTopRightOnSquareIcon className="mt-4 h-6 w-6" />

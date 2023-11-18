@@ -13,6 +13,7 @@ import { siteTitle } from "~/lib/util";
 
 export const metadata: Metadata = {
   title: `Your Pieces | ${siteTitle}`,
+  openGraph: null,
 };
 
 // TODO: add ability to track tempo of pieces and spots

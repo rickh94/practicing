@@ -145,8 +145,10 @@ export function PieceInfoSkeleton() {
 }
 
 export function PieceSpotsSkeleton({
+  wide = false,
   extraClasses = "",
 }: {
+  wide?: boolean;
   extraClasses?: string;
 }) {
   return (
@@ -155,7 +157,12 @@ export function PieceSpotsSkeleton({
         <h2 className="py-1 text-center text-2xl font-bold">Spots</h2>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div
+        className={cn(
+          "grid grid-cols-1 gap-4 sm:grid-cols-2",
+          wide && "md:grid-cols-3",
+        )}
+      >
         <div className="flex h-20 justify-between rounded-xl border border-neutral-500 bg-white/80 px-4 py-2 text-neutral-700" />
         <div className="flex h-20 justify-between rounded-xl border border-neutral-500 bg-white/80 px-4 py-2 text-neutral-700" />
         <div className="flex h-20 justify-between rounded-xl border border-neutral-500 bg-white/80 px-4 py-2 text-neutral-700" />

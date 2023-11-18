@@ -17,6 +17,7 @@ import ConfirmDeleteSpot from "~/app/_components/pieces/confirm-delete-spot";
 
 import type { ResolvingMetadata, Metadata } from "next";
 import { siteTitle } from "~/lib/util";
+import { Stage } from "@components/pieces/spot-stage";
 
 export async function generateMetadata(
   { params }: { params: { id: string; spotId: string } },
@@ -29,6 +30,7 @@ export async function generateMetadata(
 
   return {
     title: `${spot?.name} | ${siteTitle}`,
+    openGraph: null,
   };
 }
 
@@ -132,7 +134,15 @@ export default async function Page({
                   Current Tempo
                 </dt>
                 <dd className="mt-1 leading-6 text-neutral-700 sm:mt-0">
-                  {spot.currentTempo}
+                  {spot.currentTempo ?? "Unset"}
+                </dd>
+              </div>
+              <div className="px-4 py-2 sm:flex sm:justify-between sm:px-0">
+                <dt className="font-medium leading-6 text-neutral-900">
+                  Stage
+                </dt>
+                <dd className="mt-1 leading-6 text-neutral-700 sm:mt-0">
+                  <Stage stageName={spot.stage} readMore />
                 </dd>
               </div>
             </dl>

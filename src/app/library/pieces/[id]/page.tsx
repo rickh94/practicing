@@ -27,6 +27,7 @@ export async function generateMetadata(
 
   return {
     title: `${piece?.title} | ${siteTitle}`,
+    openGraph: null,
   };
 }
 
