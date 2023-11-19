@@ -1,5 +1,6 @@
 import { type PracticeSummaryItem } from "~/lib/random";
 import { HappyButton, WarningButton } from "@ui/buttons";
+import { BackToPieceLink } from "@ui/links";
 
 // TODO: implement some kind of sorting, or find a way to retain entered order,
 // possibly switch to a hashmap
@@ -7,14 +8,17 @@ export default function Summary({
   summary,
   setup,
   practice,
+  pieceHref,
 }: {
   summary: PracticeSummaryItem[];
   setup: () => void;
   practice: () => void;
+  pieceHref?: string;
 }) {
   return (
     <>
       <div className="flex w-full flex-col justify-center gap-8 pt-12 sm:flex-row sm:gap-6">
+        {pieceHref && <BackToPieceLink pieceHref={pieceHref} />}
         <WarningButton onClick={setup}>Back to Setup</WarningButton>
         <HappyButton onClick={practice}>Practice More</HappyButton>
       </div>

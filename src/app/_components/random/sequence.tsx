@@ -1,6 +1,11 @@
 import { CheckCircleIcon as CheckCircleSolid } from "@heroicons/react/20/solid";
 import { CheckCircleIcon as CheckCircleOutline } from "@heroicons/react/24/outline";
-import { useState, type Dispatch, type SetStateAction } from "react";
+import {
+  useState,
+  type Dispatch,
+  type SetStateAction,
+  useCallback,
+} from "react";
 import RadioBox from "~/app/_components/radio";
 import {
   type Spot,
@@ -22,18 +27,47 @@ export default function SequenceTab({
   mode,
   setMode,
   initialSpots,
+  onCompleted,
+  pieceHref,
 }: {
   mode: RandomMode;
   setMode: (mode: RandomMode) => void;
   initialSpots?: Spot[];
+  onCompleted?: (spotIds: string[]) => void;
+  pieceHref?: string;
 }) {
   const [fullyRandom, setFullyRandom] = useState(false);
   const [spots, setSpots] = useState<Spot[]>(initialSpots ?? []);
   const [randomizedSpots, setRandomizedSpots] = useState<Spot[]>([]);
   const [summary, setSummary] = useState<PracticeSummaryItem[]>([]);
 
-  function submit() {
-    if (fullyRandom) {
+  const submit = useCallback(
+    function () {
+      if (fullyRandom) {
+        const randomSpots: Spot[] = [];
+        for (let i = 0; i < 2 * spots.length; i++) {
+          const randomSpot = spots[Math.floor(Math.random() * spots.length)];
+          if (!randomSpot) {
+            throw new Error("invalid random spot");
+          }
+          randomSpots.push(randomSpot);
+        }
+        setRandomizedSpots(randomSpots);
+      } else {
+        const tmpSpots = spots.slice();
+        tmpSpots.sort(() => Math.random() - 0.5);
+        setRandomizedSpots(tmpSpots);
+      }
+      setMode("practice");
+    },
+    [fullyRandom, spots, setMode, setRandomizedSpots],
+  );
+
+  const moreSpots = useCallback(
+    function () {
+      if (!fullyRandom) {
+        return;
+      }
       const randomSpots: Spot[] = [];
       for (let i = 0; i < 2 * spots.length; i++) {
         const randomSpot = spots[Math.floor(Math.random() * spots.length)];
@@ -42,29 +76,19 @@ export default function SequenceTab({
         }
         randomSpots.push(randomSpot);
       }
-      setRandomizedSpots(randomSpots);
-    } else {
-      const tmpSpots = spots.slice();
-      tmpSpots.sort(() => Math.random() - 0.5);
-      setRandomizedSpots(tmpSpots);
-    }
-    setMode("practice");
-  }
+      setRandomizedSpots((spots) => spots.concat(randomSpots));
+    },
+    [fullyRandom, spots, setRandomizedSpots],
+  );
 
-  function moreSpots() {
-    if (!fullyRandom) {
-      return;
-    }
-    const randomSpots: Spot[] = [];
-    for (let i = 0; i < 2 * spots.length; i++) {
-      const randomSpot = spots[Math.floor(Math.random() * spots.length)];
-      if (!randomSpot) {
-        throw new Error("invalid random spot");
-      }
-      randomSpots.push(randomSpot);
-    }
-    setRandomizedSpots((spots) => spots.concat(randomSpots));
-  }
+  const finish = useCallback(
+    function (finalSummary: PracticeSummaryItem[]) {
+      setSummary(finalSummary);
+      setMode("summary");
+      onCompleted?.(finalSummary.map((s) => s.id));
+    },
+    [onCompleted, setMode, setSummary],
+  );
 
   return (
     <div className="absolute left-0 top-0 w-full sm:mx-auto sm:max-w-5xl">
@@ -84,10 +108,7 @@ export default function SequenceTab({
               <SequencePractice
                 spots={randomizedSpots}
                 setup={() => setMode("setup")}
-                finish={(finalSummary) => {
-                  setSummary(finalSummary);
-                  setMode("summary");
-                }}
+                finish={finish}
                 moreSpots={moreSpots}
                 fullyRandom={fullyRandom}
               />
@@ -97,6 +118,7 @@ export default function SequenceTab({
                 summary={summary}
                 setup={() => setMode("setup")}
                 practice={() => setMode("practice")}
+                pieceHref={pieceHref}
               />
             ),
           }[mode]

@@ -1,4 +1,10 @@
 {
   "buildCommand": "npm run build",
-  "installCommand": "bun install"
+  "installCommand": "bun install",
+  "crons": [
+    {
+      "schedule": "5 4 * * 0",
+      "path": "/api/clean-files"
+    }
+  ]
 }

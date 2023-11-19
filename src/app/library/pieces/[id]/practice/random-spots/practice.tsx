@@ -27,11 +27,15 @@ export default function Practice({ piece }: { piece: PieceWithSpots }) {
   });
 
   const onCompleted = useCallback(
-    function (spotIds: string[]) {
+    function (practicedSpotIds: string[]) {
       const durationMinutes = Math.ceil((Date.now() - startTime) / 1000 / 60);
+      const pieceSpotIds = piece.spots.map((spot) => spot.id);
+      const spotIds = practicedSpotIds.filter((spotId) =>
+        pieceSpotIds.includes(spotId),
+      );
       mutate({ id: piece.id, durationMinutes, spotIds });
     },
-    [mutate, piece.id, startTime],
+    [mutate, piece.id, startTime, piece.spots],
   );
 
   const hasSpots = useMemo(
@@ -54,6 +58,7 @@ export default function Practice({ piece }: { piece: PieceWithSpots }) {
     <>
       {hasSpots && hasRandomSpots && (
         <PracticeRandomSpots
+          onCompleted={onCompleted}
           initialSpots={piece.spots.filter(
             (spot) => spot.stage !== "repeat" && spot.stage !== "completed",
           )}
@@ -112,17 +117,5 @@ export default function Practice({ piece }: { piece: PieceWithSpots }) {
         </div>
       )}
     </>
-  );
-}
-
-function AddSpotsLink({ pieceId }: { pieceId: string }) {
-  return (
-    <Link
-      href={`/library/pieces/${pieceId}/spots/add`}
-      className="focusable flex items-center justify-center gap-1 rounded-xl bg-amber-700/10 px-8 py-3 text-xl font-semibold text-amber-800  transition duration-200 hover:bg-amber-700/20"
-    >
-      <DocumentPlusIcon className="-ml-1 h-6 w-6" />
-      Add Spots
-    </Link>
   );
 }

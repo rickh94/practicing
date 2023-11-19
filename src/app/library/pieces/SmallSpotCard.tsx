@@ -23,12 +23,12 @@ export function SmallSpotCard({
     >
       <div className="flex flex-grow flex-col">
         <h3 className="text-lg font-bold">{spot.name}</h3>
-        <p className="text-sm">
+        <div className="inline text-sm">
           Measures: <em className="italic">{spot.measures}</em>
-        </p>
-        <p className="text-sm">
+        </div>
+        <div className="flex flex-wrap gap-1 text-sm">
           Stage: <Stage stageName={spot.stage} />
-        </p>
+        </div>
       </div>
       <ArrowTopRightOnSquareIcon className="mt-4 h-6 w-6" />
       <span className="sr-only">View Spot</span>

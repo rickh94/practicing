@@ -1,6 +1,4 @@
-{ pkgs, ... }:
-
-{
+{ pkgs, ... }: {
   # https://devenv.sh/basics/
   dotenv.enable = false;
   dotenv.disableHint = true;
@@ -10,11 +8,11 @@
     pkgs.git
     pkgs.nodejs
     pkgs.bun
+    pkgs.biome
   ];
 
   # https://devenv.sh/scripts/
   scripts.hello.exec = "echo hello from $GREET";
-
 
   certificates = [
     "practicebetter.localhost"

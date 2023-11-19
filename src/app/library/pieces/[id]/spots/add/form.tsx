@@ -36,6 +36,7 @@ export default function SpotCreationForm({ pieceId }: { pieceId: string }) {
         }
         router.refresh();
         reset();
+        setValue("textPrompt", "");
       },
       onError: (e) => {
         const errorMessage = e.data?.zodError?.fieldErrors.content;

@@ -4,6 +4,7 @@ import {
   type UseFieldArrayUpdate,
   type UseFormRegister,
   type FormState,
+  type UseFormWatch,
 } from "react-hook-form";
 import type { PieceFormData, UpdatePieceData } from "~/lib/validators/library";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
@@ -20,7 +21,9 @@ export function SpotsArray({
   control,
   register,
   formState,
+  watch,
 }: {
+  watch: UseFormWatch<PieceFormData>;
   formState: FormState<PieceFormData>;
   register: UseFormRegister<PieceFormData>;
   control: Control<PieceFormData>;
@@ -144,13 +147,14 @@ export function SpotsArray({
               </h4>
               <div className="grid grid-cols-2 grid-rows-2 gap-2">
                 <AddAudioPrompt
+                  registerReturn={register(`spots.${index}.audioPromptUrl`)}
                   save={(audioPromptUrl: string) =>
                     updateWithoutFlashing(index, {
                       ...item,
                       audioPromptUrl,
                     })
                   }
-                  audioPromptUrl={item.audioPromptUrl}
+                  audioPromptUrl={watch(`spots.${index}.audioPromptUrl`)}
                 />
                 <AddImagePrompt
                   save={(imagePromptUrl: string) =>
@@ -159,25 +163,16 @@ export function SpotsArray({
                       imagePromptUrl,
                     })
                   }
-                  imagePromptUrl={item.imagePromptUrl}
+                  imagePromptUrl={watch(`spots.${index}.imagePromptUrl`)}
+                  registerReturn={register(`spots.${index}.imagePromptUrl`)}
                 />
                 <AddTextPrompt
-                  save={(textPrompt: string) =>
-                    updateWithoutFlashing(index, {
-                      ...item,
-                      textPrompt,
-                    })
-                  }
-                  textPrompt={item.textPrompt}
+                  registerReturn={register(`spots.${index}.textPrompt`)}
+                  textPrompt={watch(`spots.${index}.textPrompt`)}
                 />
                 <AddNotesPrompt
-                  save={(notesPrompt: string) =>
-                    updateWithoutFlashing(index, {
-                      ...item,
-                      notesPrompt,
-                    })
-                  }
-                  notesPrompt={item.notesPrompt}
+                  registerReturn={register(`spots.${index}.notesPrompt`)}
+                  notesPrompt={watch(`spots.${index}.notesPrompt`)}
                 />
               </div>
             </div>

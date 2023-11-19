@@ -8,8 +8,8 @@ import { api } from "~/trpc/react";
 import PieceFormFields from "~/app/_components/forms/piece-form";
 
 export default function CreatePieceForm() {
-  const { register, control, handleSubmit, formState } = useForm<PieceFormData>(
-    {
+  const { register, control, handleSubmit, formState, watch } =
+    useForm<PieceFormData>({
       mode: "onBlur",
       reValidateMode: "onBlur",
       resolver: zodResolver(pieceFormData),
@@ -21,8 +21,7 @@ export default function CreatePieceForm() {
         practiceNotes: "",
         spots: [],
       },
-    },
-  );
+    });
 
   // TODO: show quota error
   const router = useRouter();
@@ -58,6 +57,7 @@ export default function CreatePieceForm() {
         control={control}
         formState={formState}
         isUpdating={isUpdating}
+        watch={watch}
       />
     </form>
   );

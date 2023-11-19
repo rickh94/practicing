@@ -1,4 +1,5 @@
 import {
+  type UseFormWatch,
   type Control,
   type FormState,
   type UseFormRegister,
@@ -16,6 +17,7 @@ export default function PieceFormFields({
   register,
   formState,
   isUpdating,
+  watch,
   backTo = "/library/pieces",
 }: {
   control: Control<PieceFormData>;
@@ -23,6 +25,7 @@ export default function PieceFormFields({
   formState: FormState<PieceFormData>;
   isUpdating: boolean;
   backTo?: string;
+  watch: UseFormWatch<PieceFormData>;
 }) {
   return (
     <>
@@ -192,7 +195,12 @@ export default function PieceFormFields({
           </div>
         </div>
       </div>
-      <SpotsArray control={control} register={register} formState={formState} />
+      <SpotsArray
+        control={control}
+        register={register}
+        formState={formState}
+        watch={watch}
+      />
       <div className="flex flex-row-reverse justify-start gap-4 py-4">
         <HappyButton disabled={!formState.isValid} type="submit">
           <FolderPlusIcon className="-ml-1 inline h-6 w-6" />

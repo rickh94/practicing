@@ -9,8 +9,6 @@ import directApi from "~/trpc/direct";
 import { api } from "~/trpc/react";
 import { AngryButton, HappyButton } from "@ui/buttons";
 import { CheckIcon, XMarkIcon } from "@heroicons/react/20/solid";
-// TODO: reset email verified if email changes
-// TODO: fix form buttons on different sizes
 
 export default function UserInfoForm({
   stopEditing,

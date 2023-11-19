@@ -88,8 +88,10 @@ export const libraryRouter = createTRPCRouter({
             code: "INTERNAL_SERVER_ERROR",
           });
         }
+
+        const newSpots = [];
         for (const spot of input.spots) {
-          await tx.insert(spots).values({
+          newSpots.push({
             name: spot.name,
             order: spot.order,
             stage: spot.stage,
@@ -101,6 +103,7 @@ export const libraryRouter = createTRPCRouter({
             imagePromptUrl: spot.imagePromptUrl,
           });
         }
+        await tx.insert(spots).values(newSpots);
         return piece;
       });
       return result;
@@ -352,16 +355,14 @@ export const libraryRouter = createTRPCRouter({
         },
       );
 
-      const spotToPieceSessionPromises = [];
+      const spotToPieceSessionItems = [];
       for (const spotId of spotIds) {
-        spotToPieceSessionPromises.push(
-          ctx.db.insert(spotsToPieceSessions).values({
-            pieceSessionId: pieceSessionId,
-            spotId,
-          }),
-        );
+        spotToPieceSessionItems.push({
+          pieceSessionId: pieceSessionId,
+          spotId,
+        });
       }
-      await Promise.all(spotToPieceSessionPromises);
+      await ctx.db.insert(spotsToPieceSessions).values(spotToPieceSessionItems);
       return practiceSessionId;
     }),
   getPieceById: protectedProcedure

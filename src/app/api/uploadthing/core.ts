@@ -3,10 +3,6 @@ import { getServerAuthSession } from "~/server/auth";
 
 const f = createUploadthing();
 
-export const config = {
-  runtime: "edge",
-};
-
 // Quota should be 40 spots per piece, 10 pieces per user, won't run out of uploadthing free tier until 40 users
 export const pFileRouter = {
   audioUploader: f({ audio: { maxFileSize: "512KB" } })

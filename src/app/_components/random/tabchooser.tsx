@@ -8,6 +8,7 @@ import { workSans } from "../page-layout";
 import { type BasicSpot } from "~/lib/validators/library";
 import { HappyButton, WarningButton } from "@ui/buttons";
 import { CheckIcon, XMarkIcon } from "@heroicons/react/20/solid";
+import { cn } from "~/lib/util";
 
 const variants = {
   single: {
@@ -38,8 +39,12 @@ const variants = {
 
 export default function PracticeRandomSpots({
   initialSpots,
+  onCompleted,
+  pieceHref,
 }: {
   initialSpots?: BasicSpot[];
+  onCompleted?: (spotIds: string[]) => void;
+  pieceHref?: string;
 }) {
   const [tab, setTab] = useState<"single" | "sequence">("single");
   const [mode, setMode] = useState<RandomMode>("setup");
@@ -80,18 +85,23 @@ export default function PracticeRandomSpots({
           </button>
         </div>
         <SlideTransition
+          className="w-full sm:mx-auto sm:max-w-3xl"
           component={
             tab === "single" ? (
               <SingleTab
                 mode={mode}
                 setMode={setMode}
                 initialSpots={initialSpots}
+                onCompleted={onCompleted}
+                pieceHref={pieceHref}
               />
             ) : (
               <SequenceTab
                 mode={mode}
                 setMode={setMode}
                 initialSpots={initialSpots}
+                onCompleted={onCompleted}
+                pieceHref={pieceHref}
               />
             )
           }
@@ -180,14 +190,16 @@ export default function PracticeRandomSpots({
 function SlideTransition({
   component,
   id,
+  className = "",
 }: {
   component: React.ReactNode;
   id: "single" | "sequence";
+  className?: string;
 }) {
   return (
     <AnimatePresence initial={false}>
       <motion.div
-        className="relative"
+        className={cn("relative", className)}
         key={id}
         initial="initial"
         animate="animate"

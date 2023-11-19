@@ -1,34 +1,53 @@
 import { Transition } from "@headlessui/react";
-import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
-import {
-  type RandomMode,
-  type PracticeSummaryItem,
-  type Spot,
-} from "~/lib/random";
-import Summary from "./summary";
-import { CreateSpots } from "./createSpots";
-import { ScaleCrossFadeContent } from "@ui/transitions";
 import {
   BasicButton,
   GiantBasicButton,
   GiantHappyButton,
   WarningButton,
 } from "@ui/buttons";
+import { ScaleCrossFadeContent } from "@ui/transitions";
+import {
+  useEffect,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+  useCallback,
+} from "react";
+import {
+  type PracticeSummaryItem,
+  type RandomMode,
+  type Spot,
+} from "~/lib/random";
+import { CreateSpots } from "./createSpots";
+import Summary from "./summary";
 
 export default function SingleTab({
   mode,
   setMode,
   initialSpots,
+  onCompleted,
+  pieceHref,
 }: {
   mode: RandomMode;
   setMode: (mode: RandomMode) => void;
   initialSpots?: Spot[];
+  onCompleted?: (spotIds: string[]) => void;
+  pieceHref?: string;
 }) {
   const [spots, setSpots] = useState<Spot[]>(initialSpots ?? []);
   const [summary, setSummary] = useState<PracticeSummaryItem[]>([]);
 
+  const finish = useCallback(
+    function (finalSummary: PracticeSummaryItem[]) {
+      setSummary(finalSummary);
+      setMode("summary");
+      onCompleted?.(finalSummary.map((s) => s.id));
+    },
+    [onCompleted, setMode, setSummary],
+  );
+
   return (
-    <div className="absolute left-0 top-0 w-full sm:mx-auto sm:max-w-3xl">
+    <div className="absolute left-0 top-0 w-full">
       <ScaleCrossFadeContent
         component={
           {
@@ -43,10 +62,7 @@ export default function SingleTab({
               <SinglePractice
                 spots={spots}
                 setup={() => setMode("setup")}
-                finish={(finalSummary) => {
-                  setSummary(finalSummary);
-                  setMode("summary");
-                }}
+                finish={finish}
               />
             ),
             summary: (
@@ -54,6 +70,7 @@ export default function SingleTab({
                 summary={summary}
                 setup={() => setMode("setup")}
                 practice={() => setMode("practice")}
+                pieceHref={pieceHref}
               />
             ),
           }[mode]

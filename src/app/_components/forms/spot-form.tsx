@@ -12,12 +12,13 @@ import {
   AddNotesPrompt,
   AddTextPrompt,
 } from "~/app/_components/forms/add-prompts";
-import { useCallback } from "react";
 import { HappyButton } from "@ui/buttons";
 import { WarningLink } from "@ui/links";
 import { cn, getStageDisplayName } from "~/lib/util";
 import chevronDown from "./chevron-down.svg";
 
+// TODO: clear audiopromt and imageprompt url fields after submit
+// TODO: put spot form in column so it doesn't get all weird when the page gets tall
 export default function SpotFormFields({
   formState,
   isUpdating,
@@ -35,30 +36,6 @@ export default function SpotFormFields({
   backTo: string;
   showStage?: boolean;
 }) {
-  const setAudioPromptUrl = useCallback(
-    function (url: string) {
-      setValue("audioPromptUrl", url);
-    },
-    [setValue],
-  );
-  const setImagePromptUrl = useCallback(
-    function (data: string) {
-      setValue("imagePromptUrl", data);
-    },
-    [setValue],
-  );
-  const setTextPrompt = useCallback(
-    function (data: string) {
-      setValue("textPrompt", data);
-    },
-    [setValue],
-  );
-  const setNotesPrompt = useCallback(
-    function (data: string) {
-      setValue("notesPrompt", data);
-    },
-    [setValue],
-  );
   return (
     <>
       <div className="grid grid-cols-2 gap-2">
@@ -181,9 +158,9 @@ export default function SpotFormFields({
           )}
         </div>
       </div>
-      <div className="flex flex-col gap-2">
+      <div className="mt-2 flex flex-col gap-2">
         <div>
-          <h4 className="text-sm font-medium leading-6 text-neutral-900">
+          <h4 className="text-lg font-medium leading-6 text-neutral-900">
             Prompts (optional)
           </h4>
           <p className="text-sm italic">
@@ -192,19 +169,21 @@ export default function SpotFormFields({
         </div>
         <div className="grid grid-cols-2 grid-rows-2 gap-2 md:grid-cols-4 md:grid-rows-1 lg:grid-cols-2 lg:grid-rows-1">
           <AddAudioPrompt
-            save={setAudioPromptUrl}
+            registerReturn={register("audioPromptUrl")}
+            save={(url) => setValue("audioPromptUrl", url)}
             audioPromptUrl={watch("audioPromptUrl")}
           />
           <AddImagePrompt
-            save={setImagePromptUrl}
+            registerReturn={register("imagePromptUrl")}
+            save={(url) => setValue("imagePromptUrl", url)}
             imagePromptUrl={watch("imagePromptUrl")}
           />
           <AddTextPrompt
-            save={setTextPrompt}
             textPrompt={watch("textPrompt")}
+            registerReturn={register("textPrompt")}
           />
           <AddNotesPrompt
-            save={setNotesPrompt}
+            registerReturn={register("notesPrompt")}
             notesPrompt={watch("notesPrompt")}
           />
         </div>

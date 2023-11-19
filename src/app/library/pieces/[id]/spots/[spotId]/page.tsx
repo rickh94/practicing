@@ -141,7 +141,7 @@ export default async function Page({
                 <dt className="font-medium leading-6 text-neutral-900">
                   Stage
                 </dt>
-                <dd className="mt-1 leading-6 text-neutral-700 sm:mt-0">
+                <dd className="mt-1 px-2 leading-6 text-neutral-700 sm:mt-0">
                   <Stage stageName={spot.stage} readMore />
                 </dd>
               </div>
