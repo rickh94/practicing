@@ -36,8 +36,8 @@ export default function SpotUpdateForm({ spot }: { spot: SpotWithPieceInfo }) {
   const { mutate, isLoading: isUpdating } =
     api.library.updateSpotById.useMutation({
       onSuccess: () => {
-        router.refresh();
         router.push(`/library/pieces/${spot.piece.id}/spots/${spot.id}`);
+        router.refresh();
       },
       onError: (e) => {
         const errorMessage = e.data?.zodError?.fieldErrors.content;

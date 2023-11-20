@@ -49,7 +49,7 @@ export function SpotReadMore() {
         <div className="sr-only">Read More</div>
       </button>
       <Transition.Root show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={close}>
+        <Dialog as="div" className="relative z-30" onClose={close}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -62,7 +62,7 @@ export function SpotReadMore() {
             <div className="back fixed inset-0 bg-neutral-800/30 backdrop-blur-sm transition-opacity" />
           </Transition.Child>
 
-          <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+          <div className="fixed inset-0 z-30 w-screen overflow-y-auto">
             <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
               <Transition.Child
                 as={Fragment}

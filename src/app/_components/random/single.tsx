@@ -20,6 +20,7 @@ import {
 } from "~/lib/random";
 import { CreateSpots } from "./createSpots";
 import Summary from "./summary";
+import { uniqueID } from "~/lib/util";
 
 export default function SingleTab({
   mode,
@@ -35,6 +36,7 @@ export default function SingleTab({
   pieceHref?: string;
 }) {
   const [spots, setSpots] = useState<Spot[]>(initialSpots ?? []);
+  const [skipSpotIds, setSkipSpotIds] = useState<string[]>([]);
   const [summary, setSummary] = useState<PracticeSummaryItem[]>([]);
 
   const finish = useCallback(
@@ -63,6 +65,8 @@ export default function SingleTab({
                 spots={spots}
                 setup={() => setMode("setup")}
                 finish={finish}
+                skipSpotIds={skipSpotIds}
+                setSkipSpotIds={setSkipSpotIds}
               />
             ),
             summary: (
@@ -116,6 +120,8 @@ function SingleSetupForm({
   );
 }
 
+// TODO: show spot prompts alongside name
+
 function SinglePractice({
   spots,
   setup,
@@ -124,47 +130,65 @@ function SinglePractice({
   spots: { name: string; id: string }[];
   setup: () => void;
   finish: (summary: PracticeSummaryItem[]) => void;
+  skipSpotIds: string[];
+  setSkipSpotIds: Dispatch<SetStateAction<string[]>>;
 }) {
   const [currentSpotIdx, setCurrentSpotIdx] = useState(
     Math.floor(Math.random() * spots.length),
   );
-  const [changingSpot, setChangingSpot] = useState(false);
   const [practiceSummary, setPracticeSummary] = useState<number[]>([]);
+  // This counter ensures that the animation runs, even if the same spot is generated twice in a row.
+  const [counter, setCounter] = useState(0);
+  const [skipSpotIds, setSkipSpotIds] = useState<string[]>([]);
 
-  function addSpotRep(idx: number) {
-    setPracticeSummary((curr) => {
-      curr[idx] += 1;
-      return curr;
-    });
-  }
-
-  function handleDone() {
-    addSpotRep(currentSpotIdx);
-    const finalSummary: PracticeSummaryItem[] = [];
-    for (let i = 0; i < spots.length; i++) {
-      finalSummary.push({
-        name: spots[i]?.name ?? "Missing spot name",
-        reps: practiceSummary[i] ?? 0,
-        id: spots[i]?.id ?? "Missing spot id",
+  const addSpotRep = useCallback(
+    function (idx: number) {
+      setPracticeSummary((curr) => {
+        curr[idx] += 1;
+        return curr;
       });
-    }
-    finish(finalSummary);
-  }
+    },
+    [setPracticeSummary],
+  );
+
+  const handleDone = useCallback(
+    function () {
+      addSpotRep(currentSpotIdx);
+      const finalSummary: PracticeSummaryItem[] = [];
+      for (let i = 0; i < spots.length; i++) {
+        finalSummary.push({
+          name: spots[i]?.name ?? "Missing spot name",
+          reps: practiceSummary[i] ?? 0,
+          id: spots[i]?.id ?? "Missing spot id",
+        });
+      }
+      finish(finalSummary);
+    },
+    [practiceSummary, finish, addSpotRep, currentSpotIdx, spots],
+  );
 
   useEffect(() => {
     setPracticeSummary(Array(spots.length).fill(0));
   }, [spots]);
 
-  function nextSpot() {
-    if (!changingSpot) {
-      setChangingSpot(true);
-      setTimeout(() => {
-        addSpotRep(currentSpotIdx);
-        setCurrentSpotIdx(Math.floor(Math.random() * spots.length));
-        setChangingSpot(false);
-      }, 300);
-    }
-  }
+  const nextSpot = useCallback(
+    function () {
+      setCounter((curr) => curr + 1);
+      addSpotRep(currentSpotIdx);
+      if (skipSpotIds.length >= spots.length) {
+        handleDone();
+        return;
+      }
+      let nextSpotIdx = Math.floor(Math.random() * spots.length);
+      let nextSpotId = spots[nextSpotIdx]?.id;
+      while (!nextSpotId || (nextSpotId && skipSpotIds.includes(nextSpotId))) {
+        nextSpotIdx = Math.floor(Math.random() * spots.length);
+        nextSpotId = spots[nextSpotIdx]?.id;
+      }
+      setCurrentSpotIdx(nextSpotIdx);
+    },
+    [addSpotRep, currentSpotIdx, handleDone, skipSpotIds, spots],
+  );
 
   return (
     <div className="relative w-full">
@@ -177,18 +201,16 @@ function SinglePractice({
           Practicing:
         </div>
         <div className="relative h-32 w-full">
-          <Transition
-            className="absolute left-1/2 top-0 mt-4 w-max -translate-x-1/2 transform rounded-xl border border-neutral-500 bg-white/90 px-8 pb-5 pt-4 text-3xl font-bold text-black shadow-lg sm:pb-8 sm:pt-7 sm:text-[3rem]"
-            show={!changingSpot}
-            enter="transition ease-out transform duration-100"
-            enterFrom="opacity-0 scale-95"
-            enterTo="opacity-100 scale-100"
-            leave="transition ease-in transform duration-200"
-            leaveFrom="opacity-100 scale-100"
-            leaveTo="opacity-0 scale-95"
-          >
-            {spots[currentSpotIdx]?.name ?? "Something went wrong"}
-          </Transition>
+          <ScaleCrossFadeContent
+            component={
+              <div className="flex justify-center">
+                <div className="rounded-xl border border-neutral-500 bg-white/90 px-4 pb-5 pt-4 text-center text-5xl font-bold shadow-lg sm:px-8 sm:text-xl">
+                  {spots[currentSpotIdx]?.name ?? "Something went wrong"}
+                </div>
+              </div>
+            }
+            id={`${currentSpotIdx}-${counter}`}
+          />
         </div>
         <div className="pt-12">
           <GiantHappyButton type="button" onClick={nextSpot}>

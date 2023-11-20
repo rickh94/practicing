@@ -21,24 +21,7 @@ import {
   users,
 } from "~/server/db/schema";
 import { eq, and, desc } from "drizzle-orm";
-// import { utapi } from "~/server/uploadthing";
-
-/*
-// TODO: make this a cron quotas can be handled by pieces per user and spots per piece
-// which will create a defacto max upload quota
-async function deleteUploadthingFile(url?: string | null) {
-  if (!url) return;
-  if (url.startsWith("https://utfs.io/")) {
-    const parts = url.split("/");
-    const fname = parts[parts.length - 1];
-    if (!fname) {
-      return;
-    }
-    console.log("deleted", fname);
-    await utapi.deleteFiles(fname);
-  }
-}
-*/
+import { revalidatePath } from "next/cache";
 
 export const libraryRouter = createTRPCRouter({
   createPiece: protectedProcedure
@@ -579,6 +562,9 @@ export const libraryRouter = createTRPCRouter({
             and(eq(spots.id, input.spotId), eq(spots.pieceId, input.pieceId)),
           );
       });
+      revalidatePath("/library");
+      revalidatePath(`/library/pieces/${input.pieceId}`);
+      revalidatePath(`/library/pieces/${input.pieceId}/spots/${input.spotId}`);
     }),
 
   repeatPracticeSpot: protectedProcedure
