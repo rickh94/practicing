@@ -76,7 +76,9 @@ export default function SpotFormFields({
               className="focusable block h-full w-full rounded-xl border-0 bg-neutral-700/10 py-2 pl-4 pr-12 font-semibold text-neutral-800 placeholder-neutral-700 transition duration-200 focus:bg-neutral-700/20"
               style={{
                 appearance: "none",
-                backgroundImage: `url(${(chevronDown as { src: string }).src})`,
+                backgroundImage: `url(${
+                  (chevronDown as unknown as { src: string }).src
+                })`,
                 backgroundRepeat: "no-repeat",
                 backgroundPosition: "right 0.7rem top 50%",
                 backgroundSize: "1rem auto",
