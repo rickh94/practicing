@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "dotenv -c -- tsx ./drizzle/migrate.ts && next build",
+    "ci:build": "next build",
     "db:studio": "dotenv drizzle-kit studio",
     "db:migrate": "dotenv -c -- tsx ./drizzle/migrate.ts",
     "db:generate": "drizzle-kit generate:sqlite --out ./drizzle/migrations --breakpoints --schema=./src/server/db/schema.ts",
