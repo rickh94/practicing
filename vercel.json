@@ -1,6 +1,6 @@
 {
-  "buildCommand": "npm run build",
-  "installCommand": "npm install",
+  "buildCommand": "bun run build",
+  "installCommand": "bun install",
   "crons": [
     {
       "schedule": "5 4 * * 0",
